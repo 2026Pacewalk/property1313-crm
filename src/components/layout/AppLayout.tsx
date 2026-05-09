@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { useIsMobile } from '@/hooks/useMobile';
+import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useThemeStore } from '@/stores/themeStore';
 import DesktopSidebar from './DesktopSidebar';
@@ -8,15 +9,22 @@ import TopNavBar from './TopNavBar';
 import MobileHeader from './MobileHeader';
 import BottomTabBar from './BottomTabBar';
 import ImpersonationBanner from '@/components/shared/ImpersonationBanner';
+import Login from '@/pages/Login';
 import { cn } from '@/lib/utils';
 
 export default function AppLayout() {
   const isMobile = useIsMobile();
   const { sidebarCollapsed } = useUIStore();
+  const { user, isAuthenticated } = useAuthStore();
   const { init: initTheme, mode } = useThemeStore();
   const location = useLocation();
 
   useEffect(() => { initTheme(); }, []);
+
+  // Redirect to login if not authenticated
+  if (!user || !isAuthenticated) {
+    return <Login />;
+  }
 
   const showMobileNav = isMobile;
   const pageTitle = getPageTitle(location.pathname);

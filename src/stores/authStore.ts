@@ -248,7 +248,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.removeItem('p13_session');
     sessionStorage.removeItem('p13_session');
     set({ user: null, isAuthenticated: false, token: null });
-    window.location.href = '/login';
+    // Use replace to avoid back-button returning to logged-in state
+    window.location.replace('/');
   },
 
   setLoginMethod: (method) => set({ loginMethod: method }),
