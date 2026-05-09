@@ -132,8 +132,8 @@ export default function Login() {
       <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(251,189,8,0.4) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
       <div className="relative w-full max-w-[420px]">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
-          <h1 className="text-p13-yellow text-3xl font-bold tracking-wide">P1313</h1>
-          <p className="text-neutral-500 text-sm mt-1">Secure Login</p>
+          <img src="/logo-main.png" alt="Property1313" className="h-24 w-auto mx-auto mb-2" />
+          <p className="text-neutral-500 text-sm">Secure Login</p>
         </motion.div>
 
         <AnimatePresence mode="wait">

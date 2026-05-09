@@ -46,7 +46,7 @@ export default function PublicProject() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="h-14 bg-white flex items-center px-4 border-b border-neutral-200 sticky top-0 z-10">
-        <span className="text-p13-yellow text-lg font-bold">P1313</span>
+        <img src="/logo-website.png" alt="Property1313" className="h-6 w-auto" />
         <div className="ml-auto flex gap-2 items-center">
           {can('manage_projects') && (
             <button onClick={() => navigate(`/projects/${project.slug}/edit`)}
@@ -204,7 +204,7 @@ export default function PublicProject() {
 
       {/* Footer */}
       <footer className="bg-p13-black py-5 text-center">
-        <p className="text-xs text-neutral-400">Powered by Property1313 CRM</p>
+        <img src="/logo-footer.png" alt="Property1313" className="h-6 w-auto mx-auto mb-1" />
       </footer>
 
       {/* Bottom CTA (Mobile) */}

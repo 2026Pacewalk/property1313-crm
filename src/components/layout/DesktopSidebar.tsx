@@ -46,7 +46,7 @@ export default function DesktopSidebar() {
         {sidebarCollapsed ? (
           <span className="text-p13-yellow font-bold text-lg">P</span>
         ) : (
-          <span className="text-p13-yellow font-bold text-lg tracking-wide">P1313</span>
+          <img src="/logo-website.png" alt="Property1313" className="h-6 w-auto" />
         )}
         <button
           onClick={toggleSidebar}
