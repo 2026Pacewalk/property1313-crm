@@ -103,12 +103,13 @@ export const useDataStore = create<DataState>()(
 
       // Lead CRUD with Supabase
       addLead: async (lead) => {
+        console.log('[addLead] Saving lead to Supabase:', lead.name);
         const saved = await createLead(lead as any);
         if (saved) {
-          const leadData = saved as Lead;
-          set((s) => ({ leads: [leadData, ...s.leads] }));
+          console.log('[addLead] Saved to Supabase successfully:', saved.id);
+          set((s) => ({ leads: [saved as Lead, ...s.leads] }));
         } else {
-          // Fallback: save locally
+          console.warn('[addLead] Supabase save failed, using localStorage fallback');
           set((s) => ({ leads: [lead, ...s.leads] }));
         }
       },
