@@ -45,11 +45,11 @@ function ToastItem({ toast, onRemove }: { toast: { id: string; type: string; mes
       animate={{ opacity: 1, y: 0, x: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-      className="bg-p13-black text-white rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 min-w-[280px] max-w-[400px]"
+      className="bg-card text-foreground rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 min-w-[280px] max-w-[400px]"
     >
       <Icon size={16} className={colors[toast.type as keyof typeof colors]?.replace('bg-', 'text-') || 'text-blue-500'} />
       <span className="text-sm flex-1">{toast.message}</span>
-      <button onClick={() => onRemove(toast.id)} className="text-neutral-400 hover:text-white">
+      <button onClick={() => onRemove(toast.id)} className="text-muted-foreground hover:text-foreground">
         <X size={14} />
       </button>
     </motion.div>

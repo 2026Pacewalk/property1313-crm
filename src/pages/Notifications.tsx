@@ -212,7 +212,7 @@ export default function Notifications() {
         <div className="flex items-center gap-2">
           {selectionMode ? (
             <>
-              <span className="text-xs text-neutral-500">{selectedIds.length} selected</span>
+              <span className="text-xs text-muted-foreground">{selectedIds.length} selected</span>
               {selectedIds.length > 0 && (
                 <>
                   <button onClick={handleBulkRead} className="text-xs text-blue-600 font-medium hover:underline">
@@ -223,7 +223,7 @@ export default function Notifications() {
                   </button>
                 </>
               )}
-              <button onClick={() => { setSelectionMode(false); setSelectedIds([]); }} className="text-xs text-neutral-500">
+              <button onClick={() => { setSelectionMode(false); setSelectedIds([]); }} className="text-xs text-muted-foreground">
                 Cancel
               </button>
             </>
@@ -235,7 +235,7 @@ export default function Notifications() {
                   <CheckCheck size={14} /> Mark all read
                 </button>
               )}
-              <button onClick={() => setSelectionMode(true)} className="text-xs text-neutral-500 hover:text-neutral-700">
+              <button onClick={() => setSelectionMode(true)} className="text-xs text-muted-foreground hover:text-foreground/80">
                 Select
               </button>
             </>
@@ -245,14 +245,14 @@ export default function Notifications() {
 
       {/* Search */}
       <div className="relative mb-3">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search notifications..."
-          className="w-full h-10 pl-9 pr-9 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+          className="w-full h-10 pl-9 pr-9 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
         />
         {search && (
-          <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600">
+          <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground">
             <X size={14} />
           </button>
         )}
@@ -261,21 +261,21 @@ export default function Notifications() {
       {/* Quick Filters Row */}
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-2 scrollbar-none">
         <button onClick={() => setReadFilter('all')}
-          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'all' ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-neutral-500')}>
+          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'all' ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground')}>
           All ({activeNotifications.length})
         </button>
         <button onClick={() => setReadFilter(readFilter === 'unread' ? 'all' : 'unread')}
-          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'unread' ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-neutral-500')}>
+          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'unread' ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground')}>
           Unread ({unreadCount})
         </button>
         {(['urgent', 'high'] as const).map(p => (
           <button key={p} onClick={() => setPriorityFilter(priorityFilter === p ? 'all' : p)}
-            className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition-colors', priorityFilter === p ? 'bg-red-100 text-red-700' : 'bg-neutral-200 text-neutral-500')}>
+            className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition-colors', priorityFilter === p ? 'bg-red-100 text-red-700' : 'bg-neutral-200 text-muted-foreground')}>
             {p} ({activeNotifications.filter(n => !n.read && n.priority === p).length})
           </button>
         ))}
         <button onClick={() => setShowFilters(!showFilters)}
-          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1', showFilters || hasFilters ? 'bg-p13-black text-white' : 'bg-neutral-200 text-neutral-500')}>
+          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1', showFilters || hasFilters ? 'bg-card text-foreground' : 'bg-neutral-200 text-muted-foreground')}>
           <Filter size={12} /> Filter {hasFilters && <span className="w-1.5 h-1.5 bg-p13-yellow rounded-full" />}
         </button>
       </div>
@@ -285,17 +285,17 @@ export default function Notifications() {
         {showFilters && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden mb-3">
-            <div className="bg-white rounded-xl p-3 border border-neutral-200/50 space-y-3">
+            <div className="bg-card rounded-xl p-3 border border-neutral-200/50 space-y-3">
               {/* Type filter */}
               <div>
-                <p className="text-[11px] font-semibold text-neutral-500 mb-1.5">Type</p>
+                <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">Type</p>
                 <div className="flex flex-wrap gap-1.5">
-                  <button onClick={() => setTypeFilter('all')} className={cn('px-2 py-1 rounded-md text-[11px] font-medium transition-colors', typeFilter === 'all' ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-100 text-neutral-500')}>
+                  <button onClick={() => setTypeFilter('all')} className={cn('px-2 py-1 rounded-md text-[11px] font-medium transition-colors', typeFilter === 'all' ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}>
                     All
                   </button>
                   {Object.entries(typeLabels).map(([key, label]) => (
                     <button key={key} onClick={() => setTypeFilter(typeFilter === key ? 'all' : key)}
-                      className={cn('px-2 py-1 rounded-md text-[11px] font-medium transition-colors', typeFilter === key ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-100 text-neutral-500')}>
+                      className={cn('px-2 py-1 rounded-md text-[11px] font-medium transition-colors', typeFilter === key ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}>
                       {label}
                     </button>
                   ))}
@@ -303,11 +303,11 @@ export default function Notifications() {
               </div>
               {/* Module filter */}
               <div>
-                <p className="text-[11px] font-semibold text-neutral-500 mb-1.5">Module</p>
+                <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">Module</p>
                 <div className="flex flex-wrap gap-1.5">
                   {Object.entries(moduleLabels).map(([key, label]) => (
                     <button key={key} onClick={() => setModuleFilter(moduleFilter === key ? 'all' : key)}
-                      className={cn('px-2 py-1 rounded-md text-[11px] font-medium transition-colors', moduleFilter === key ? 'bg-p13-black text-white' : 'bg-neutral-100 text-neutral-500')}>
+                      className={cn('px-2 py-1 rounded-md text-[11px] font-medium transition-colors', moduleFilter === key ? 'bg-card text-foreground' : 'bg-muted text-muted-foreground')}>
                       {label}
                     </button>
                   ))}
@@ -315,11 +315,11 @@ export default function Notifications() {
               </div>
               {/* Priority filter */}
               <div>
-                <p className="text-[11px] font-semibold text-neutral-500 mb-1.5">Priority</p>
+                <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">Priority</p>
                 <div className="flex flex-wrap gap-1.5">
                   {(['urgent', 'high', 'normal', 'low'] as const).map(p => (
                     <button key={p} onClick={() => setPriorityFilter(priorityFilter === p ? 'all' : p)}
-                      className={cn('px-2 py-1 rounded-md text-[11px] font-medium capitalize transition-colors', priorityFilter === p ? 'bg-red-100 text-red-700' : 'bg-neutral-100 text-neutral-500')}>
+                      className={cn('px-2 py-1 rounded-md text-[11px] font-medium capitalize transition-colors', priorityFilter === p ? 'bg-red-100 text-red-700' : 'bg-muted text-muted-foreground')}>
                       {p}
                     </button>
                   ))}
@@ -337,8 +337,8 @@ export default function Notifications() {
 
       {/* Selection bar */}
       {selectionMode && (
-        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-neutral-100 rounded-lg">
-          <button onClick={selectAll} className="flex items-center gap-1.5 text-xs font-medium text-neutral-700">
+        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-muted rounded-lg">
+          <button onClick={selectAll} className="flex items-center gap-1.5 text-xs font-medium text-foreground/80">
             <div className={cn('w-4 h-4 rounded border-2 flex items-center justify-center transition-colors', selectedIds.length === filtered.length && filtered.length > 0 ? 'bg-p13-yellow border-p13-yellow' : 'border-neutral-300')}>
               {selectedIds.length === filtered.length && filtered.length > 0 && <Check size={10} className="text-p13-black" />}
             </div>
@@ -351,9 +351,9 @@ export default function Notifications() {
       <div>
         {Object.keys(grouped).length === 0 ? (
           <div className="text-center py-12">
-            <Bell size={40} className="text-neutral-300 mx-auto mb-3" />
-            <p className="text-sm text-neutral-500 font-medium">No notifications found</p>
-            <p className="text-xs text-neutral-400 mt-1">Try adjusting your filters</p>
+            <Bell size={40} className="text-muted-foreground/50 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground font-medium">No notifications found</p>
+            <p className="text-xs text-muted-foreground mt-1">Try adjusting your filters</p>
             {hasFilters && (
               <button onClick={clearFilters} className="mt-3 text-xs text-p13-yellow font-medium hover:underline">
                 Clear filters
@@ -363,8 +363,8 @@ export default function Notifications() {
         ) : (
           Object.keys(grouped).sort((a, b) => new Date(b).getTime() - new Date(a).getTime()).map(date => (
             <div key={date} className="mb-4">
-              <div className="sticky top-0 bg-p13-white z-[5] py-2 border-b border-neutral-200 mb-1">
-                <p className="text-xs font-semibold text-neutral-500">{dateLabel(date)}</p>
+              <div className="sticky top-0 bg-p13-white z-[5] py-2 border-b border-border mb-1">
+                <p className="text-xs font-semibold text-muted-foreground">{dateLabel(date)}</p>
               </div>
               {grouped[date].map((n, i) => {
                 const config = iconMap[n.type] || iconMap.system;
@@ -380,7 +380,7 @@ export default function Notifications() {
                     onClick={() => handleNotificationClick(n)}
                     className={cn(
                       'flex items-start gap-3 p-3 rounded-xl mb-1.5 cursor-pointer transition-all hover:shadow-md',
-                      !n.read ? 'bg-white border-l-[3px] border-l-p13-yellow shadow-xs' : 'bg-white/60 border border-transparent',
+                      !n.read ? 'bg-card border-l-[3px] border-l-p13-yellow shadow-xs' : 'bg-white/60 border border-transparent',
                       isSelected && selectionMode ? 'ring-2 ring-p13-yellow bg-p13-yellow/5' : ''
                     )}
                   >
@@ -399,12 +399,12 @@ export default function Notifications() {
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <p className={cn('text-sm', !n.read ? 'font-semibold text-neutral-900' : 'font-medium text-neutral-700')}>
+                            <p className={cn('text-sm', !n.read ? 'font-semibold text-foreground' : 'font-medium text-foreground/80')}>
                               {n.title}
                             </p>
                             {!n.read && <div className={cn('w-2 h-2 rounded-full', pConfig.dot)} />}
                           </div>
-                          <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">{n.description}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.description}</p>
                         </div>
                       </div>
                       {/* Meta row */}
@@ -412,9 +412,9 @@ export default function Notifications() {
                         <span className={cn('text-[10px] font-semibold px-1.5 py-0.5 rounded-full capitalize', pConfig.badge)}>
                           {n.priority}
                         </span>
-                        <span className="text-[10px] text-neutral-400">{moduleLabels[n.module]}</span>
-                        <span className="text-[10px] text-neutral-300">|</span>
-                        <span className="text-[10px] text-neutral-400">{timeAgo(n.createdAt)}</span>
+                        <span className="text-[10px] text-muted-foreground">{moduleLabels[n.module]}</span>
+                        <span className="text-[10px] text-muted-foreground/50">|</span>
+                        <span className="text-[10px] text-muted-foreground">{timeAgo(n.createdAt)}</span>
                       </div>
                       {/* Actions */}
                       {n.actions && !selectionMode && (
@@ -437,10 +437,10 @@ export default function Notifications() {
                         {!n.read && (
                           <button
                             onClick={(e) => { e.stopPropagation(); markNotificationRead(n.id); }}
-                            className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors"
+                            className="p-1.5 hover:bg-muted rounded-lg transition-colors"
                             title="Mark as read"
                           >
-                            <Check size={14} className="text-neutral-400" />
+                            <Check size={14} className="text-muted-foreground" />
                           </button>
                         )}
                         <button
@@ -463,7 +463,7 @@ export default function Notifications() {
       {/* Summary footer */}
       {filtered.length > 0 && (
         <div className="text-center py-4">
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-muted-foreground">
             Showing {filtered.length} of {activeNotifications.length} notifications
           </p>
         </div>

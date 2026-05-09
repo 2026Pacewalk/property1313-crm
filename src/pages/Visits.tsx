@@ -39,8 +39,8 @@ export default function Visits() {
           </div>
         </div>
         <div className="flex bg-neutral-200 rounded-lg p-0.5">
-          <button onClick={() => setViewMode('list')} className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-white shadow-sm' : ''}`}><List size={14} /></button>
-          <button onClick={() => setViewMode('calendar')} className={`p-1.5 rounded ${viewMode === 'calendar' ? 'bg-white shadow-sm' : ''}`}><CalendarDays size={14} /></button>
+          <button onClick={() => setViewMode('list')} className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-card shadow-sm' : ''}`}><List size={14} /></button>
+          <button onClick={() => setViewMode('calendar')} className={`p-1.5 rounded ${viewMode === 'calendar' ? 'bg-card shadow-sm' : ''}`}><CalendarDays size={14} /></button>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ export default function Visits() {
       <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
         {['all', 'scheduled', 'completed', 'cancelled'].map(s => (
           <button key={s} onClick={() => setActiveStatus(s)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize whitespace-nowrap transition-colors ${activeStatus === s ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-neutral-500'}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize whitespace-nowrap transition-colors ${activeStatus === s ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground'}`}>
             {s === 'all' ? 'All' : s.replace('_', ' ')}
           </button>
         ))}
@@ -63,33 +63,33 @@ export default function Visits() {
           <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {Object.keys(grouped).sort().map(date => (
               <div key={date}>
-                <div className="sticky top-0 bg-p13-white z-[5] py-2 border-b border-neutral-200 mb-2">
+                <div className="sticky top-0 bg-p13-white z-[5] py-2 border-b border-border mb-2">
                   <p className="text-sm font-semibold">{new Date(date).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
-                  <p className="text-xs text-neutral-400">{grouped[date].length} visits</p>
+                  <p className="text-xs text-muted-foreground">{grouped[date].length} visits</p>
                 </div>
                 {grouped[date].map((v, i) => (
                   <motion.div key={v.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                    className={`bg-white rounded-xl p-4 shadow-xs border border-neutral-200/50 mb-3 ${statusColors[v.status] || ''} border-l-[3px]`}>
+                    className={`bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50 mb-3 ${statusColors[v.status] || ''} border-l-[3px]`}>
                     <div className="flex items-center justify-between mb-2">
                       <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${statusBg[v.status] || ''}`}>{v.status.replace('_', ' ')}</span>
-                      <span className="text-xs text-neutral-400">{v.visitType === 'first_visit' ? 'First Visit' : 'Revisit'}</span>
+                      <span className="text-xs text-muted-foreground">{v.visitType === 'first_visit' ? 'First Visit' : 'Revisit'}</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1">
-                      <Clock size={14} className="text-neutral-400" />
+                      <Clock size={14} className="text-muted-foreground" />
                       <span className="text-sm font-semibold">{v.visitTime} - {String(Number(v.visitTime.split(':')[0]) + (v.duration.includes('1.5') ? 1 : 1)).padStart(2, '0')}:{v.visitTime.split(':')[1]}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: getAvatarColor(v.leadName) }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0" style={{ backgroundColor: getAvatarColor(v.leadName) }}>
                         {getInitials(v.leadName)}
                       </div>
                       <div>
                         <p className="text-sm font-medium">{v.leadName}</p>
-                        <p className="text-xs text-neutral-400">{v.leadPhone}</p>
+                        <p className="text-xs text-muted-foreground">{v.leadPhone}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-1 mt-2">
-                      <MapPin size={12} className="text-neutral-400" />
-                      <p className="text-xs text-neutral-500">{v.projectName}</p>
+                      <MapPin size={12} className="text-muted-foreground" />
+                      <p className="text-xs text-muted-foreground">{v.projectName}</p>
                     </div>
                     <div className="flex gap-2 mt-3">
                       {v.status === 'scheduled' && <button className="flex-1 h-8 bg-p13-yellow text-p13-black rounded-lg text-xs font-semibold">Start Visit</button>}
@@ -102,10 +102,10 @@ export default function Visits() {
           </motion.div>
         ) : (
           <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="bg-white rounded-xl p-4 shadow-xs border border-neutral-200/50">
+            <div className="bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50">
               <div className="grid grid-cols-7 gap-1 text-center">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
-                  <div key={d} className="text-[10px] font-medium text-neutral-400 py-1">{d}</div>
+                  <div key={d} className="text-[10px] font-medium text-muted-foreground py-1">{d}</div>
                 ))}
                 {Array.from({ length: 35 }, (_, i) => {
                   const day = i - 4;
@@ -115,7 +115,7 @@ export default function Visits() {
                   });
                   return (
                     <div key={i} className={`aspect-square flex flex-col items-center justify-center rounded-lg text-xs ${
-                      day === 8 ? 'bg-p13-yellow text-p13-black font-bold' : day > 0 && day < 32 ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200' : ''
+                      day === 8 ? 'bg-p13-yellow text-p13-black font-bold' : day > 0 && day < 32 ? 'bg-muted text-foreground/80 hover:bg-neutral-200' : ''
                     }`}>
                       {day > 0 && day < 32 ? day : ''}
                       {hasVisit && day > 0 && day < 32 && <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-0.5" />}
@@ -132,15 +132,15 @@ export default function Visits() {
         <div className="space-y-4 py-2">
           {['Lead', 'Project/Property', 'Date', 'Time', 'Duration', 'Visit Type', 'Notes'].map(label => (
             <div key={label}>
-              <label className="text-xs font-medium text-neutral-500 mb-1 block">{label}</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">{label}</label>
               {label === 'Notes' ? (
-                <textarea rows={3} placeholder={`Enter ${label.toLowerCase()}...`} className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm resize-none" />
+                <textarea rows={3} placeholder={`Enter ${label.toLowerCase()}...`} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
               ) : label === 'Date' ? (
-                <input type="date" className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm" />
+                <input type="date" className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm" />
               ) : label === 'Time' ? (
-                <input type="time" className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm" />
+                <input type="time" className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm" />
               ) : (
-                <input placeholder={`Enter ${label.toLowerCase()}...`} className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm" />
+                <input placeholder={`Enter ${label.toLowerCase()}...`} className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm" />
               )}
             </div>
           ))}

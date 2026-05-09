@@ -124,8 +124,8 @@ export default function Profile() {
   return (
     <div className="pb-6">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-neutral-200 px-4 py-2 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-neutral-600 hover:text-neutral-900">
+      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-border px-4 py-2 flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft size={18} />
         </button>
         <h1 className="text-[15px] font-semibold flex-1">My Profile</h1>
@@ -137,10 +137,10 @@ export default function Profile() {
       </div>
 
       {/* Profile Hero Card */}
-      <div className="bg-p13-black px-4 py-6">
+      <div className="bg-card px-4 py-6">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full border-2 border-p13-yellow flex items-center justify-center text-white text-xl font-bold"
+            <div className="w-16 h-16 rounded-full border-2 border-p13-yellow flex items-center justify-center text-foreground text-xl font-bold"
               style={{ backgroundColor: avatarColor }}>
               {initials}
             </div>
@@ -149,8 +149,8 @@ export default function Profile() {
             </button>
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-white text-lg font-semibold">{user.name}</h2>
-            <p className="text-neutral-400 text-xs">{user.displayName || user.name}</p>
+            <h2 className="text-foreground text-lg font-semibold">{user.name}</h2>
+            <p className="text-muted-foreground text-xs">{user.displayName || user.name}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className="px-2 py-0.5 bg-p13-yellow text-p13-black rounded-full text-[10px] font-semibold capitalize">
                 {user.role.replace('_', ' ')}
@@ -169,20 +169,20 @@ export default function Profile() {
         </div>
 
         {/* Quick Stats Row */}
-        <div className="flex gap-4 mt-4 pt-4 border-t border-white/10">
+        <div className="flex gap-4 mt-4 pt-4 border-t border-border">
           <div className="text-center flex-1">
-            <p className="text-lg font-bold text-white">12</p>
-            <p className="text-[10px] text-neutral-400">Leads</p>
+            <p className="text-lg font-bold text-foreground">12</p>
+            <p className="text-[10px] text-muted-foreground">Leads</p>
           </div>
           <div className="w-px bg-white/10" />
           <div className="text-center flex-1">
-            <p className="text-lg font-bold text-white">8</p>
-            <p className="text-[10px] text-neutral-400">Follow-ups</p>
+            <p className="text-lg font-bold text-foreground">8</p>
+            <p className="text-[10px] text-muted-foreground">Follow-ups</p>
           </div>
           <div className="w-px bg-white/10" />
           <div className="text-center flex-1">
-            <p className="text-lg font-bold text-white">5</p>
-            <p className="text-[10px] text-neutral-400">Visits</p>
+            <p className="text-lg font-bold text-foreground">5</p>
+            <p className="text-[10px] text-muted-foreground">Visits</p>
           </div>
         </div>
       </div>
@@ -191,7 +191,7 @@ export default function Profile() {
       <div className="flex bg-neutral-200 px-4 py-1 gap-0.5">
         {tabs.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${activeTab === tab.key ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'}`}>
+            className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${activeTab === tab.key ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground/80'}`}>
             {tab.label}
           </button>
         ))}
@@ -203,8 +203,8 @@ export default function Profile() {
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* Personal Info Card */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Personal Information</h3>
                   <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 text-xs text-p13-yellow font-medium">
                     <Pencil size={12} /> Edit
@@ -225,32 +225,32 @@ export default function Profile() {
               </div>
 
               {/* Account Status Card */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Account Status</h3>
                 </div>
                 <div className="px-4 py-3 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-neutral-500">Status</span>
+                    <span className="text-sm text-muted-foreground">Status</span>
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-neutral-500">Email Verification</span>
+                    <span className="text-sm text-muted-foreground">Email Verification</span>
                     <span className={`flex items-center gap-1 text-xs font-medium ${user.emailVerified ? 'text-green-600' : 'text-yellow-600'}`}>
                       {user.emailVerified ? <><Check size={12} /> Verified</> : <><AlertCircle size={12} /> Pending</>}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-neutral-500">Phone Verification</span>
+                    <span className="text-sm text-muted-foreground">Phone Verification</span>
                     <span className={`flex items-center gap-1 text-xs font-medium ${user.phoneVerified ? 'text-green-600' : 'text-yellow-600'}`}>
                       {user.phoneVerified ? <><Check size={12} /> Verified</> : <><AlertCircle size={12} /> Pending</>}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-neutral-500">Last Login</span>
-                    <span className="text-xs text-neutral-600">{new Date(user.lastLoginAt).toLocaleString()}</span>
+                    <span className="text-sm text-muted-foreground">Last Login</span>
+                    <span className="text-xs text-muted-foreground">{new Date(user.lastLoginAt).toLocaleString()}</span>
                   </div>
                   {user.forcePasswordChange && (
                     <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-lg p-2.5">
@@ -262,62 +262,62 @@ export default function Profile() {
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <button onClick={() => setShowChangePass(true)} className="flex items-center gap-3 w-full px-4 py-3 border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <button onClick={() => setShowChangePass(true)} className="flex items-center gap-3 w-full px-4 py-3 border-b border-border/50 hover:bg-muted/50 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-p13-yellow/10 flex items-center justify-center">
                     <Lock size={14} className="text-p13-yellow" />
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-medium">Change Password</p>
-                    <p className="text-[11px] text-neutral-400">Update your password</p>
+                    <p className="text-[11px] text-muted-foreground">Update your password</p>
                   </div>
-                  <ChevronRight size={14} className="text-neutral-400" />
+                  <ChevronRight size={14} className="text-muted-foreground" />
                 </button>
-                <button onClick={() => setActiveTab('security')} className="flex items-center gap-3 w-full px-4 py-3 border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
+                <button onClick={() => setActiveTab('security')} className="flex items-center gap-3 w-full px-4 py-3 border-b border-border/50 hover:bg-muted/50 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
                     <Shield size={14} className="text-blue-500" />
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-medium">Security Settings</p>
-                    <p className="text-[11px] text-neutral-400">Login methods & sessions</p>
+                    <p className="text-[11px] text-muted-foreground">Login methods & sessions</p>
                   </div>
-                  <ChevronRight size={14} className="text-neutral-400" />
+                  <ChevronRight size={14} className="text-muted-foreground" />
                 </button>
-                <button onClick={() => setActiveTab('login_activity')} className="flex items-center gap-3 w-full px-4 py-3 border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
+                <button onClick={() => setActiveTab('login_activity')} className="flex items-center gap-3 w-full px-4 py-3 border-b border-border/50 hover:bg-muted/50 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center">
                     <Clock size={14} className="text-purple-500" />
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-medium">Login Activity</p>
-                    <p className="text-[11px] text-neutral-400">View your login history</p>
+                    <p className="text-[11px] text-muted-foreground">View your login history</p>
                   </div>
-                  <ChevronRight size={14} className="text-neutral-400" />
+                  <ChevronRight size={14} className="text-muted-foreground" />
                 </button>
-                <button onClick={() => setActiveTab('notifications')} className="flex items-center gap-3 w-full px-4 py-3 hover:bg-neutral-50 transition-colors">
+                <button onClick={() => setActiveTab('notifications')} className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
                     <Bell size={14} className="text-green-500" />
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-medium">Notification Preferences</p>
-                    <p className="text-[11px] text-neutral-400">Manage alert settings</p>
+                    <p className="text-[11px] text-muted-foreground">Manage alert settings</p>
                   </div>
-                  <ChevronRight size={14} className="text-neutral-400" />
+                  <ChevronRight size={14} className="text-muted-foreground" />
                 </button>
               </div>
 
               {/* Recent Audit Log */}
               {myAuditLogs.length > 0 && (
-                <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                  <div className="px-4 py-3 border-b border-neutral-100">
+                <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                  <div className="px-4 py-3 border-b border-border/50">
                     <h3 className="text-sm font-semibold">Recent Account Activity</h3>
                   </div>
                   <div className="px-4 py-2">
                     {myAuditLogs.slice(0, 4).map(log => (
-                      <div key={log.id} className="flex items-start gap-2 py-2 border-b border-neutral-100 last:border-0">
-                        <ShieldCheck size={12} className="text-neutral-400 mt-0.5 flex-shrink-0" />
+                      <div key={log.id} className="flex items-start gap-2 py-2 border-b border-border/50 last:border-0">
+                        <ShieldCheck size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-neutral-700">{log.details}</p>
-                          <p className="text-[10px] text-neutral-400 mt-0.5">{new Date(log.createdAt).toLocaleString()}</p>
+                          <p className="text-xs text-foreground/80">{log.details}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">{new Date(log.createdAt).toLocaleString()}</p>
                         </div>
                       </div>
                     ))}
@@ -336,51 +336,51 @@ export default function Profile() {
           {activeTab === 'security' && (
             <motion.div key="security" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* Login Methods */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Login Methods</h3>
                 </div>
                 <div className="px-4 py-3 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <KeyRound size={16} className="text-neutral-500" />
+                      <KeyRound size={16} className="text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">Password Login</p>
-                        <p className="text-[11px] text-neutral-400">Sign in with email and password</p>
+                        <p className="text-[11px] text-muted-foreground">Sign in with email and password</p>
                       </div>
                     </div>
                     <div className="w-10 h-5 bg-p13-yellow rounded-full relative flex-shrink-0">
-                      <div className="absolute top-0.5 left-[22px] w-4 h-4 rounded-full bg-white shadow" />
+                      <div className="absolute top-0.5 left-[22px] w-4 h-4 rounded-full bg-card shadow" />
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Smartphone size={16} className="text-neutral-500" />
+                      <Smartphone size={16} className="text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">WhatsApp OTP</p>
-                        <p className="text-[11px] text-neutral-400">Login with WhatsApp OTP</p>
+                        <p className="text-[11px] text-muted-foreground">Login with WhatsApp OTP</p>
                       </div>
                     </div>
                     <button
                       onClick={() => addToast({ type: 'success', message: `WhatsApp OTP ${user.loginMethods.whatsappOtp ? 'disabled' : 'enabled'}` })}
                       className={`w-10 h-5 rounded-full relative flex-shrink-0 transition-colors ${user.loginMethods.whatsappOtp ? 'bg-p13-yellow' : 'bg-neutral-300'}`}>
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${user.loginMethods.whatsappOtp ? 'left-[22px]' : 'left-0.5'}`} />
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-all ${user.loginMethods.whatsappOtp ? 'left-[22px]' : 'left-0.5'}`} />
                     </button>
                   </div>
                 </div>
               </div>
 
               {/* Active Sessions */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Active Sessions</h3>
-                  <span className="text-[10px] text-neutral-400">{userSessions.filter(s => s.userId === user.id).length} devices</span>
+                  <span className="text-[10px] text-muted-foreground">{userSessions.filter(s => s.userId === user.id).length} devices</span>
                 </div>
                 <div className="divide-y divide-neutral-100">
                   {userSessions.filter(s => s.userId === user.id).map(session => (
                     <div key={session.id} className="flex items-center gap-3 px-4 py-3">
-                      <div className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center flex-shrink-0">
-                        <Monitor size={16} className="text-neutral-500" />
+                      <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                        <Monitor size={16} className="text-muted-foreground" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -389,8 +389,8 @@ export default function Profile() {
                             <span className="px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full text-[9px] font-semibold">Current</span>
                           )}
                         </div>
-                        <p className="text-[11px] text-neutral-400">{session.browser} &middot; {session.location}</p>
-                        <p className="text-[10px] text-neutral-400">IP: {session.ipAddress}</p>
+                        <p className="text-[11px] text-muted-foreground">{session.browser} &middot; {session.location}</p>
+                        <p className="text-[10px] text-muted-foreground">IP: {session.ipAddress}</p>
                       </div>
                       {!session.isCurrent && (
                         <button onClick={() => addToast({ type: 'success', message: 'Session terminated' })}
@@ -404,16 +404,16 @@ export default function Profile() {
               </div>
 
               {/* Two-Factor Auth */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Two-Factor Authentication</h3>
                 </div>
                 <div className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <Fingerprint size={20} className="text-neutral-400" />
+                    <Fingerprint size={20} className="text-muted-foreground" />
                     <div className="flex-1">
                       <p className="text-sm font-medium">2FA Not Enabled</p>
-                      <p className="text-[11px] text-neutral-400">Add an extra layer of security to your account</p>
+                      <p className="text-[11px] text-muted-foreground">Add an extra layer of security to your account</p>
                     </div>
                     <button onClick={() => addToast({ type: 'info', message: '2FA setup coming soon' })}
                       className="px-3 py-1.5 bg-p13-yellow text-p13-black rounded-lg text-xs font-semibold">
@@ -424,7 +424,7 @@ export default function Profile() {
               </div>
 
               {/* Danger Zone */}
-              <div className="bg-white rounded-xl shadow-xs border border-red-100 mb-6">
+              <div className="bg-card rounded-xl shadow-xs border border-red-100 mb-6">
                 <div className="px-4 py-3 border-b border-red-100">
                   <h3 className="text-sm font-semibold text-red-600">Danger Zone</h3>
                 </div>
@@ -445,14 +445,14 @@ export default function Profile() {
               <div className="flex gap-1.5 mb-3">
                 {(['all', 'success', 'failed'] as const).map(f => (
                   <button key={f} onClick={() => setActivityFilter(f)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-colors ${activityFilter === f ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-neutral-500'}`}>
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-colors ${activityFilter === f ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground'}`}>
                     {f}
                   </button>
                 ))}
               </div>
 
               {/* Activity List */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50">
                 <div className="divide-y divide-neutral-100">
                   {filteredActivity.map((activity, i) => (
                     <motion.div key={activity.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
@@ -467,14 +467,14 @@ export default function Profile() {
                             {activity.status}
                           </span>
                         </div>
-                        <p className="text-[11px] text-neutral-400">{activity.browser} on {activity.device}</p>
-                        <p className="text-[11px] text-neutral-400">IP: {activity.ipAddress}</p>
-                        <p className="text-[10px] text-neutral-400 mt-0.5">{new Date(activity.createdAt).toLocaleString()}</p>
+                        <p className="text-[11px] text-muted-foreground">{activity.browser} on {activity.device}</p>
+                        <p className="text-[11px] text-muted-foreground">IP: {activity.ipAddress}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{new Date(activity.createdAt).toLocaleString()}</p>
                       </div>
                     </motion.div>
                   ))}
                   {filteredActivity.length === 0 && (
-                    <p className="text-center text-sm text-neutral-400 py-8">No login activity found</p>
+                    <p className="text-center text-sm text-muted-foreground py-8">No login activity found</p>
                   )}
                 </div>
               </div>
@@ -485,8 +485,8 @@ export default function Profile() {
           {activeTab === 'notifications' && (
             <motion.div key="notifications" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* CRM Alerts */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">CRM Alerts</h3>
                 </div>
                 <div className="divide-y divide-neutral-100">
@@ -499,8 +499,8 @@ export default function Profile() {
               </div>
 
               {/* Security Alerts */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Security</h3>
                 </div>
                 <div className="divide-y divide-neutral-100">
@@ -509,8 +509,8 @@ export default function Profile() {
               </div>
 
               {/* Delivery Channels */}
-              <div className="bg-white rounded-xl shadow-xs border border-neutral-200/50 mb-4">
-                <div className="px-4 py-3 border-b border-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Delivery Channels</h3>
                 </div>
                 <div className="divide-y divide-neutral-100">
@@ -535,7 +535,7 @@ export default function Profile() {
           {/* Photo upload */}
           <div className="flex justify-center mb-2">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full border-2 border-p13-yellow flex items-center justify-center text-white text-lg font-bold"
+              <div className="w-16 h-16 rounded-full border-2 border-p13-yellow flex items-center justify-center text-foreground text-lg font-bold"
                 style={{ backgroundColor: avatarColor }}>
                 {getInitials(editName)}
               </div>
@@ -545,30 +545,30 @@ export default function Profile() {
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">Full Name *</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Full Name *</label>
             <input value={editName} onChange={e => setEditName(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">Display Name</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Display Name</label>
             <input value={editDisplayName} onChange={e => setEditDisplayName(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">Mobile Number</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Mobile Number</label>
             <input value={editPhone} onChange={e => setEditPhone(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">WhatsApp Mobile</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">WhatsApp Mobile</label>
             <input value={editWhatsappMobile} onChange={e => setEditWhatsappMobile(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
-            <p className="text-[10px] text-neutral-400 mt-1">Used for WhatsApp template sending</p>
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+            <p className="text-[10px] text-muted-foreground mt-1">Used for WhatsApp template sending</p>
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">Timezone</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Timezone</label>
             <select value={editTimezone} onChange={e => setEditTimezone(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none">
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none">
               <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
               <option value="Asia/Dubai">Asia/Dubai (GST)</option>
               <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
@@ -586,21 +586,21 @@ export default function Profile() {
       <BottomSheet isOpen={showChangePass} onClose={() => setShowChangePass(false)} title="Change Password">
         <div className="space-y-4 py-2">
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">Current Password</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Current Password</label>
             <div className="relative">
               <input type={showCurr ? 'text' : 'password'} value={currPass} onChange={e => setCurrPass(e.target.value)}
-                className="w-full h-11 px-3 pr-10 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
-              <button onClick={() => setShowCurr(!showCurr)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                className="w-full h-11 px-3 pr-10 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+              <button onClick={() => setShowCurr(!showCurr)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                 {showCurr ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">New Password</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">New Password</label>
             <div className="relative">
               <input type={showNew ? 'text' : 'password'} value={newPass} onChange={e => setNewPass(e.target.value)}
-                className="w-full h-11 px-3 pr-10 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
-              <button onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                className="w-full h-11 px-3 pr-10 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+              <button onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                 {showNew ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
@@ -612,7 +612,7 @@ export default function Profile() {
                     <div key={i} className={`h-1 flex-1 rounded-full ${i <= strength ? strengthColors[strength - 1] : 'bg-neutral-200'}`} />
                   ))}
                 </div>
-                <p className="text-[10px] text-neutral-500">{strengthLabels[strength - 1] || 'Too weak'}</p>
+                <p className="text-[10px] text-muted-foreground">{strengthLabels[strength - 1] || 'Too weak'}</p>
               </div>
             )}
             <div className="mt-2 space-y-1">
@@ -624,19 +624,19 @@ export default function Profile() {
               ].map(req => (
                 <div key={req.label} className="flex items-center gap-1.5">
                   <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center ${req.valid ? 'bg-green-500' : 'bg-neutral-300'}`}>
-                    <Check size={8} className="text-white" />
+                    <Check size={8} className="text-foreground" />
                   </div>
-                  <span className={`text-[11px] ${req.valid ? 'text-green-600' : 'text-neutral-400'}`}>{req.label}</span>
+                  <span className={`text-[11px] ${req.valid ? 'text-green-600' : 'text-muted-foreground'}`}>{req.label}</span>
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">Confirm Password</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Confirm Password</label>
             <div className="relative">
               <input type={showConf ? 'text' : 'password'} value={confPass} onChange={e => setConfPass(e.target.value)}
-                className="w-full h-11 px-3 pr-10 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
-              <button onClick={() => setShowConf(!showConf)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                className="w-full h-11 px-3 pr-10 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+              <button onClick={() => setShowConf(!showConf)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                 {showConf ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
@@ -644,7 +644,7 @@ export default function Profile() {
           </div>
           <div className="flex items-center gap-2 pt-1">
             <input type="checkbox" id="logoutOthers" className="w-4 h-4 accent-p13-yellow" />
-            <label htmlFor="logoutOthers" className="text-xs text-neutral-600">Logout from all other devices</label>
+            <label htmlFor="logoutOthers" className="text-xs text-muted-foreground">Logout from all other devices</label>
           </div>
           <button onClick={handleChangePassword} className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold">
             Update Password
@@ -660,9 +660,9 @@ export default function Profile() {
             const sColor = getAvatarColor(staff.name);
             const sLeads = [12, 8, 5, 0][Math.abs(staff.name.charCodeAt(0)) % 4];
             return (
-              <div key={staff.id} className="bg-white rounded-lg p-3 border border-neutral-200/50">
+              <div key={staff.id} className="bg-card rounded-lg p-3 border border-neutral-200/50">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0"
                     style={{ backgroundColor: sColor }}>
                     {sInit}
                   </div>
@@ -673,10 +673,10 @@ export default function Profile() {
                         {staff.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
-                    <p className="text-[11px] text-neutral-400 capitalize">{staff.role.replace('_', ' ')} &middot; {sLeads} leads</p>
+                    <p className="text-[11px] text-muted-foreground capitalize">{staff.role.replace('_', ' ')} &middot; {sLeads} leads</p>
                   </div>
                   <button onClick={() => { setSelectedStaffId(staff.id); setShowAdminActions(true); }}
-                    className="text-xs bg-p13-black text-white px-3 py-1.5 rounded-lg font-medium">
+                    className="text-xs bg-card text-foreground px-3 py-1.5 rounded-lg font-medium">
                     Manage
                   </button>
                 </div>
@@ -693,40 +693,40 @@ export default function Profile() {
           if (!staff) return null;
           return (
             <div className="space-y-2 py-2">
-              <div className="flex items-center gap-3 mb-4 pb-3 border-b border-neutral-200">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold"
+              <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-foreground text-xs font-bold"
                   style={{ backgroundColor: getAvatarColor(staff.name) }}>
                   {getInitials(staff.name)}
                 </div>
                 <div>
                   <p className="text-sm font-semibold">{staff.name}</p>
-                  <p className="text-[11px] text-neutral-400 capitalize">{staff.role.replace('_', ' ')}</p>
+                  <p className="text-[11px] text-muted-foreground capitalize">{staff.role.replace('_', ' ')}</p>
                 </div>
               </div>
               <button onClick={() => { setShowAdminActions(false); setShowSetPassword(true); }}
-                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-left">
+                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left">
                 <KeyRound size={16} className="text-p13-yellow" />
-                <div><p className="text-sm font-medium">Set Password</p><p className="text-[11px] text-neutral-400">Set new password for user</p></div>
+                <div><p className="text-sm font-medium">Set Password</p><p className="text-[11px] text-muted-foreground">Set new password for user</p></div>
               </button>
               <button onClick={() => { addToast({ type: 'success', message: 'Password reset email sent' }); setShowAdminActions(false); }}
-                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-left">
+                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left">
                 <Lock size={16} className="text-blue-500" />
-                <div><p className="text-sm font-medium">Reset Password</p><p className="text-[11px] text-neutral-400">Send password reset link</p></div>
+                <div><p className="text-sm font-medium">Reset Password</p><p className="text-[11px] text-muted-foreground">Send password reset link</p></div>
               </button>
               <button onClick={() => { addToast({ type: 'info', message: `Logged in as ${staff.name}` }); setShowAdminActions(false); }}
-                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-left">
+                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left">
                 <User size={16} className="text-purple-500" />
-                <div><p className="text-sm font-medium">Login as User</p><p className="text-[11px] text-neutral-400">Impersonate this account</p></div>
+                <div><p className="text-sm font-medium">Login as User</p><p className="text-[11px] text-muted-foreground">Impersonate this account</p></div>
               </button>
               <button onClick={() => { addToast({ type: 'success', message: `${staff.isActive ? 'Disabled' : 'Enabled'} ${staff.name}` }); setShowAdminActions(false); }}
-                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-left">
+                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left">
                 <Shield size={16} className={staff.isActive ? 'text-red-500' : 'text-green-500'} />
-                <div><p className="text-sm font-medium">{staff.isActive ? 'Disable Account' : 'Enable Account'}</p><p className="text-[11px] text-neutral-400">{staff.isActive ? 'Temporarily disable' : 'Reactivate account'}</p></div>
+                <div><p className="text-sm font-medium">{staff.isActive ? 'Disable Account' : 'Enable Account'}</p><p className="text-[11px] text-muted-foreground">{staff.isActive ? 'Temporarily disable' : 'Reactivate account'}</p></div>
               </button>
               <button onClick={() => { if (confirm(`Delete ${staff.name}?`)) { addToast({ type: 'success', message: 'User deleted' }); setShowAdminActions(false); } }}
                 className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-red-50 transition-colors text-left">
                 <Trash2Custom />
-                <div><p className="text-sm font-medium text-red-600">Delete Account</p><p className="text-[11px] text-neutral-400">Permanently remove user</p></div>
+                <div><p className="text-sm font-medium text-red-600">Delete Account</p><p className="text-[11px] text-muted-foreground">Permanently remove user</p></div>
               </button>
             </div>
           );
@@ -740,7 +740,7 @@ export default function Profile() {
             const staff = allUsers.find(u => u.id === selectedStaffId);
             return staff ? (
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-foreground text-xs font-bold"
                   style={{ backgroundColor: getAvatarColor(staff.name) }}>
                   {getInitials(staff.name)}
                 </div>
@@ -749,14 +749,14 @@ export default function Profile() {
             ) : null;
           })()}
           <div>
-            <label className="text-xs font-medium text-neutral-500 mb-1 block">New Password</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">New Password</label>
             <input type="password" value={adminNewPass} onChange={e => setAdminNewPass(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="forceChange" checked={forceChange} onChange={e => setForceChange(e.target.checked)}
               className="w-4 h-4 accent-p13-yellow" />
-            <label htmlFor="forceChange" className="text-xs text-neutral-600">Force password change on next login</label>
+            <label htmlFor="forceChange" className="text-xs text-muted-foreground">Force password change on next login</label>
           </div>
           <button onClick={handleAdminSetPassword} className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold">
             Set Password
@@ -773,8 +773,8 @@ function ProfileInfoRow({ icon, label, value, verified }: { icon: React.ReactNod
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2.5">
-        <span className="text-neutral-400">{icon}</span>
-        <span className="text-xs text-neutral-400">{label}</span>
+        <span className="text-muted-foreground">{icon}</span>
+        <span className="text-xs text-muted-foreground">{label}</span>
       </div>
       <div className="flex items-center gap-1.5">
         <span className="text-sm font-medium text-neutral-800">{value}</span>
@@ -791,11 +791,11 @@ function NotificationToggleRow({ label, desc, enabled, onToggle }: { label: stri
     <div className="flex items-center justify-between px-4 py-3">
       <div>
         <p className="text-sm font-medium">{label}</p>
-        <p className="text-[11px] text-neutral-400">{desc}</p>
+        <p className="text-[11px] text-muted-foreground">{desc}</p>
       </div>
       <button onClick={onToggle}
         className={cn('w-10 h-5 rounded-full relative flex-shrink-0 transition-colors', enabled ? 'bg-p13-yellow' : 'bg-neutral-300')}>
-        <div className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all', enabled ? 'left-[22px]' : 'left-0.5')} />
+        <div className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-all', enabled ? 'left-[22px]' : 'left-0.5')} />
       </button>
     </div>
   );

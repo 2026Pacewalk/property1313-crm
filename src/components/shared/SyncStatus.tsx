@@ -54,8 +54,8 @@ export function SyncStatus() {
       </button>
 
       {showTooltip && (
-        <div className="absolute right-0 bottom-full mb-2 w-56 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-xs z-50">
-          <p className="font-medium text-gray-900 dark:text-white mb-1">
+        <div className="absolute right-0 bottom-full mb-2 w-56 p-3 bg-card dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-xs z-50">
+          <p className="font-medium text-gray-900 dark:text-foreground mb-1">
             {isOnline ? 'Cloud Database Connected' : 'Local Storage Mode'}
           </p>
           <p className="text-gray-500 dark:text-gray-400">

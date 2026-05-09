@@ -141,7 +141,7 @@ export default function Login() {
           {screen === 'login' && (
             <motion.div key="login" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
               {/* Tabs */}
-              <div className="flex bg-white rounded-lg p-1 mb-6 border border-gray-200 shadow-sm">
+              <div className="flex bg-card rounded-lg p-1 mb-6 border border-gray-200 shadow-sm">
                 {[
                   { key: 'password' as const, label: 'Password', icon: Lock },
                   { key: 'otp' as const, label: 'WhatsApp OTP', icon: MessageCircle },
@@ -153,7 +153,7 @@ export default function Login() {
                 ))}
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+              <div className="bg-card border border-gray-200 rounded-xl p-6 shadow-sm">
                 {/* Identifier Input */}
                 <div className="mb-4">
                   <label className="text-[11px] font-medium text-gray-500 mb-1.5 block">Email or Mobile Number</label>
@@ -274,7 +274,7 @@ export default function Login() {
           {/* ========== FORGOT PASSWORD ========== */}
           {screen === 'forgot' && (
             <motion.div key="forgot" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+              <div className="bg-card border border-gray-200 rounded-xl p-6 shadow-sm">
                 <button onClick={() => setScreen('login')} className="flex items-center gap-1 text-gray-500 hover:text-gray-900 text-xs mb-4">
                   <ArrowLeft size={14} /> Back to login
                 </button>
@@ -349,7 +349,7 @@ export default function Login() {
                           {[{ label: '8+ characters', valid: newPass.length >= 8 }, { label: 'One uppercase letter', valid: /[A-Z]/.test(newPass) }, { label: 'One number', valid: /[0-9]/.test(newPass) }, { label: 'One special character', valid: /[!@#$%^&*]/.test(newPass) }].map((req) => (
                             <div key={req.label} className="flex items-center gap-1.5">
                               <div className={cn('w-3.5 h-3.5 rounded-full flex items-center justify-center', req.valid ? 'bg-green-500' : 'bg-gray-200')}>
-                                {req.valid && <CheckCircle size={8} className="text-white" />}
+                                {req.valid && <CheckCircle size={8} className="text-foreground" />}
                               </div>
                               <span className={cn('text-[11px]', req.valid ? 'text-green-600' : 'text-gray-500')}>{req.label}</span>
                             </div>
@@ -384,7 +384,7 @@ export default function Login() {
           {/* ========== FORCE PASSWORD CHANGE ========== */}
           {screen === 'reset' && (
             <motion.div key="reset" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm text-center">
+              <div className="bg-card border border-gray-200 rounded-xl p-6 shadow-sm text-center">
                 <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <ShieldCheck size={24} className="text-amber-600" />
                 </div>

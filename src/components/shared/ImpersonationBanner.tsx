@@ -14,7 +14,7 @@ export default function ImpersonationBanner() {
 
   return (
     <div className={cn(
-      'w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2',
+      'w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-foreground px-4 py-2',
       'flex items-center justify-between gap-3 z-[60] relative'
     )}>
       <div className="flex items-center gap-2 min-w-0">

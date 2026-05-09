@@ -41,7 +41,7 @@ export default function TopNavBar({ title }: TopNavBarProps) {
       {/* Profile */}
       <button
         onClick={() => navigate('/profile')}
-        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm"
+        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-foreground shadow-sm"
         style={{ backgroundColor: avatarColor }}
       >
         {initials}

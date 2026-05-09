@@ -105,13 +105,13 @@ export default function LeadDetail() {
   return (
     <div className="pb-24">
       {/* Sticky Top Action Bar */}
-      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-neutral-200 px-4 py-2 flex items-center gap-3">
-        <button onClick={() => navigate('/leads')} className="text-neutral-600"><ArrowLeft size={18} /></button>
+      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-border px-4 py-2 flex items-center gap-3">
+        <button onClick={() => navigate('/leads')} className="text-muted-foreground"><ArrowLeft size={18} /></button>
         <span className="text-[15px] font-semibold truncate flex-1">{lead.name}</span>
         <div className="flex gap-2">
           {[{ icon: Phone, bg: 'bg-green-500' }, { icon: MessageCircle, bg: 'bg-p13-yellow' }, { icon: Bell, bg: 'bg-blue-500' }, { icon: MapPin, bg: 'bg-orange-500' }].map((a, i) => (
             <motion.button key={i} whileTap={{ scale: 0.9 }} className={`w-8 h-8 ${a.bg} rounded-full flex items-center justify-center`}>
-              <a.icon size={13} className="text-white" />
+              <a.icon size={13} className="text-foreground" />
             </motion.button>
           ))}
         </div>
@@ -119,10 +119,10 @@ export default function LeadDetail() {
 
       <div className="page-container pt-4 space-y-4">
         {/* Lead Info Card */}
-        <div className="bg-white rounded-xl p-4 shadow-xs border border-neutral-200/50">
+        <div className="bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold" style={{ backgroundColor: color }}>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center text-foreground text-base font-bold" style={{ backgroundColor: color }}>
                 {getInitials(lead.name)}
               </div>
               <div>
@@ -130,22 +130,22 @@ export default function LeadDetail() {
                 <StatusBadge status={lead.status} />
               </div>
             </div>
-            <button onClick={openEditForm} className="text-neutral-400 p-1 hover:text-p13-yellow transition-colors"><Pencil size={16} /></button>
+            <button onClick={openEditForm} className="text-muted-foreground p-1 hover:text-p13-yellow transition-colors"><Pencil size={16} /></button>
           </div>
           <div className="grid grid-cols-2 gap-3 mt-4">
-            <InfoRow icon={<Phone size={14} className="text-neutral-400" />} label="Phone" value={lead.phone} />
-            {lead.email && <InfoRow icon={<MessageCircle size={14} className="text-neutral-400" />} label="Email" value={lead.email} />}
-            <InfoRow icon={<Tag size={14} className="text-neutral-400" />} label="Source" value={lead.source} />
-            <InfoRow icon={<Calendar size={14} className="text-neutral-400" />} label="Date Added" value={new Date(lead.createdAt).toLocaleDateString()} />
-            <InfoRow icon={<User size={14} className="text-neutral-400" />} label="Assigned To" value="Rahul Verma" />
-            <InfoRow icon={<Building2 size={14} className="text-neutral-400" />} label="Project" value={lead.projectInterest || 'N/A'} />
-            {lead.budget && <InfoRow icon={<IndianRupee size={14} className="text-neutral-400" />} label="Budget" value={`Rs.${(lead.budget / 100000).toFixed(1)}L`} />}
-            <InfoRow icon={<Flame size={14} className="text-neutral-400" />} label="Lead Score" value={<span className={`text-xs font-semibold ${lead.leadScore === 'hot' ? 'text-orange-500' : lead.leadScore === 'warm' ? 'text-p13-yellow' : 'text-neutral-400'}`}>{lead.leadScore.toUpperCase()}</span>} />
+            <InfoRow icon={<Phone size={14} className="text-muted-foreground" />} label="Phone" value={lead.phone} />
+            {lead.email && <InfoRow icon={<MessageCircle size={14} className="text-muted-foreground" />} label="Email" value={lead.email} />}
+            <InfoRow icon={<Tag size={14} className="text-muted-foreground" />} label="Source" value={lead.source} />
+            <InfoRow icon={<Calendar size={14} className="text-muted-foreground" />} label="Date Added" value={new Date(lead.createdAt).toLocaleDateString()} />
+            <InfoRow icon={<User size={14} className="text-muted-foreground" />} label="Assigned To" value="Rahul Verma" />
+            <InfoRow icon={<Building2 size={14} className="text-muted-foreground" />} label="Project" value={lead.projectInterest || 'N/A'} />
+            {lead.budget && <InfoRow icon={<IndianRupee size={14} className="text-muted-foreground" />} label="Budget" value={`Rs.${(lead.budget / 100000).toFixed(1)}L`} />}
+            <InfoRow icon={<Flame size={14} className="text-muted-foreground" />} label="Lead Score" value={<span className={`text-xs font-semibold ${lead.leadScore === 'hot' ? 'text-orange-500' : lead.leadScore === 'warm' ? 'text-p13-yellow' : 'text-muted-foreground'}`}>{lead.leadScore.toUpperCase()}</span>} />
           </div>
           {lead.notes && (
-            <div className="mt-3 pt-3 border-t border-neutral-200">
-              <p className="text-xs font-semibold text-neutral-500 mb-1">Notes</p>
-              <p className="text-sm text-neutral-600">{lead.notes}</p>
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs font-semibold text-muted-foreground mb-1">Notes</p>
+              <p className="text-sm text-muted-foreground">{lead.notes}</p>
             </div>
           )}
         </div>
@@ -159,8 +159,8 @@ export default function LeadDetail() {
             </div>
             {aiSuggestions.map((s, i) => (
               <div key={i} className="border-l-2 border-p13-yellow pl-3 mb-2.5 last:mb-0">
-                <p className="text-[13px] font-medium text-white">{s.title}</p>
-                <p className="text-xs text-neutral-400">{s.desc}</p>
+                <p className="text-[13px] font-medium text-foreground">{s.title}</p>
+                <p className="text-xs text-muted-foreground">{s.desc}</p>
                 <span className="text-xs text-p13-yellow cursor-pointer font-medium">{s.action}</span>
               </div>
             ))}
@@ -180,7 +180,7 @@ export default function LeadDetail() {
                   leadPhone: lead.phone,
                   projectName: lead.projectInterest,
                 })}
-                className="snap-start flex-shrink-0 flex items-center gap-2 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-xs font-medium text-neutral-600 hover:border-p13-yellow transition-colors"
+                className="snap-start flex-shrink-0 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:border-p13-yellow transition-colors"
               >
                 <MessageCircle size={14} className="text-green-600" />{t.name}
               </button>
@@ -189,7 +189,7 @@ export default function LeadDetail() {
           {/* Suggested templates */}
           {getSuggested(lead.leadScore).length > 0 && (
             <div className="mt-2">
-              <p className="text-[11px] text-neutral-500 mb-1.5 flex items-center gap-1">
+              <p className="text-[11px] text-muted-foreground mb-1.5 flex items-center gap-1">
                 <Sparkles size={10} className="text-p13-yellow" /> Suggested for {lead.leadScore.toUpperCase()} lead
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1 snap-x">
@@ -202,10 +202,10 @@ export default function LeadDetail() {
                       leadPhone: lead.phone,
                       projectName: lead.projectInterest,
                     })}
-                    className="snap-start flex-shrink-0 bg-gradient-to-br from-p13-black to-neutral-800 text-white rounded-lg px-3 py-2 text-left min-w-[140px]"
+                    className="snap-start flex-shrink-0 bg-gradient-to-br from-p13-black to-neutral-800 text-foreground rounded-lg px-3 py-2 text-left min-w-[140px]"
                   >
                     <span className="text-[11px] font-medium block truncate">{t.name}</span>
-                    <span className="text-[9px] text-neutral-400">{t.category}</span>
+                    <span className="text-[9px] text-muted-foreground">{t.category}</span>
                   </button>
                 ))}
               </div>
@@ -225,8 +225,8 @@ export default function LeadDetail() {
                 </div>
                 <div className="pb-4 flex-1">
                   <p className="text-[13px] font-medium">{item.title}</p>
-                  <p className="text-xs text-neutral-400">{item.desc}</p>
-                  <p className="text-[11px] text-neutral-400 mt-0.5">{new Date(item.time).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{new Date(item.time).toLocaleString()}</p>
                 </div>
               </div>
             ))}
@@ -235,7 +235,7 @@ export default function LeadDetail() {
       </div>
 
       {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 h-14 bg-p13-black flex items-center gap-3 px-4 z-40" style={{ boxShadow: '0 -4px 24px rgba(0,0,0,0.3)' }}>
+      <div className="fixed bottom-0 left-0 right-0 h-14 bg-card flex items-center gap-3 px-4 z-40" style={{ boxShadow: '0 -4px 24px rgba(0,0,0,0.3)' }}>
         <button onClick={() => setShowFollowup(true)} className="flex-1 h-10 bg-p13-yellow text-p13-black rounded-lg text-[13px] font-semibold flex items-center justify-center gap-1.5">
           <Bell size={14} /> Schedule Follow-up
         </button>
@@ -246,7 +246,7 @@ export default function LeadDetail() {
             leadPhone: lead.phone,
             projectName: lead.projectInterest,
           })}
-          className="flex-1 h-10 bg-white/10 text-white rounded-lg text-[13px] font-medium flex items-center justify-center gap-1.5 hover:bg-white/20 transition-colors"
+          className="flex-1 h-10 bg-white/10 text-foreground rounded-lg text-[13px] font-medium flex items-center justify-center gap-1.5 hover:bg-white/20 transition-colors"
         >
           <MessageCircle size={14} /> Send WhatsApp
         </button>
@@ -255,12 +255,12 @@ export default function LeadDetail() {
       {/* Add Follow-up Sheet */}
       <BottomSheet isOpen={showFollowup} onClose={() => setShowFollowup(false)} title="Add Follow-up">
         <div className="space-y-4 py-2">
-          <div><label className="text-xs font-medium text-neutral-500 mb-1 block">Date &amp; Time</label>
+          <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Date &amp; Time</label>
             <input type="datetime-local" value={followupDate} onChange={e => setFollowupDate(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" /></div>
-          <div><label className="text-xs font-medium text-neutral-500 mb-1 block">Note</label>
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" /></div>
+          <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Note</label>
             <textarea value={followupNote} onChange={e => setFollowupNote(e.target.value)} rows={3} placeholder="Add a note..."
-              className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none resize-none" /></div>
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none resize-none" /></div>
           <button onClick={handleAddFollowup} className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold hover:bg-p13-yellow/90">Add Follow-up</button>
         </div>
       </BottomSheet>
@@ -271,39 +271,39 @@ export default function LeadDetail() {
           <div className="space-y-4 py-2 pb-6">
             {/* Name */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Full Name *</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Full Name *</label>
               <input value={editName} onChange={(e) => setEditName(e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+                className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
               />
             </div>
 
             {/* Phone */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Phone *</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone *</label>
               <input value={editPhone} onChange={(e) => setEditPhone(e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+                className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Email</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
               <input type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)}
                 placeholder="email@example.com"
-                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+                className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
               />
             </div>
 
             {/* Status */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Lead Status</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Lead Status</label>
               <div className="flex gap-1.5 flex-wrap">
                 {(['new', 'warm', 'hot', 'cold', 'converted', 'lost'] as const).map((s) => (
                   <button key={s} onClick={() => setEditStatus(s)}
                     className={cn('px-3 py-1.5 rounded-full text-[11px] font-medium border capitalize transition-all',
                       editStatus === s
                         ? 'bg-p13-yellow border-p13-yellow text-p13-black'
-                        : 'bg-white border-neutral-200 text-neutral-600')}>
+                        : 'bg-card border-border text-muted-foreground')}>
                     {s}
                   </button>
                 ))}
@@ -312,7 +312,7 @@ export default function LeadDetail() {
 
             {/* Lead Score */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Lead Score</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Lead Score</label>
               <div className="flex gap-2">
                 {(['hot', 'warm', 'cold'] as const).map((score) => (
                   <button key={score} onClick={() => setEditLeadScore(score)}
@@ -321,7 +321,7 @@ export default function LeadDetail() {
                         ? score === 'hot' ? 'bg-orange-100 border-orange-300 text-orange-700'
                           : score === 'warm' ? 'bg-yellow-100 border-yellow-300 text-yellow-700'
                           : 'bg-blue-100 border-blue-300 text-blue-700'
-                        : 'bg-white border-neutral-200 text-neutral-500')}>
+                        : 'bg-card border-border text-muted-foreground')}>
                     {score === 'hot' && <Flame size={12} className="inline mr-1" />}
                     {score === 'warm' && <SunIcon />}
                     {score === 'cold' && <SnowIcon />}
@@ -333,9 +333,9 @@ export default function LeadDetail() {
 
             {/* Source */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Source</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Source</label>
               <select value={editSource} onChange={(e) => setEditSource(e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow outline-none">
+                className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none">
                 <option value="Website">Website</option>
                 <option value="Facebook">Facebook</option>
                 <option value="Instagram">Instagram</option>
@@ -351,10 +351,10 @@ export default function LeadDetail() {
 
             {/* Project Interest - Searchable Dropdown */}
             <div className="relative">
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Project Interest</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Project Interest</label>
               {/* Search input + selected value display */}
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                   value={projDropdownOpen ? projQuery : editProject}
                   onChange={(e) => {
@@ -364,13 +364,13 @@ export default function LeadDetail() {
                   }}
                   onFocus={() => { setProjQuery(editProject); setProjDropdownOpen(true); }}
                   placeholder="Search or type project name..."
-                  className="w-full h-11 pl-9 pr-9 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+                  className="w-full h-11 pl-9 pr-9 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
                 />
                 {/* Clear button */}
                 {editProject && (
                   <button
                     onClick={() => { setEditProject(''); setProjQuery(''); }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                   >
                     <X size={14} />
                   </button>
@@ -379,7 +379,7 @@ export default function LeadDetail() {
 
               {/* Dropdown list */}
               {projDropdownOpen && (
-                <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div className="absolute z-50 left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
                   {/* Filtered projects */}
                   {projects
                     .filter(p => p.name.toLowerCase().includes(projQuery.toLowerCase()))
@@ -392,14 +392,14 @@ export default function LeadDetail() {
                           setProjDropdownOpen(false);
                         }}
                         className={cn(
-                          'w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-p13-yellow/10 transition-colors border-b border-neutral-100 last:border-0',
+                          'w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-p13-yellow/10 transition-colors border-b border-border/50 last:border-0',
                           editProject === p.name && 'bg-p13-yellow/20'
                         )}
                       >
                         <Building2 size={14} className="text-p13-yellow flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium truncate">{p.name}</p>
-                          <p className="text-[10px] text-neutral-400">{p.location}</p>
+                          <p className="text-[10px] text-muted-foreground">{p.location}</p>
                         </div>
                         {editProject === p.name && <Check size={12} className="text-p13-yellow" />}
                       </button>
@@ -414,14 +414,14 @@ export default function LeadDetail() {
                       }}
                       className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-p13-yellow/10 transition-colors"
                     >
-                      <Pencil size={14} className="text-neutral-400 flex-shrink-0" />
-                      <p className="text-xs text-neutral-600">Use &quot;<span className="font-medium">{projQuery.trim()}</span>&quot; as custom text</p>
+                      <Pencil size={14} className="text-muted-foreground flex-shrink-0" />
+                      <p className="text-xs text-muted-foreground">Use &quot;<span className="font-medium">{projQuery.trim()}</span>&quot; as custom text</p>
                     </button>
                   )}
 
                   {/* Empty state when no query */}
                   {projects.length > 0 && !projQuery.trim() && (
-                    <div className="px-3 py-2 text-[10px] text-neutral-400">
+                    <div className="px-3 py-2 text-[10px] text-muted-foreground">
                       Type to search projects or enter custom name
                     </div>
                   )}
@@ -431,33 +431,33 @@ export default function LeadDetail() {
 
             {/* Budget */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Budget (INR)</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Budget (INR)</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">&#8377;</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">&#8377;</span>
                 <input type="number" value={editBudget} onChange={(e) => setEditBudget(e.target.value)}
                   placeholder="5000000"
-                  className="w-full h-11 pl-8 pr-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+                  className="w-full h-11 pl-8 pr-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
                 />
               </div>
             </div>
 
             {/* Notes */}
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Notes</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Notes</label>
               <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} rows={3}
                 placeholder="Add any notes about this lead..."
-                className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none resize-none"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none resize-none"
               />
             </div>
 
             {/* Actions */}
             <div className="flex gap-2 pt-2">
               <button onClick={() => setShowEdit(false)}
-                className="flex-1 h-11 bg-neutral-100 text-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-all">
+                className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-all">
                 Cancel
               </button>
               <button onClick={handleSaveLead}
-                className="flex-1 h-11 bg-p13-black text-white rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+                className="flex-1 h-11 bg-card text-foreground rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
                 <Save size={14} /> Save Changes
               </button>
             </div>
@@ -488,7 +488,7 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
     <div className="flex items-start gap-2">
       {icon}
       <div>
-        <p className="text-[11px] text-neutral-400">{label}</p>
+        <p className="text-[11px] text-muted-foreground">{label}</p>
         <p className="text-sm text-neutral-800 font-medium">{value}</p>
       </div>
     </div>

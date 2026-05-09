@@ -29,7 +29,7 @@ const statusConfig: Record<string, { color: string; bg: string; label: string }>
   pending: { color: 'text-yellow-600', bg: 'bg-yellow-100', label: 'Pending' },
   triggered: { color: 'text-orange-600', bg: 'bg-orange-100', label: 'Triggered' },
   completed: { color: 'text-green-600', bg: 'bg-green-100', label: 'Done' },
-  cancelled: { color: 'text-neutral-500', bg: 'bg-neutral-100', label: 'Cancelled' },
+  cancelled: { color: 'text-muted-foreground', bg: 'bg-muted', label: 'Cancelled' },
   overdue: { color: 'text-red-600', bg: 'bg-red-100', label: 'Overdue' },
   snoozed: { color: 'text-blue-600', bg: 'bg-blue-100', label: 'Snoozed' },
 };
@@ -197,11 +197,11 @@ export default function Followups() {
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-neutral-100 rounded-lg p-0.5 mb-4 overflow-x-auto">
+      <div className="flex bg-muted rounded-lg p-0.5 mb-4 overflow-x-auto">
         {tabs.map((tab) => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
             className={cn('flex-shrink-0 py-2 px-3 rounded-md text-xs font-medium transition-all whitespace-nowrap',
-              activeTab === tab.key ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500')}>
+              activeTab === tab.key ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground')}>
             {tab.label}
             {tab.count > 0 && <span className={cn('ml-1 text-[10px] px-1 py-0.5 rounded-full', activeTab === tab.key ? 'bg-p13-yellow' : 'bg-neutral-200')}>{tab.count}</span>}
           </button>
@@ -219,8 +219,8 @@ export default function Followups() {
         <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           {filtered.length === 0 ? (
             <div className="text-center py-12">
-              <Bell size={40} className="text-neutral-300 mx-auto mb-3" />
-              <p className="text-sm text-neutral-400">No {tabs.find(t => t.key === activeTab)?.label.toLowerCase()} reminders</p>
+              <Bell size={40} className="text-muted-foreground/50 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">No {tabs.find(t => t.key === activeTab)?.label.toLowerCase()} reminders</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -231,7 +231,7 @@ export default function Followups() {
                 return (
                   <motion.div key={reminder.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     onClick={() => setShowDetail(reminder)}
-                    className={cn('bg-white rounded-lg p-3 shadow-xs border border-neutral-200/50 cursor-pointer hover:shadow-md transition-all',
+                    className={cn('bg-card rounded-lg p-3 shadow-xs border border-neutral-200/50 cursor-pointer hover:shadow-md transition-all',
                       reminder.status === 'overdue' && 'border-l-[3px] border-l-red-500',
                       reminder.status === 'triggered' && 'border-l-[3px] border-l-orange-500',
                       reminder.status === 'snoozed' && 'border-l-[3px] border-l-blue-400',
@@ -247,8 +247,8 @@ export default function Followups() {
                             {cfg.label}
                           </span>
                         </div>
-                        <p className="text-xs text-neutral-500 line-clamp-1">{reminder.message}</p>
-                        <div className="flex items-center gap-2 mt-1.5 text-[10px] text-neutral-400">
+                        <p className="text-xs text-muted-foreground line-clamp-1">{reminder.message}</p>
+                        <div className="flex items-center gap-2 mt-1.5 text-[10px] text-muted-foreground">
                           <span className="flex items-center gap-0.5"><Calendar size={10} /> {dateLabel(reminder.reminderDateTime)}</span>
                           <span className="flex items-center gap-0.5"><Clock size={10} /> {timeLabel(reminder.reminderDateTime)}</span>
                           {lead && <span className="flex items-center gap-0.5"><User size={10} /> {lead.name}</span>}
@@ -256,7 +256,7 @@ export default function Followups() {
                           {reminder.snoozeCount > 0 && <span className="text-blue-500">Snoozed x{reminder.snoozeCount}</span>}
                         </div>
                       </div>
-                      <ChevronRight size={14} className="text-neutral-300 mt-1" />
+                      <ChevronRight size={14} className="text-muted-foreground/50 mt-1" />
                     </div>
                   </motion.div>
                 );
@@ -271,9 +271,9 @@ export default function Followups() {
         <div className="space-y-4 py-2">
           {/* Lead selection */}
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Lead *</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Lead *</label>
             <select value={newLeadId} onChange={(e) => setNewLeadId(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow">
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow">
               <option value="">Select lead...</option>
               {leads.map((l) => <option key={l.id} value={l.id}>{l.name} - {l.phone}</option>)}
             </select>
@@ -281,12 +281,12 @@ export default function Followups() {
 
           {/* Type */}
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Type</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Type</label>
             <div className="flex gap-1.5 flex-wrap">
               {Object.entries(REMINDER_TYPE_LABELS).map(([key, label]) => (
                 <button key={key} onClick={() => setNewType(key as Reminder['reminderType'])}
                   className={cn('px-2.5 py-1.5 rounded-lg text-[11px] font-medium border transition-all',
-                    newType === key ? 'bg-p13-yellow border-p13-yellow text-p13-black' : 'bg-white border-neutral-200 text-neutral-600')}>
+                    newType === key ? 'bg-p13-yellow border-p13-yellow text-p13-black' : 'bg-card border-border text-muted-foreground')}>
                   {label}
                 </button>
               ))}
@@ -295,23 +295,23 @@ export default function Followups() {
 
           {/* Title */}
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Title *</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Title *</label>
             <input value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
               placeholder="e.g., Follow up on pricing"
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20" />
           </div>
 
           {/* Message */}
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Note</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Note</label>
             <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} rows={2}
               placeholder="Add details..."
-              className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow resize-none" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow resize-none" />
           </div>
 
           {/* Quick date presets */}
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-2 block">Quick Select</label>
+            <label className="text-xs font-medium text-muted-foreground mb-2 block">Quick Select</label>
             <div className="flex gap-1.5">
               {QUICK_DATE_PRESETS.map((preset) => (
                 <button key={preset.days}
@@ -319,7 +319,7 @@ export default function Followups() {
                   className={cn('flex-1 py-2 rounded-lg text-[11px] font-medium border transition-all',
                     newDateType === 'preset' && newPresetDays === preset.days
                       ? 'bg-p13-yellow border-p13-yellow text-p13-black'
-                      : 'bg-white border-neutral-200 text-neutral-600')}>
+                      : 'bg-card border-border text-muted-foreground')}>
                   {preset.label}
                 </button>
               ))}
@@ -329,28 +329,28 @@ export default function Followups() {
           {/* Time */}
           {newDateType === 'preset' && (
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Time</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Time</label>
               <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow" />
+                className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
             </div>
           )}
 
           {/* Custom date option */}
           <div className="flex items-center gap-2">
             <input type="checkbox" checked={newDateType === 'custom'} onChange={() => setNewDateType(newDateType === 'custom' ? 'preset' : 'custom')} className="accent-p13-yellow" />
-            <label className="text-xs text-neutral-600">Use custom date/time</label>
+            <label className="text-xs text-muted-foreground">Use custom date/time</label>
           </div>
 
           {newDateType === 'custom' && (
             <div>
-              <label className="text-xs font-medium text-neutral-600 mb-1 block">Date & Time</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Date & Time</label>
               <input type="datetime-local" value={newCustomDate} onChange={(e) => setNewCustomDate(e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow" />
+                className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
             </div>
           )}
 
           <button onClick={handleCreate}
-            className="w-full h-12 bg-p13-black text-white rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+            className="w-full h-12 bg-card text-foreground rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
             <Plus size={16} /> Set Reminder
           </button>
         </div>
@@ -361,20 +361,20 @@ export default function Followups() {
         {showDetail && (
           <div className="space-y-4 py-2">
             {/* Info */}
-            <div className="bg-neutral-50 rounded-lg p-3">
+            <div className="bg-muted/50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-2">
                 {(() => {
                   const Icon = typeIcons[showDetail.reminderType] || Bell;
-                  return <Icon size={16} className="text-neutral-600" />;
+                  return <Icon size={16} className="text-muted-foreground" />;
                 })()}
-                <span className="text-xs font-medium text-neutral-600">{REMINDER_TYPE_LABELS[showDetail.reminderType]}</span>
+                <span className="text-xs font-medium text-muted-foreground">{REMINDER_TYPE_LABELS[showDetail.reminderType]}</span>
                 <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-auto',
                   statusConfig[showDetail.status]?.bg, statusConfig[showDetail.status]?.color)}>
                   {statusConfig[showDetail.status]?.label}
                 </span>
               </div>
               <p className="text-sm">{showDetail.message}</p>
-              <div className="flex items-center gap-3 mt-2 text-[11px] text-neutral-500">
+              <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
                 <span className="flex items-center gap-1"><Calendar size={11} /> {dateLabel(showDetail.reminderDateTime)} {timeLabel(showDetail.reminderDateTime)}</span>
                 <span className="flex items-center gap-1"><Clock size={11} /> Asia/Kolkata</span>
               </div>
@@ -390,17 +390,17 @@ export default function Followups() {
             {showDetail.status !== 'completed' && showDetail.status !== 'cancelled' && (
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={() => { setShowComplete(showDetail.id); setShowDetail(null); }}
-                  className="h-11 bg-green-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-600 transition-all">
+                  className="h-11 bg-green-500 text-foreground rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-600 transition-all">
                   <Check size={14} /> Complete
                 </button>
                 <button onClick={() => { setShowSnooze(showDetail.id); setShowDetail(null); }}
-                  className="h-11 bg-blue-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-blue-600 transition-all">
+                  className="h-11 bg-blue-500 text-foreground rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-blue-600 transition-all">
                   <Pause size={14} /> Snooze
                 </button>
                 {showDetail.leadId && (
                   <>
                     <button onClick={() => { navigate(`/leads/${showDetail.leadId}`); setShowDetail(null); }}
-                      className="h-11 bg-neutral-100 text-neutral-700 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-neutral-200 transition-all">
+                      className="h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-neutral-200 transition-all">
                       <User size={14} /> View Lead
                     </button>
                     <button onClick={() => {
@@ -425,7 +425,7 @@ export default function Followups() {
       {/* ==================== SNOOZE SHEET ==================== */}
       <BottomSheet isOpen={!!showSnooze} onClose={() => setShowSnooze(null)} title="Snooze Reminder">
         <div className="space-y-2 py-2">
-          <p className="text-xs text-neutral-500 mb-2">Choose snooze duration:</p>
+          <p className="text-xs text-muted-foreground mb-2">Choose snooze duration:</p>
           {[
             { key: '15min' as SnoozeDuration, label: '15 Minutes', desc: 'Quick delay' },
             { key: '1hour' as SnoozeDuration, label: '1 Hour', desc: 'Short break' },
@@ -433,13 +433,13 @@ export default function Followups() {
           ].map((opt) => (
             <button key={opt.key}
               onClick={() => showSnooze && handleSnooze(showSnooze, opt.key)}
-              className="w-full flex items-center gap-3 p-3 bg-white border border-neutral-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all text-left">
+              className="w-full flex items-center gap-3 p-3 bg-card border border-border rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all text-left">
               <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center">
                 <Pause size={16} className="text-blue-500" />
               </div>
               <div>
                 <p className="text-sm font-semibold">{opt.label}</p>
-                <p className="text-[11px] text-neutral-400">{opt.desc}</p>
+                <p className="text-[11px] text-muted-foreground">{opt.desc}</p>
               </div>
             </button>
           ))}
@@ -450,13 +450,13 @@ export default function Followups() {
       <BottomSheet isOpen={!!showComplete} onClose={() => { setShowComplete(null); setCompleteNote(''); }} title="Complete Reminder">
         <div className="space-y-4 py-2">
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Completion Note</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Completion Note</label>
             <textarea value={completeNote} onChange={(e) => setCompleteNote(e.target.value)} rows={3}
               placeholder="What was the outcome?..."
-              className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-green-300 focus:ring-2 focus:ring-green-100 resize-none" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm outline-none focus:border-green-300 focus:ring-2 focus:ring-green-100 resize-none" />
           </div>
           <button onClick={() => showComplete && handleComplete(showComplete)}
-            className="w-full h-12 bg-green-500 text-white rounded-lg text-sm font-semibold hover:bg-green-600 transition-all flex items-center justify-center gap-2">
+            className="w-full h-12 bg-green-500 text-foreground rounded-lg text-sm font-semibold hover:bg-green-600 transition-all flex items-center justify-center gap-2">
             <Check size={16} /> Mark as Complete
           </button>
         </div>

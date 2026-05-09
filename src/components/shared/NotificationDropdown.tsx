@@ -89,7 +89,7 @@ export default function NotificationDropdown() {
       {/* Bell Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative text-neutral-400 hover:text-white transition-colors p-1.5"
+        className="relative text-muted-foreground hover:text-foreground transition-colors p-1.5"
       >
         <Bell size={18} />
         {unreadCount > 0 && (
@@ -121,10 +121,10 @@ export default function NotificationDropdown() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.97 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
-              className="absolute right-0 top-10 w-[400px] max-h-[560px] bg-white rounded-xl shadow-xl border border-neutral-200 z-50 overflow-hidden"
+              className="absolute right-0 top-10 w-[400px] max-h-[560px] bg-card rounded-xl shadow-xl border border-border z-50 overflow-hidden"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-semibold">Notifications</h3>
                   {unreadCount > 0 && (
@@ -142,7 +142,7 @@ export default function NotificationDropdown() {
                       Mark all read
                     </button>
                   )}
-                  <button onClick={() => setIsOpen(false)} className="text-neutral-400 hover:text-neutral-600">
+                  <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-muted-foreground">
                     <X size={14} />
                   </button>
                 </div>
@@ -152,9 +152,9 @@ export default function NotificationDropdown() {
               <div className="overflow-y-auto max-h-[440px]">
                 {recentNotifications.length === 0 ? (
                   <div className="text-center py-8">
-                    <Bell size={32} className="text-neutral-300 mx-auto mb-2" />
-                    <p className="text-sm text-neutral-500">No notifications</p>
-                    <p className="text-xs text-neutral-400">You are all caught up!</p>
+                    <Bell size={32} className="text-muted-foreground/50 mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">No notifications</p>
+                    <p className="text-xs text-muted-foreground">You are all caught up!</p>
                   </div>
                 ) : (
                   recentNotifications.map((n, i) => {
@@ -167,7 +167,7 @@ export default function NotificationDropdown() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.02 }}
                         onClick={() => handleNotificationClick(n)}
-                        className={`flex items-start gap-3 px-4 py-3 border-b border-neutral-50 cursor-pointer transition-colors hover:bg-neutral-50 group ${
+                        className={`flex items-start gap-3 px-4 py-3 border-b border-neutral-50 cursor-pointer transition-colors hover:bg-muted/50 group ${
                           !n.read ? 'bg-p13-yellow/[0.03]' : ''
                         }`}
                       >
@@ -178,19 +178,19 @@ export default function NotificationDropdown() {
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
-                            <p className={`text-[13px] leading-tight ${!n.read ? 'font-semibold text-neutral-900' : 'font-medium text-neutral-700'}`}>
+                            <p className={`text-[13px] leading-tight ${!n.read ? 'font-semibold text-foreground' : 'font-medium text-foreground/80'}`}>
                               {n.title}
                             </p>
                             <div className="flex items-center gap-1 flex-shrink-0">
                               {!n.read && <div className={`w-2 h-2 rounded-full ${priorityDot[n.priority]}`} />}
                             </div>
                           </div>
-                          <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">{n.description}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.description}</p>
                           <div className="flex items-center justify-between mt-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] text-neutral-400">{timeAgo(n.createdAt)}</span>
-                              <span className="text-[10px] text-neutral-300">|</span>
-                              <span className="text-[10px] text-neutral-400">{moduleLabels[n.module]}</span>
+                              <span className="text-[10px] text-muted-foreground">{timeAgo(n.createdAt)}</span>
+                              <span className="text-[10px] text-muted-foreground/50">|</span>
+                              <span className="text-[10px] text-muted-foreground">{moduleLabels[n.module]}</span>
                             </div>
                             {/* Hover actions */}
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -200,7 +200,7 @@ export default function NotificationDropdown() {
                                   className="p-1 hover:bg-neutral-200 rounded"
                                   title="Mark as read"
                                 >
-                                  <Check size={12} className="text-neutral-500" />
+                                  <Check size={12} className="text-muted-foreground" />
                                 </button>
                               )}
                               <button
@@ -220,7 +220,7 @@ export default function NotificationDropdown() {
               </div>
 
               {/* Footer */}
-              <div className="px-4 py-2.5 border-t border-neutral-100 bg-neutral-50">
+              <div className="px-4 py-2.5 border-t border-border/50 bg-muted/50">
                 <button
                   onClick={() => { setIsOpen(false); navigate('/notifications'); }}
                   className="w-full text-center text-xs text-p13-yellow font-medium hover:underline"

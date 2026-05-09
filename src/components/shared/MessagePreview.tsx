@@ -26,10 +26,10 @@ export default function MessagePreview({ message, mediaType, mediaUrl, status = 
           )}
           {mediaType === 'pdf' && (
             <div className="mb-2 bg-white/80 rounded-md p-2 flex items-center gap-2">
-              <div className="w-8 h-10 bg-red-500 rounded flex items-center justify-center text-white text-[10px] font-bold">PDF</div>
+              <div className="w-8 h-10 bg-red-500 rounded flex items-center justify-center text-foreground text-[10px] font-bold">PDF</div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium truncate">Brochure.pdf</p>
-                <p className="text-[10px] text-neutral-500">2.4 MB</p>
+                <p className="text-[10px] text-muted-foreground">2.4 MB</p>
               </div>
             </div>
           )}
@@ -59,9 +59,9 @@ export default function MessagePreview({ message, mediaType, mediaUrl, status = 
 
           {/* Time + Status */}
           <div className="flex items-center justify-end gap-1 mt-1">
-            <span className="text-[10px] text-neutral-500">{time}</span>
-            {status === 'sent' && <Clock size={compact ? 10 : 12} className="text-neutral-400" />}
-            {status === 'delivered' && <CheckCheck size={compact ? 10 : 12} className="text-neutral-400" />}
+            <span className="text-[10px] text-muted-foreground">{time}</span>
+            {status === 'sent' && <Clock size={compact ? 10 : 12} className="text-muted-foreground" />}
+            {status === 'delivered' && <CheckCheck size={compact ? 10 : 12} className="text-muted-foreground" />}
             {status === 'read' && <CheckCheck size={compact ? 10 : 12} className="text-blue-500" />}
             {status === 'failed' && <span className="text-[10px] text-red-500">Failed</span>}
           </div>

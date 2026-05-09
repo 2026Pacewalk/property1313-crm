@@ -129,20 +129,20 @@ export default function TemplateEditor() {
       <div className="space-y-4 pb-6">
         {/* Name */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">Template Name *</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Template Name *</label>
           <input
             value={name} onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Welcome - New Lead"
-            className="w-full h-10 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+            className="w-full h-10 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
           />
         </div>
 
         {/* Category */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">Category</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Category</label>
           <select
             value={category} onChange={(e) => setCategory(e.target.value)}
-            className="w-full h-10 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow outline-none"
+            className="w-full h-10 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none"
           >
             {categories.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
           </select>
@@ -150,24 +150,24 @@ export default function TemplateEditor() {
 
         {/* Description */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">Description</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Description</label>
           <input
             value={description} onChange={(e) => setDescription(e.target.value)}
             placeholder="Brief description of this template"
-            className="w-full h-10 px-3 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow outline-none"
+            className="w-full h-10 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none"
           />
         </div>
 
         {/* Message Type */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">Message Type</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Message Type</label>
           <div className="flex gap-2 flex-wrap">
             {messageTypes.map((mt) => (
               <button
                 key={mt.key}
                 onClick={() => setMessageType(mt.key)}
                 className={cn('flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all',
-                  messageType === mt.key ? 'bg-p13-yellow border-p13-yellow text-p13-black' : 'bg-white border-neutral-200 text-neutral-600')}
+                  messageType === mt.key ? 'bg-p13-yellow border-p13-yellow text-p13-black' : 'bg-card border-border text-muted-foreground')}
               >
                 <mt.icon size={12} />{mt.label}
               </button>
@@ -177,14 +177,14 @@ export default function TemplateEditor() {
 
         {/* AI Tone */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">AI Tone</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">AI Tone</label>
           <div className="flex gap-2">
             {aiTones.map((t) => (
               <button
                 key={t.key}
                 onClick={() => setAiTone(aiTone === t.key ? undefined : t.key)}
                 className={cn('flex-1 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border transition-all',
-                  aiTone === t.key ? t.color : 'bg-white border-neutral-200 text-neutral-600')}
+                  aiTone === t.key ? t.color : 'bg-card border-border text-muted-foreground')}
               >
                 <t.icon size={13} />
                 <div className="text-left">
@@ -198,7 +198,7 @@ export default function TemplateEditor() {
 
         {/* Variables */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">Insert Variables</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Insert Variables</label>
           <div className="flex flex-wrap gap-1.5">
             {variables.map((v) => (
               <button
@@ -214,18 +214,18 @@ export default function TemplateEditor() {
 
         {/* Content */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">Message Content *</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Message Content *</label>
           <textarea
             value={content} onChange={(e) => setContent(e.target.value)}
             rows={6}
             placeholder="Type your message here... Use {{variable_name}} for dynamic content."
-            className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none resize-none font-mono leading-relaxed"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none resize-none font-mono leading-relaxed"
           />
           <div className="flex items-center justify-between mt-1">
-            <span className="text-[10px] text-neutral-400">{content.length} characters</span>
+            <span className="text-[10px] text-muted-foreground">{content.length} characters</span>
             {detectedVars.length > 0 && (
               <div className="flex items-center gap-1">
-                <span className="text-[10px] text-neutral-400">Detected:</span>
+                <span className="text-[10px] text-muted-foreground">Detected:</span>
                 {detectedVars.map((v) => (
                   <span key={v} className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] rounded">{v}</span>
                 ))}
@@ -236,15 +236,15 @@ export default function TemplateEditor() {
 
         {/* Options */}
         <div className="flex gap-3 flex-wrap">
-          <label className="flex items-center gap-2 text-xs text-neutral-600 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
             <input type="checkbox" checked={automationEnabled} onChange={(e) => setAutomationEnabled(e.target.checked)} className="accent-p13-yellow" />
             <span className="flex items-center gap-1"><Bot size={12} /> Enable automation</span>
           </label>
-          <label className="flex items-center gap-2 text-xs text-neutral-600 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
             <input type="checkbox" checked={isFavorite} onChange={(e) => setIsFavorite(e.target.checked)} className="accent-p13-yellow" />
             <span>Mark as favorite</span>
           </label>
-          <label className="flex items-center gap-2 text-xs text-neutral-600 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
             <input type="checkbox" checked={status === 'archived'} onChange={(e) => setStatus(e.target.checked ? 'archived' : 'active')} className="accent-p13-yellow" />
             <span>Archive</span>
           </label>
@@ -252,7 +252,7 @@ export default function TemplateEditor() {
 
         {/* Preview */}
         <div>
-          <label className="text-xs font-medium text-neutral-600 mb-1 block">Live Preview</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Live Preview</label>
           <div className="bg-[#E5DDD5] rounded-xl p-4">
             <MessagePreview message={preview} mediaType={messageType !== 'text' ? messageType : undefined} status="sent" />
           </div>
@@ -260,10 +260,10 @@ export default function TemplateEditor() {
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <button onClick={closeEditor} className="flex-1 h-11 bg-neutral-100 text-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-all">
+          <button onClick={closeEditor} className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-all">
             Cancel
           </button>
-          <button onClick={handleSave} className="flex-1 h-11 bg-p13-black text-white rounded-lg text-sm font-medium hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+          <button onClick={handleSave} className="flex-1 h-11 bg-card text-foreground rounded-lg text-sm font-medium hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
             <Save size={14} />{existing ? 'Update' : 'Create'} Template
           </button>
         </div>

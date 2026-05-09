@@ -46,7 +46,7 @@ export default function AdminUsers() {
       <div className="page-container pt-10 text-center">
         <Shield size={48} className="text-red-400 mx-auto mb-4" />
         <h2 className="text-lg font-semibold">Access Denied</h2>
-        <p className="text-sm text-neutral-500 mt-1">You need admin privileges to access this page.</p>
+        <p className="text-sm text-muted-foreground mt-1">You need admin privileges to access this page.</p>
         <button onClick={() => navigate('/dashboard')} className="mt-4 h-10 px-6 bg-p13-yellow text-p13-black rounded-lg text-sm font-medium">
           Back to Dashboard
         </button>
@@ -139,9 +139,9 @@ export default function AdminUsers() {
   return (
     <div className="pb-6">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-neutral-200 px-4 py-3">
+      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-border px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <button onClick={() => navigate(-1)} className="text-neutral-600"><ArrowLeft size={18} /></button>
+          <button onClick={() => navigate(-1)} className="text-muted-foreground"><ArrowLeft size={18} /></button>
           <h1 className="text-[17px] font-semibold flex-1">User Management</h1>
           <button onClick={() => setShowCreateUser(true)}
             className="h-9 px-3 bg-p13-yellow text-p13-black rounded-lg text-xs font-semibold flex items-center gap-1.5">
@@ -151,10 +151,10 @@ export default function AdminUsers() {
 
         {/* Search */}
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search users by name or email..."
-            className="w-full h-10 pl-9 pr-4 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+            className="w-full h-10 pl-9 pr-4 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
         </div>
       </div>
 
@@ -163,7 +163,7 @@ export default function AdminUsers() {
         {Object.entries(roleLabels).map(([role, label]) => (
           <button key={role} onClick={() => setRoleFilter(role)}
             className={cn('flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all',
-              roleFilter === role ? 'bg-p13-yellow text-p13-black border-p13-yellow' : 'bg-white text-neutral-600 border-neutral-200')}>
+              roleFilter === role ? 'bg-p13-yellow text-p13-black border-p13-yellow' : 'bg-card text-muted-foreground border-border')}>
             {label} <span className="opacity-60">({roleCounts[role as keyof typeof roleCounts] || 0})</span>
           </button>
         ))}
@@ -172,7 +172,7 @@ export default function AdminUsers() {
       {/* Stats */}
       <div className="px-4 py-3 grid grid-cols-4 gap-2">
         {[
-          { label: 'Total', value: allUsers.length, color: 'bg-neutral-100' },
+          { label: 'Total', value: allUsers.length, color: 'bg-muted' },
           { label: 'Active', value: allUsers.filter(u => u.isActive).length, color: 'bg-green-100 text-green-700' },
           { label: 'Inactive', value: allUsers.filter(u => !u.isActive).length, color: 'bg-red-100 text-red-700' },
           { label: 'Online', value: allUsers.filter(u => u.isActive).length, color: 'bg-blue-100 text-blue-700' },
@@ -188,9 +188,9 @@ export default function AdminUsers() {
       <div className="px-4 space-y-2">
         {filteredUsers.map((u, i) => (
           <motion.div key={u.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-            className="bg-white rounded-lg border border-neutral-200/50 p-3 hover:shadow-md transition-all">
+            className="bg-card rounded-lg border border-neutral-200/50 p-3 hover:shadow-md transition-all">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0"
                 style={{ backgroundColor: getAvatarColor(u.name) }}>
                 {getInitials(u.name)}
               </div>
@@ -199,9 +199,9 @@ export default function AdminUsers() {
                   <p className="text-sm font-semibold">{u.name}</p>
                   {u.id === user.id && <span className="text-[9px] bg-p13-yellow text-p13-black px-1.5 py-0.5 rounded-full font-semibold">You</span>}
                 </div>
-                <p className="text-[11px] text-neutral-400">{u.email}</p>
+                <p className="text-[11px] text-muted-foreground">{u.email}</p>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className={cn('text-[9px] font-semibold px-1.5 py-0.5 rounded-full capitalize', roleBadgeColors[u.role] || 'bg-neutral-100')}>
+                  <span className={cn('text-[9px] font-semibold px-1.5 py-0.5 rounded-full capitalize', roleBadgeColors[u.role] || 'bg-muted')}>
                     {u.role.replace('_', ' ')}
                   </span>
                   <span className={cn('flex items-center gap-0.5 text-[10px]', u.isActive ? 'text-green-500' : 'text-red-500')}>
@@ -211,7 +211,7 @@ export default function AdminUsers() {
                 </div>
               </div>
               <button onClick={() => { setSelectedUserId(u.id); setShowActions(true); }}
-                className="text-xs bg-p13-black text-white px-3 py-1.5 rounded-lg font-medium flex-shrink-0">
+                className="text-xs bg-card text-foreground px-3 py-1.5 rounded-lg font-medium flex-shrink-0">
                 Manage
               </button>
             </div>
@@ -219,8 +219,8 @@ export default function AdminUsers() {
         ))}
         {filteredUsers.length === 0 && (
           <div className="text-center py-10">
-            <User size={32} className="text-neutral-300 mx-auto mb-2" />
-            <p className="text-sm text-neutral-500">No users found</p>
+            <User size={32} className="text-muted-foreground/50 mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">No users found</p>
           </div>
         )}
       </div>
@@ -232,16 +232,16 @@ export default function AdminUsers() {
           const activity = loginActivity.filter(a => a.userId === selectedUser.id);
           return (
             <div className="space-y-4 py-2">
-              <div className="flex items-center gap-3 pb-3 border-b border-neutral-200">
-                <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg font-bold"
+              <div className="flex items-center gap-3 pb-3 border-b border-border">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-foreground text-lg font-bold"
                   style={{ backgroundColor: getAvatarColor(selectedUser.name) }}>
                   {getInitials(selectedUser.name)}
                 </div>
                 <div>
                   <p className="text-base font-semibold">{selectedUser.name}</p>
-                  <p className="text-xs text-neutral-400">{selectedUser.email}</p>
+                  <p className="text-xs text-muted-foreground">{selectedUser.email}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize', roleBadgeColors[selectedUser.role] || 'bg-neutral-100')}>
+                    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize', roleBadgeColors[selectedUser.role] || 'bg-muted')}>
                       {selectedUser.role.replace('_', ' ')}
                     </span>
                     <span className={cn('text-[10px]', selectedUser.isActive ? 'text-green-500' : 'text-red-500')}>
@@ -265,11 +265,11 @@ export default function AdminUsers() {
               </div>
 
               {sessions.length > 0 && (
-                <div className="pt-3 border-t border-neutral-200">
-                  <p className="text-xs font-semibold text-neutral-600 mb-2">Active Sessions ({sessions.length})</p>
+                <div className="pt-3 border-t border-border">
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">Active Sessions ({sessions.length})</p>
                   {sessions.map(s => (
                     <div key={s.id} className="flex items-center gap-2 py-1.5">
-                      <span className="text-[10px] text-neutral-500">{s.device} &middot; {s.browser}</span>
+                      <span className="text-[10px] text-muted-foreground">{s.device} &middot; {s.browser}</span>
                       {s.isCurrent && <span className="text-[9px] text-green-600 font-semibold">Current</span>}
                     </div>
                   ))}
@@ -277,12 +277,12 @@ export default function AdminUsers() {
               )}
 
               {activity.length > 0 && (
-                <div className="pt-3 border-t border-neutral-200">
-                  <p className="text-xs font-semibold text-neutral-600 mb-2">Recent Activity</p>
+                <div className="pt-3 border-t border-border">
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">Recent Activity</p>
                   {activity.slice(0, 5).map(a => (
                     <div key={a.id} className="flex items-center gap-2 py-1.5">
                       <span className={cn('w-2 h-2 rounded-full', a.status === 'success' ? 'bg-green-400' : 'bg-red-400')} />
-                      <span className="text-[10px] text-neutral-500">{a.action.replace(/_/g, ' ')} &middot; {new Date(a.createdAt).toLocaleDateString()}</span>
+                      <span className="text-[10px] text-muted-foreground">{a.action.replace(/_/g, ' ')} &middot; {new Date(a.createdAt).toLocaleDateString()}</span>
                     </div>
                   ))}
                 </div>
@@ -296,14 +296,14 @@ export default function AdminUsers() {
       <BottomSheet isOpen={showActions} onClose={() => { setShowActions(false); setSelectedUserId(null); }} title="User Actions">
         {selectedUser && (
           <div className="space-y-1 py-2">
-            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-neutral-200">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold"
+            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-foreground text-xs font-bold"
                 style={{ backgroundColor: getAvatarColor(selectedUser.name) }}>
                 {getInitials(selectedUser.name)}
               </div>
               <div>
                 <p className="text-sm font-semibold">{selectedUser.name}</p>
-                <p className="text-[11px] text-neutral-400 capitalize">{selectedUser.role.replace('_', ' ')} &middot; {selectedUser.isActive ? 'Active' : 'Inactive'}</p>
+                <p className="text-[11px] text-muted-foreground capitalize">{selectedUser.role.replace('_', ' ')} &middot; {selectedUser.isActive ? 'Active' : 'Inactive'}</p>
               </div>
             </div>
 
@@ -337,7 +337,7 @@ export default function AdminUsers() {
         <div className="space-y-4 py-2">
           {selectedUser && (
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-foreground text-xs font-bold"
                 style={{ backgroundColor: getAvatarColor(selectedUser.name) }}>
                 {getInitials(selectedUser.name)}
               </div>
@@ -345,18 +345,18 @@ export default function AdminUsers() {
             </div>
           )}
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">New Password</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">New Password</label>
             <div className="relative">
               <input type={showPass ? 'text' : 'password'} value={adminNewPass} onChange={e => setAdminNewPass(e.target.value)}
-                className="w-full h-11 px-3 pr-10 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow outline-none" />
-              <button onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                className="w-full h-11 px-3 pr-10 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none" />
+              <button onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                 {showPass ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="forceChange" checked={forceChange} onChange={e => setForceChange(e.target.checked)} className="w-4 h-4 accent-p13-yellow" />
-            <label htmlFor="forceChange" className="text-xs text-neutral-600">Force password change on next login</label>
+            <label htmlFor="forceChange" className="text-xs text-muted-foreground">Force password change on next login</label>
           </div>
           <button onClick={handleSetPassword} className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold">
             Set Password
@@ -368,33 +368,33 @@ export default function AdminUsers() {
       <BottomSheet isOpen={showCreateUser} onClose={() => setShowCreateUser(false)} title="Invite New User" maxHeight="90vh">
         <div className="space-y-4 py-2">
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Full Name *</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Full Name *</label>
             <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g., John Doe"
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Email *</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Email *</label>
             <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="john@company.com"
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Mobile</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Mobile</label>
             <input value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="+91 98765 43210"
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow" />
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Role</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Role</label>
             <select value={newRole} onChange={e => setNewRole(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow">
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow">
               {Object.entries(roleLabels).filter(([k]) => k !== 'all').map(([role, label]) => (
                 <option key={role} value={role}>{label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Manager</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Manager</label>
             <select value={newManagerId} onChange={e => setNewManagerId(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow">
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow">
               <option value="">No manager</option>
               {allUsers.filter(u => u.role === 'manager' || u.role === 'admin').map(u => (
                 <option key={u.id} value={u.id}>{u.name}</option>
@@ -402,12 +402,12 @@ export default function AdminUsers() {
             </select>
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-600 mb-1 block">Initial Password *</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Initial Password *</label>
             <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-neutral-200 bg-white text-sm outline-none focus:border-p13-yellow" />
-            <p className="text-[10px] text-neutral-400 mt-1">Min 8 characters with uppercase, number, special char</p>
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
+            <p className="text-[10px] text-muted-foreground mt-1">Min 8 characters with uppercase, number, special char</p>
           </div>
-          <button onClick={handleCreateUser} className="w-full h-12 bg-p13-black text-white rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+          <button onClick={handleCreateUser} className="w-full h-12 bg-card text-foreground rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
             <UserPlus size={16} /> Send Invite
           </button>
         </div>
@@ -419,7 +419,7 @@ export default function AdminUsers() {
 function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2 text-neutral-400">
+      <div className="flex items-center gap-2 text-muted-foreground">
         {icon}
         <span className="text-xs">{label}</span>
       </div>
@@ -432,12 +432,12 @@ function ActionButton({ icon, label, desc, danger, onClick }: {
   icon: React.ReactNode; label: string; desc: string; danger?: boolean; onClick: () => void;
 }) {
   return (
-    <button onClick={onClick} className={cn('flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-left',
+    <button onClick={onClick} className={cn('flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left',
       danger && 'hover:bg-red-50')}>
       {icon}
       <div>
         <p className={cn('text-sm font-medium', danger && 'text-red-600')}>{label}</p>
-        <p className="text-[11px] text-neutral-400">{desc}</p>
+        <p className="text-[11px] text-muted-foreground">{desc}</p>
       </div>
     </button>
   );

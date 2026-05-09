@@ -73,7 +73,7 @@ export const STATUS_CONFIG: Record<AccountStatus, { label: string; color: string
   disabled: { label: 'Disabled', color: 'text-red-700', bgColor: 'bg-red-100', icon: 'x' },
   invite_pending: { label: 'Invite Pending', color: 'text-yellow-700', bgColor: 'bg-yellow-100', icon: 'mail' },
   locked: { label: 'Locked', color: 'text-orange-700', bgColor: 'bg-orange-100', icon: 'lock' },
-  archived: { label: 'Archived', color: 'text-neutral-500', bgColor: 'bg-neutral-100', icon: 'archive' },
+  archived: { label: 'Archived', color: 'text-muted-foreground', bgColor: 'bg-muted', icon: 'archive' },
 };
 
 // ==================== AUDIT ACTION LABELS ====================

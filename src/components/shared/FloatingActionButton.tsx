@@ -58,11 +58,11 @@ export default function FloatingActionButton({ actions, className }: FABProps) {
                 onClick={() => { action.onClick(); setOpen(false); }}
                 className="flex items-center gap-2 group"
               >
-                <span className="text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-2.5 py-1 rounded-md shadow-sm whitespace-nowrap border border-neutral-200 dark:border-slate-700">
+                <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground/50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-2.5 py-1 rounded-md shadow-sm whitespace-nowrap border border-border dark:border-slate-700">
                   {action.label}
                 </span>
                 <span
-                  className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg text-white text-sm transition-transform active:scale-90"
+                  className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg text-foreground text-sm transition-transform active:scale-90"
                   style={{ backgroundColor: action.color || '#FBBD08' }}
                 >
                   {action.icon}

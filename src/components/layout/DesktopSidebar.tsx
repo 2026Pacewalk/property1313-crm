@@ -120,7 +120,7 @@ export default function DesktopSidebar() {
       <div className="p-3 border-t border-sidebar-border flex-shrink-0">
         <div className={cn('flex items-center', sidebarCollapsed ? 'justify-center' : 'gap-3 px-1')}>
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-foreground flex-shrink-0"
             style={{ backgroundColor: avatarColor }}
           >
             {initials}

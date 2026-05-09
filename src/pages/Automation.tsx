@@ -20,7 +20,7 @@ export default function Automation() {
       <div className="flex bg-neutral-200 rounded-lg p-0.5 mb-5">
         {(['manual', 'semi', 'full'] as const).map(mode => (
           <button key={mode} className={`flex-1 py-2.5 px-3 rounded-md text-xs font-semibold capitalize transition-all ${
-            mode === 'semi' ? 'bg-p13-black text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-700'
+            mode === 'semi' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground/80'
           }`}>
             {mode === 'semi' ? 'Semi Automatic' : `${mode.charAt(0).toUpperCase() + mode.slice(1)}`}
           </button>
@@ -33,7 +33,7 @@ export default function Automation() {
           const Icon = iconMap[rule.icon] || Zap;
           return (
             <motion.div key={rule.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className={cn('bg-white rounded-xl p-4 shadow-xs border transition-all',
+              className={cn('bg-card rounded-xl p-4 shadow-xs border transition-all',
                 rule.enabled ? 'border-l-[3px]' : 'border-neutral-200/50',
                 rule.enabled ? '' : 'opacity-75'
               )}
@@ -45,21 +45,21 @@ export default function Automation() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold">{rule.name}</h3>
-                    <p className="text-xs text-neutral-400">{rule.description}</p>
+                    <p className="text-xs text-muted-foreground">{rule.description}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => { toggleAutomationRule(rule.id); addToast({ type: 'success', message: `${rule.name} ${rule.enabled ? 'disabled' : 'enabled'}` }); }}
                   className={cn('w-11 h-6 rounded-full transition-colors relative flex-shrink-0', rule.enabled ? 'bg-p13-yellow' : 'bg-neutral-300')}>
-                  <div className={cn('absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform', rule.enabled ? 'left-[22px]' : 'left-0.5')} />
+                  <div className={cn('absolute top-0.5 w-5 h-5 rounded-full bg-card shadow transition-transform', rule.enabled ? 'left-[22px]' : 'left-0.5')} />
                 </button>
               </div>
-              <p className="text-[11px] text-neutral-400 mb-2">
+              <p className="text-[11px] text-muted-foreground mb-2">
                 <span className="font-medium">Trigger:</span> {rule.trigger.replace(/_/g, ' ')}
                 {rule.triggerCondition && ` (${rule.triggerCondition})`}
               </p>
               <div className="flex items-center justify-between">
-                <span className="text-[11px] text-neutral-400">
+                <span className="text-[11px] text-muted-foreground">
                   {rule.lastRunAt ? `Last run: ${new Date(rule.lastRunAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Never run'}
                   {'  '} Runs: {rule.runCount}
                 </span>

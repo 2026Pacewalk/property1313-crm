@@ -11,8 +11,8 @@ export default function ThemeToggle({ className }: { className?: string }) {
       onClick={toggle}
       className={cn(
         'relative w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200',
-        'hover:bg-neutral-100 dark:hover:bg-white/10',
-        isDark ? 'text-p13-yellow' : 'text-neutral-500',
+        'hover:bg-muted dark:hover:bg-white/10',
+        isDark ? 'text-p13-yellow' : 'text-muted-foreground',
         className
       )}
       title={isDark ? 'Light mode' : 'Dark mode'}

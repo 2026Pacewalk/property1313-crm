@@ -199,13 +199,13 @@ export default function TemplatePicker() {
             <div className="flex gap-2">
               <button
                 onClick={handleMarkAsSent}
-                className="flex-1 h-10 bg-green-600 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-700 transition-all"
+                className="flex-1 h-10 bg-green-600 text-foreground rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-700 transition-all"
               >
                 <CheckCircle size={14} /> Mark as Sent
               </button>
               <button
                 onClick={clearPendingConfirmation}
-                className="h-10 px-4 bg-white border border-neutral-200 text-neutral-600 rounded-lg text-sm font-medium hover:bg-neutral-50 transition-all"
+                className="h-10 px-4 bg-card border border-border text-muted-foreground rounded-lg text-sm font-medium hover:bg-muted/50 transition-all"
               >
                 Cancel
               </button>
@@ -216,15 +216,15 @@ export default function TemplatePicker() {
         {/* Search */}
         {!selectedTemplate && !pendingConfirmation && (
           <div className="relative">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search templates..."
-              className="w-full h-10 pl-9 pr-9 rounded-lg border border-neutral-200 bg-white text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
+              className="w-full h-10 pl-9 pr-9 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
             />
             {search && (
-              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                 <X size={14} />
               </button>
             )}
@@ -235,7 +235,7 @@ export default function TemplatePicker() {
         {!selectedTemplate && !pendingConfirmation && (
           <>
             {/* Tabs */}
-            <div className="flex gap-1 bg-neutral-100 rounded-lg p-1">
+            <div className="flex gap-1 bg-muted rounded-lg p-1">
               {[
                 { key: 'all' as const, label: 'All', icon: MessageCircle },
                 { key: 'favorites' as const, label: 'Favorites', icon: Heart },
@@ -245,7 +245,7 @@ export default function TemplatePicker() {
                   key={t.key}
                   onClick={() => setActiveTab(t.key)}
                   className={cn('flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-md text-xs font-medium transition-all',
-                    activeTab === t.key ? 'bg-white text-p13-black shadow-sm' : 'text-neutral-500')}
+                    activeTab === t.key ? 'bg-card text-p13-black shadow-sm' : 'text-muted-foreground')}
                 >
                   <t.icon size={12} />{t.label}
                 </button>
@@ -257,20 +257,20 @@ export default function TemplatePicker() {
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <Sparkles size={13} className="text-p13-yellow" />
-                  <span className="text-xs font-semibold text-neutral-700">Suggested for this lead</span>
+                  <span className="text-xs font-semibold text-foreground/80">Suggested for this lead</span>
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-1 snap-x">
                   {suggested.map((t) => (
                     <button
                       key={t.id}
                       onClick={() => handleSelectTemplate(t)}
-                      className="snap-start flex-shrink-0 bg-gradient-to-br from-p13-black to-neutral-800 text-white rounded-lg px-3 py-2 text-left min-w-[140px] max-w-[180px]"
+                      className="snap-start flex-shrink-0 bg-gradient-to-br from-p13-black to-neutral-800 text-foreground rounded-lg px-3 py-2 text-left min-w-[140px] max-w-[180px]"
                     >
                       <div className="flex items-center gap-1 mb-1">
                         {t.aiTone && toneIcons[t.aiTone]}
                         <span className="text-[11px] font-medium truncate">{t.name}</span>
                       </div>
-                      <p className="text-[10px] text-neutral-400 line-clamp-2">{t.category}</p>
+                      <p className="text-[10px] text-muted-foreground line-clamp-2">{t.category}</p>
                     </button>
                   ))}
                 </div>
@@ -286,7 +286,7 @@ export default function TemplatePicker() {
                   className={cn('flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all border',
                     activeCategory === c.id
                       ? 'bg-p13-yellow text-p13-black border-p13-yellow'
-                      : 'bg-white text-neutral-600 border-neutral-200')}
+                      : 'bg-card text-muted-foreground border-border')}
                 >
                   {c.name}
                 </button>
@@ -297,8 +297,8 @@ export default function TemplatePicker() {
             <div className="space-y-2 max-h-[50vh] overflow-y-auto">
               {filtered.length === 0 ? (
                 <div className="text-center py-8">
-                  <MessageCircle size={32} className="text-neutral-300 mx-auto mb-2" />
-                  <p className="text-sm text-neutral-500">No templates found</p>
+                  <MessageCircle size={32} className="text-muted-foreground/50 mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">No templates found</p>
                 </div>
               ) : (
                 filtered.map((template) => (
@@ -321,24 +321,24 @@ export default function TemplatePicker() {
               {/* Back button */}
               <button
                 onClick={() => { setSelectedTemplate(null); setPreviewMessage(''); setOpenFailed(false); setManualUrl(''); }}
-                className="text-xs text-neutral-500 flex items-center gap-1 mb-3"
+                className="text-xs text-muted-foreground flex items-center gap-1 mb-3"
               >
                 <ChevronRight size={12} className="rotate-180" /> Back to templates
               </button>
 
               {/* Template info */}
-              <div className="bg-white rounded-lg border border-neutral-200 p-3 mb-3">
+              <div className="bg-card rounded-lg border border-border p-3 mb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {selectedTemplate.aiTone && toneIcons[selectedTemplate.aiTone]}
                     <div>
                       <p className="text-sm font-semibold">{selectedTemplate.name}</p>
-                      <p className="text-[11px] text-neutral-500">{selectedTemplate.category}</p>
+                      <p className="text-[11px] text-muted-foreground">{selectedTemplate.category}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => toggleFavorite(selectedTemplate.id)}
-                    className={cn('p-1.5 rounded-full', selectedTemplate.isFavorite ? 'text-p13-yellow' : 'text-neutral-300')}
+                    className={cn('p-1.5 rounded-full', selectedTemplate.isFavorite ? 'text-p13-yellow' : 'text-muted-foreground/50')}
                   >
                     <Star size={16} fill={selectedTemplate.isFavorite ? 'currentColor' : 'none'} />
                   </button>
@@ -347,7 +347,7 @@ export default function TemplatePicker() {
 
               {/* WhatsApp Preview */}
               <div className="bg-[#E5DDD5] rounded-xl p-4 mb-3">
-                <p className="text-[10px] text-neutral-500 text-center mb-3 uppercase tracking-wider">WhatsApp Preview</p>
+                <p className="text-[10px] text-muted-foreground text-center mb-3 uppercase tracking-wider">WhatsApp Preview</p>
                 <MessagePreview
                   message={previewMessage}
                   mediaType={selectedTemplate.messageType !== 'text' ? selectedTemplate.messageType : undefined}
@@ -357,11 +357,11 @@ export default function TemplatePicker() {
               </div>
 
               {/* Sender info */}
-              <div className="flex items-center gap-2 mb-3 bg-neutral-50 rounded-lg p-2.5">
+              <div className="flex items-center gap-2 mb-3 bg-muted/50 rounded-lg p-2.5">
                 {isMobile ? <Smartphone size={14} className="text-green-600" /> : <Monitor size={14} className="text-green-600" />}
                 <div className="flex-1">
-                  <p className="text-[11px] font-medium text-neutral-700">Sending from your {deviceLabel}</p>
-                  <p className="text-[10px] text-neutral-500">
+                  <p className="text-[11px] font-medium text-foreground/80">Sending from your {deviceLabel}</p>
+                  <p className="text-[10px] text-muted-foreground">
                     {user?.whatsappMobile || user?.phone || 'No mobile set'}
                   </p>
                 </div>
@@ -372,7 +372,7 @@ export default function TemplatePicker() {
                 <button
                   onClick={handleOpenWhatsApp}
                   disabled={opening || !userHasMobile || !leadPhoneValid}
-                  className="w-full h-12 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+                  className="w-full h-12 bg-green-500 text-foreground rounded-xl text-sm font-semibold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
                 >
                   {opening ? (
                     <>
@@ -402,7 +402,7 @@ export default function TemplatePicker() {
                     href={manualUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full h-12 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 flex items-center justify-center gap-2 transition-all"
+                    className="w-full h-12 bg-green-500 text-foreground rounded-xl text-sm font-semibold hover:bg-green-600 flex items-center justify-center gap-2 transition-all"
                   >
                     <Link2 size={16} /> Open WhatsApp Manually
                   </a>
@@ -441,7 +441,7 @@ function TemplateCard({ template, onSelect, onToggleFavorite }: {
 
   return (
     <div
-      className="bg-white rounded-lg border border-neutral-200 p-3 hover:border-p13-yellow transition-all cursor-pointer group"
+      className="bg-card rounded-lg border border-border p-3 hover:border-p13-yellow transition-all cursor-pointer group"
       onClick={onSelect}
     >
       <div className="flex items-start justify-between">
@@ -449,13 +449,13 @@ function TemplateCard({ template, onSelect, onToggleFavorite }: {
           <div className="flex items-center gap-1.5 mb-0.5">
             <span className="text-xs font-semibold truncate">{template.name}</span>
             {template.aiTone && (
-              <span className={cn('text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-neutral-100', toneColor[template.aiTone])}>
+              <span className={cn('text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted', toneColor[template.aiTone])}>
                 {template.aiTone.toUpperCase()}
               </span>
             )}
           </div>
-          <p className="text-[11px] text-neutral-500 line-clamp-2 mb-1.5">{template.content.slice(0, 100)}...</p>
-          <div className="flex items-center gap-2 text-[10px] text-neutral-400">
+          <p className="text-[11px] text-muted-foreground line-clamp-2 mb-1.5">{template.content.slice(0, 100)}...</p>
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
             <span>{template.category}</span>
             {template.automationEnabled && <span className="text-blue-500">Auto</span>}
             <span>{template.usageCount} uses</span>
@@ -464,11 +464,11 @@ function TemplateCard({ template, onSelect, onToggleFavorite }: {
         <div className="flex flex-col items-center gap-1 ml-2">
           <button
             onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-            className={cn('p-1 rounded-full transition-colors', template.isFavorite ? 'text-p13-yellow' : 'text-neutral-300 hover:text-neutral-500')}
+            className={cn('p-1 rounded-full transition-colors', template.isFavorite ? 'text-p13-yellow' : 'text-muted-foreground/50 hover:text-muted-foreground')}
           >
             <Star size={14} fill={template.isFavorite ? 'currentColor' : 'none'} />
           </button>
-          <ChevronRight size={14} className="text-neutral-300 group-hover:text-p13-yellow transition-colors" />
+          <ChevronRight size={14} className="text-muted-foreground/50 group-hover:text-p13-yellow transition-colors" />
         </div>
       </div>
     </div>

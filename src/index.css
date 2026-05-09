@@ -5,32 +5,32 @@
 @layer base {
   :root {
     /* Light mode tokens */
-    --background: 220 14% 97%;       /* #F8F9FB */
-    --foreground: 220 43% 11%;       /* #111827 */
-    --card: 0 0% 100%;               /* #FFFFFF */
-    --card-foreground: 220 43% 11%;  /* #111827 */
+    --background: 0 0% 100%;          /* #FFFFFF */
+    --foreground: 220 43% 11%;        /* #111827 */
+    --card: 0 0% 100%;                /* #FFFFFF */
+    --card-foreground: 220 43% 11%;   /* #111827 */
     --popover: 0 0% 100%;
     --popover-foreground: 220 43% 11%;
-    --primary: 45 95% 51%;           /* #FBBD08 yellow */
-    --primary-foreground: 0 0% 10%;  /* #1A1A1A */
+    --primary: 45 95% 51%;            /* #FBBD08 yellow */
+    --primary-foreground: 220 43% 11%;
     --secondary: 220 14% 96%;
     --secondary-foreground: 220 43% 11%;
     --muted: 220 14% 93%;
     --muted-foreground: 220 9% 46%;
     --accent: 45 95% 51%;
-    --accent-foreground: 0 0% 10%;
+    --accent-foreground: 220 43% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 91%;          /* #E5E7EB */
+    --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 45 95% 51%;
     --radius: 0.5rem;
 
     /* Light sidebar */
-    --sidebar-background: 0 0% 100%; /* #FFFFFF */
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 220 43% 11%;
     --sidebar-primary: 45 95% 51%;
-    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-primary-foreground: 220 43% 11%;
     --sidebar-accent: 220 14% 96%;
     --sidebar-accent-foreground: 220 43% 11%;
     --sidebar-border: 220 13% 91%;
@@ -38,32 +38,32 @@
   }
 
   .dark {
-    /* Dark mode tokens */
-    --background: 222 47% 7%;         /* #0B1121 close to #0F172A */
-    --foreground: 210 40% 98%;        /* #F9FAFB */
-    --card: 217 33% 17%;             /* #1E293B */
-    --card-foreground: 210 40% 98%;
+    /* Dark mode tokens - proper contrast */
+    --background: 222 47% 7%;          /* #0B1121 */
+    --foreground: 210 40% 98%;         /* #F9FAFB */
+    --card: 217 33% 17%;              /* #1E293B */
+    --card-foreground: 210 40% 98%;   /* #F9FAFB */
     --popover: 217 33% 17%;
     --popover-foreground: 210 40% 98%;
     --primary: 45 95% 51%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 217 33% 17%;
+    --primary-foreground: 220 43% 11%;
+    --secondary: 217 33% 22%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 16% 57%;
+    --muted: 217 33% 22%;
+    --muted-foreground: 215 16% 70%;
     --accent: 45 95% 51%;
-    --accent-foreground: 0 0% 10%;
+    --accent-foreground: 220 43% 11%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 217 19% 27%;           /* #334155 */
+    --border: 217 19% 27%;
     --input: 217 19% 27%;
     --ring: 45 95% 51%;
 
     /* Dark sidebar */
-    --sidebar-background: 220 43% 11%;  /* #111827 */
+    --sidebar-background: 220 43% 11%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 45 95% 51%;
-    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-primary-foreground: 220 43% 11%;
     --sidebar-accent: 217 33% 17%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 19% 27%;
@@ -112,6 +112,10 @@
     @apply bg-card text-card-foreground rounded-xl border shadow-xs transition-colors duration-200;
   }
 
+  .kpi-card {
+    @apply bg-card text-card-foreground rounded-xl p-4 shadow-xs border border-border/50 cursor-pointer hover:shadow-md hover:border-primary/30 transition-all;
+  }
+
   .skeleton-shimmer {
     background: linear-gradient(90deg, #EEEEEE 25%, #F5F5F5 50%, #EEEEEE 75%);
     background-size: 200% 100%;
@@ -126,5 +130,28 @@
   /* Sticky action footer */
   .sticky-action-footer {
     @apply sticky bottom-0 z-40 backdrop-blur-md;
+  }
+
+  /* Dark mode safe text colors */
+  .text-primary-dark-safe {
+    @apply text-neutral-900 dark:text-gray-100;
+  }
+
+  .text-secondary-dark-safe {
+    @apply text-neutral-600 dark:text-gray-300;
+  }
+
+  .text-muted-dark-safe {
+    @apply text-neutral-400 dark:text-gray-500;
+  }
+
+  /* Revenue card gradient */
+  .revenue-card-gradient {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2A2510 100%);
+  }
+
+  .dark .revenue-card-gradient {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    border: 1px solid rgba(251, 189, 8, 0.15);
   }
 }
