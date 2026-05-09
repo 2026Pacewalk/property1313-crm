@@ -41,18 +41,18 @@ export default function BottomSheet({ isOpen, onClose, title, children, maxHeigh
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative bg-neutral-100 w-full rounded-t-2xl shadow-lg overflow-hidden"
-            style={{ maxHeight }}
+            transition={{ type: 'spring', damping: 30, stiffness: 350 }}
+            className="relative bg-neutral-100 dark:bg-[#1E293B] w-full rounded-t-2xl shadow-2xl overflow-hidden border-t border-neutral-200 dark:border-slate-700"
+            style={{ maxHeight, paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 bg-neutral-300 rounded-full" />
+              <div className="w-10 h-1 bg-neutral-300 dark:bg-slate-600 rounded-full" />
             </div>
             {/* Header */}
             <div className="flex items-center justify-between px-4 pb-3">
-              <h2 className="text-base font-semibold">{title}</h2>
-              <button onClick={onClose} className="text-neutral-400 hover:text-neutral-800 p-1">
+              <h2 className="text-base font-semibold dark:text-white">{title}</h2>
+              <button onClick={onClose} className="text-neutral-400 hover:text-neutral-800 dark:hover:text-white p-1 transition-colors">
                 <X size={20} />
               </button>
             </div>

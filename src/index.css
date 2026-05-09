@@ -38,12 +38,48 @@
     @apply border-border;
   }
 
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
-    @apply bg-p13-white text-neutral-800 antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Dark mode variables */
+  .dark {
+    --background: 220 25% 8%;
+    --foreground: 210 40% 98%;
+    --card: 220 20% 14%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 20% 14%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 45 95% 51%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 215 16% 60%;
+    --accent: 45 95% 51%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 45 95% 51%;
+    --sidebar-background: 220 25% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 45 95% 51%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 220 20% 18%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 45 95% 51%;
   }
 
   /* Mobile momentum scrolling */
@@ -52,7 +88,12 @@
     overscroll-behavior: contain;
   }
 
-  /* Custom scrollbar */
+  /* Smooth transitions for theme */
+  .theme-transition {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Custom scrollbar - light */
   ::-webkit-scrollbar {
     width: 4px;
   }
@@ -64,11 +105,33 @@
     border-radius: 4px;
   }
 
+  /* Dark scrollbar */
+  .dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+  }
+
   /* Hide scrollbar on mobile */
   @media (max-width: 767px) {
     ::-webkit-scrollbar {
       display: none;
     }
+  }
+
+  /* Input focus fix - prevent blocked typing */
+  input, textarea, select {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+  }
+
+  /* Safe area padding for notched phones */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
 
@@ -78,13 +141,83 @@
   }
 
   .card-base {
-    @apply bg-white rounded-lg shadow-xs border border-neutral-200;
+    @apply bg-card rounded-lg shadow-xs border rounded-xl;
+    border-color: hsl(var(--border));
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .dark .card-base {
+    background: hsl(220 20% 14%);
+    border-color: hsl(220 15% 22%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
 
   .skeleton-shimmer {
     background: linear-gradient(90deg, #EEEEEE 25%, #F5F5F5 50%, #EEEEEE 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .dark .skeleton-shimmer {
+    background: linear-gradient(90deg, #1E293B 25%, #273347 50%, #1E293B 75%);
+    background-size: 200% 100%;
+  }
+
+  /* FAB animation */
+  @keyframes fab-in {
+    from { transform: scale(0) rotate(-45deg); opacity: 0; }
+    to { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes speed-dial-in {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fade-in-up {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .animate-fab-in {
+    animation: fab-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .animate-speed-dial-in {
+    animation: speed-dial-in 0.15s ease-out forwards;
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 0.2s ease-out forwards;
+  }
+
+  /* Native app page transition */
+  .page-transition-enter {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .page-transition-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  /* Sticky bottom bar */
+  .sticky-action-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Bottom sheet backdrop */
+  .bs-backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* No scroll when overlay open */
+  .no-scroll {
+    overflow: hidden;
+    height: 100%;
+    touch-action: none;
   }
 }
 

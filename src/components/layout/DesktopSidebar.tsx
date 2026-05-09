@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router';
 import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
+import ThemeToggle from '@/components/shared/ThemeToggle';
 import {
   LayoutDashboard, Users, Bell, MapPin, Building2, FileText, Zap, BarChart3, Settings, LogOut, ChevronLeft, ChevronRight, UserCircle, MessageCircle, Shield, ClipboardList, Database,
 } from 'lucide-react';
@@ -89,6 +90,13 @@ export default function DesktopSidebar() {
           );
         })}
       </nav>
+
+      {/* Theme Toggle */}
+      <div className={cn('px-3 py-2 border-t border-white/[0.06]',
+        sidebarCollapsed && 'flex justify-center'
+      )}>
+        <ThemeToggle className={cn('w-full', sidebarCollapsed && 'w-9 h-9')} />
+      </div>
 
       {/* User */}
       <div className="p-3 border-t border-white/[0.06]">

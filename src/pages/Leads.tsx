@@ -4,14 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, SlidersHorizontal, Plus, Phone, MessageCircle, Bell,
   LayoutList, LayoutGrid, X, User, Home, Users,
-  Calendar, Clock, ChevronDown
+  Calendar, Clock, ChevronDown, MapPin
 } from 'lucide-react';
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useMasterStore } from '@/stores/masterStore';
-import { getInitials, getAvatarColor } from '@/data/mockData';
+import { getInitials, getAvatarColor, users as allUsers } from '@/data/mockData';
 import StatusBadge from '@/components/shared/StatusBadge';
 import BottomSheet from '@/components/shared/BottomSheet';
+import FloatingActionButton from '@/components/shared/FloatingActionButton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import type { Lead } from '@/types';
@@ -315,6 +316,16 @@ export default function Leads() {
       <BottomSheet isOpen={showAddLead} onClose={() => setShowAddLead(false)} title="Create New Lead" maxHeight="90vh">
         <AddLeadForm onClose={() => setShowAddLead(false)} />
       </BottomSheet>
+
+      {/* Floating Action Button */}
+      <FloatingActionButton
+        actions={[
+          { id: 'add-lead', label: 'Add Lead', icon: <User size={16} />, onClick: () => setShowAddLead(true), color: '#FBBD08' },
+          { id: 'add-followup', label: 'Add Follow-up', icon: <Calendar size={16} />, onClick: () => { /* Follow-up form */ }, color: '#3B82F6' },
+          { id: 'schedule-visit', label: 'Schedule Visit', icon: <MapPin size={16} />, onClick: () => { /* Visit form */ }, color: '#22C55E' },
+          { id: 'quick-assign', label: 'Quick Assign', icon: <Users size={16} />, onClick: () => { /* Assign flow */ }, color: '#8B5CF6' },
+        ]}
+      />
     </div>
   );
 }
@@ -332,6 +343,13 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
   const lookingForOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_looking_for' && v.isActive).map(v => v.name);
   const typeDetailsOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_property_sub_category' && v.isActive).map(v => v.name);
   const inquirySourceOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_lead_source' && v.isActive).map(v => v.name);
+
+  // Real users filtered by role for assignments
+  const activeUsers = allUsers.filter(u => u.isActive);
+  const telecallerOptions = activeUsers.filter(u => u.role === 'telecaller').map(u => u.name);
+  const salesOptions = activeUsers.filter(u => u.role === 'sales_person').map(u => u.name);
+  const managerOptions = activeUsers.filter(u => u.role === 'manager' || u.role === 'admin' || u.role === 'super_admin').map(u => u.name);
+  const teamOptions = activeUsers.filter(u => u.role !== 'super_admin').map(u => u.name);
 
   // Customer Details
   const [fullName, setFullName] = useState('');
@@ -499,21 +517,21 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
         </div>
         <div>
           <Label>Assign Telecaller</Label>
-          <SelectInput value={assignTelecaller} onChange={setAssignTelecaller} options={['Priya Sharma', 'Sneha Patel']} placeholder="Select option..." />
+          <SelectInput value={assignTelecaller} onChange={setAssignTelecaller} options={telecallerOptions} placeholder={telecallerOptions.length ? 'Select option...' : 'No telecallers'} />
         </div>
         <div>
           <Label>Assign Sales Expert</Label>
-          <SelectInput value={assignSalesExpert} onChange={setAssignSalesExpert} options={['Rahul Verma', 'Priya Sharma']} placeholder="Select option..." />
+          <SelectInput value={assignSalesExpert} onChange={setAssignSalesExpert} options={salesOptions} placeholder={salesOptions.length ? 'Select option...' : 'No sales experts'} />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
         <div>
           <Label>Assign Manager</Label>
-          <SelectInput value={assignManager} onChange={setAssignManager} options={['Pacewalk Admin', 'Priya Sharma']} placeholder="Select option..." />
+          <SelectInput value={assignManager} onChange={setAssignManager} options={managerOptions} placeholder={managerOptions.length ? 'Select option...' : 'No managers'} />
         </div>
         <div>
           <Label>Project Team Members</Label>
-          <SelectInput value={projectTeamMembers[0] || ''} onChange={(v) => setProjectTeamMembers(v ? [v] : [])} options={['Rahul Verma', 'Sneha Patel', 'Priya Sharma']} placeholder="Select options..." />
+          <SelectInput value={projectTeamMembers[0] || ''} onChange={(v) => setProjectTeamMembers(v ? [v] : [])} options={teamOptions} placeholder={teamOptions.length ? 'Select options...' : 'No team members'} />
         </div>
       </div>
 

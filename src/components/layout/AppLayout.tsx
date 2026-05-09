@@ -1,22 +1,31 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { useIsMobile } from '@/hooks/useMobile';
 import { useUIStore } from '@/stores/uiStore';
+import { useThemeStore } from '@/stores/themeStore';
 import DesktopSidebar from './DesktopSidebar';
 import TopNavBar from './TopNavBar';
 import MobileHeader from './MobileHeader';
 import BottomTabBar from './BottomTabBar';
 import ImpersonationBanner from '@/components/shared/ImpersonationBanner';
+import { cn } from '@/lib/utils';
 
 export default function AppLayout() {
   const isMobile = useIsMobile();
   const { sidebarCollapsed } = useUIStore();
+  const { init: initTheme, mode } = useThemeStore();
   const location = useLocation();
+
+  useEffect(() => { initTheme(); }, []);
 
   const showMobileNav = isMobile;
   const pageTitle = getPageTitle(location.pathname);
+  const isDark = mode === 'dark';
 
   return (
-    <div className="flex h-screen bg-p13-white overflow-hidden">
+    <div className={cn('flex h-[100dvh] overflow-hidden transition-colors duration-200',
+      isDark ? 'bg-[#0F172A]' : 'bg-[#F8F9FB]'
+    )}>
       {!isMobile && <DesktopSidebar />}
       <div
         className="flex-1 flex flex-col overflow-hidden transition-all duration-300"
@@ -28,7 +37,10 @@ export default function AppLayout() {
         ) : (
           <TopNavBar title={pageTitle} />
         )}
-        <main className="flex-1 overflow-y-auto scroll-momentum pb-20 md:pb-0">
+        <main className={cn('flex-1 overflow-y-auto scroll-momentum transition-colors duration-200',
+          isDark ? 'bg-[#0F172A]' : 'bg-[#F8F9FB]',
+          isMobile && 'pb-20'
+        )}>
           <Outlet />
         </main>
         {showMobileNav && <BottomTabBar />}
