@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router';
+import { Routes, Route } from 'react-router';
 import AppLayout from './components/layout/AppLayout';
 
 import Login from './pages/Login';
@@ -22,7 +22,7 @@ import ToastContainer from './components/shared/ToastContainer';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/project/:slug" element={<PublicProject />} />
@@ -47,6 +47,6 @@ export default function App() {
         </Route>
       </Routes>
       <ToastContainer />
-    </BrowserRouter>
+    </>
   );
 }
