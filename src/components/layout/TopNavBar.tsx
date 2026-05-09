@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import { Bell } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import ThemeToggle from '@/components/shared/ThemeToggle';
+import { SyncStatus } from '@/components/shared/SyncStatus';
 import { cn } from '@/lib/utils';
 import { getInitials, getAvatarColor } from '@/data/mockData';
 
@@ -25,6 +26,9 @@ export default function TopNavBar({ title }: TopNavBarProps) {
 
       {/* Theme Toggle */}
       <ThemeToggle />
+
+      {/* Sync Status */}
+      <SyncStatus />
 
       {/* Notification */}
       <button

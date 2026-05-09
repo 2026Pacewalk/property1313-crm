@@ -7,6 +7,14 @@ import {
   whatsappTemplates as mockTemplates,
   activityData, sourceBreakdown, conversionFunnel, teamPerformance, loginActivity,
 } from '@/data/mockData';
+import {
+  fetchLeads, createLead, updateLeadDb, deleteLeadDb,
+  fetchProjects, createProject, updateProjectDb,
+  fetchFollowups, createFollowup,
+  fetchVisits, createVisit,
+  fetchLoanInquiries, createLoanInquiry,
+  fetchNotifications, createNotification, markNotificationReadDb,
+} from '@/lib/supabase-api';
 
 interface DataState {
   leads: Lead[];
@@ -23,26 +31,29 @@ interface DataState {
   teamPerformance: typeof teamPerformance;
   loginActivity: typeof loginActivity;
   unreadCount: number;
-  addLead: (lead: Lead) => void;
-  updateLead: (id: string, data: Partial<Lead>) => void;
-  deleteLead: (id: string) => void;
-  addFollowup: (followup: FollowUp) => void;
+  isLoading: boolean;
+  // Actions
+  addLead: (lead: Lead) => Promise<void>;
+  updateLead: (id: string, data: Partial<Lead>) => Promise<void>;
+  deleteLead: (id: string) => Promise<void>;
+  addFollowup: (followup: FollowUp) => Promise<void>;
   updateFollowup: (id: string, data: Partial<FollowUp>) => void;
-  addVisit: (visit: Visit) => void;
-  addProject: (project: Project) => void;
-  updateProject: (id: string, data: Partial<Project>) => void;
-  addLoanInquiry: (inquiry: LoanInquiry) => void;
-  markNotificationRead: (id: string) => void;
+  addVisit: (visit: Visit) => Promise<void>;
+  addProject: (project: Project) => Promise<void>;
+  updateProject: (id: string, data: Partial<Project>) => Promise<void>;
+  addLoanInquiry: (inquiry: LoanInquiry) => Promise<void>;
+  markNotificationRead: (id: string) => Promise<void>;
   markAllNotificationsRead: () => void;
   markNotificationsReadByIds: (ids: string[]) => void;
   deleteNotification: (id: string) => void;
   deleteNotificationsByIds: (ids: string[]) => void;
-  createNotification: (notification: Omit<Notification, 'id' | 'createdAt'>) => void;
+  createNotification: (notification: Omit<Notification, 'id' | 'createdAt'>) => Promise<void>;
   getUnreadCount: () => number;
   toggleAutomationRule: (id: string) => void;
+  syncFromSupabase: () => Promise<void>;
 }
 
-// Non-persisted mock data
+// Static mock data (not persisted)
 const staticData = {
   automationRules: mockRules,
   whatsappTemplates: mockTemplates,
@@ -56,72 +67,170 @@ const staticData = {
 export const useDataStore = create<DataState>()(
   persist(
     (set, get) => ({
-      // Persisted data
+      // State
       leads: [],
       followups: [],
       visits: [],
       projects: mockProjects,
       loanInquiries: [],
       notifications: [],
-
-      // Static (not persisted - always from mock data)
       ...staticData,
-
       unreadCount: 0,
+      isLoading: false,
 
-      addLead: (lead) => set((s) => ({ leads: [lead, ...s.leads] })),
-      updateLead: (id, data) => set((s) => ({
-        leads: s.leads.map((l) => l.id === id ? { ...l, ...data, updatedAt: new Date().toISOString() } : l),
-      })),
-      deleteLead: (id) => set((s) => ({ leads: s.leads.filter((l) => l.id !== id) })),
-      addFollowup: (followup) => set((s) => ({ followups: [followup, ...s.followups] })),
-      updateFollowup: (id, data) => set((s) => ({
-        followups: s.followups.map((f) => f.id === id ? { ...f, ...data } : f),
-      })),
-      addVisit: (visit) => set((s) => ({ visits: [visit, ...s.visits] })),
-      addProject: (project) => set((s) => ({ projects: [project, ...s.projects] })),
-      updateProject: (id, data) => set((s) => ({
-        projects: s.projects.map((p) => p.id === id ? { ...p, ...data } : p),
-      })),
-      addLoanInquiry: (inquiry) => set((s) => ({ loanInquiries: [inquiry, ...s.loanInquiries] })),
+      // Sync data from Supabase on load
+      syncFromSupabase: async () => {
+        set({ isLoading: true });
+        const [leadsData, projectsData, followupsData, visitsData, loanData, notifData] = await Promise.all([
+          fetchLeads(),
+          fetchProjects(),
+          fetchFollowups(),
+          fetchVisits(),
+          fetchLoanInquiries(),
+          fetchNotifications(),
+        ]);
+        set({
+          leads: leadsData as Lead[],
+          projects: projectsData.length > 0 ? (projectsData as Project[]) : get().projects,
+          followups: followupsData as FollowUp[],
+          visits: visitsData as Visit[],
+          loanInquiries: loanData as LoanInquiry[],
+          notifications: notifData as Notification[],
+          unreadCount: (notifData as Notification[]).filter((n: Notification) => !n.read && !n.deleted).length,
+          isLoading: false,
+        });
+      },
 
-      // Notification service
-      markNotificationRead: (id) => set((s) => {
-        const updated = s.notifications.map((n) => n.id === id ? { ...n, read: true } : n);
-        return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
-      }),
-      markAllNotificationsRead: () => set((s) => {
-        const updated = s.notifications.map((n) => ({ ...n, read: true }));
-        return { notifications: updated, unreadCount: 0 };
-      }),
-      markNotificationsReadByIds: (ids) => set((s) => {
-        const updated = s.notifications.map((n) => ids.includes(n.id) ? { ...n, read: true } : n);
-        return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
-      }),
-      deleteNotification: (id) => set((s) => {
-        const updated = s.notifications.map((n) => n.id === id ? { ...n, deleted: true } : n);
-        return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
-      }),
-      deleteNotificationsByIds: (ids) => set((s) => {
-        const updated = s.notifications.map((n) => ids.includes(n.id) ? { ...n, deleted: true } : n);
-        return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
-      }),
-      createNotification: (notification) => set((s) => {
-        const n: Notification = {
-          ...notification,
-          id: `not_${Date.now()}`,
-          createdAt: new Date().toISOString(),
-        };
-        const updated = [n, ...s.notifications];
-        return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
-      }),
+      // Lead CRUD with Supabase
+      addLead: async (lead) => {
+        const saved = await createLead(lead as any);
+        if (saved) {
+          const leadData = saved as Lead;
+          set((s) => ({ leads: [leadData, ...s.leads] }));
+        } else {
+          // Fallback: save locally
+          set((s) => ({ leads: [lead, ...s.leads] }));
+        }
+      },
+
+      updateLead: async (id, data) => {
+        const saved = await updateLeadDb(id, data as any);
+        set((s) => {
+          if (saved) {
+            return { leads: s.leads.map((l) => l.id === id ? {...l, ...saved as any} : l) };
+          }
+          return { leads: s.leads.map((l) => l.id === id ? {...l, ...data, updatedAt: new Date().toISOString()} : l) };
+        });
+      },
+
+      deleteLead: async (id) => {
+        await deleteLeadDb(id);
+        set((s) => ({ leads: s.leads.filter((l) => l.id !== id) }));
+      },
+
+      // Followup CRUD
+      addFollowup: async (followup) => {
+        const saved = await createFollowup(followup as any);
+        if (saved) {
+          set((s) => ({ followups: [saved as FollowUp, ...s.followups] }));
+        } else {
+          set((s) => ({ followups: [followup, ...s.followups] }));
+        }
+      },
+
+      updateFollowup: (id, data) =>
+        set((s) => ({ followups: s.followups.map((f) => f.id === id ? { ...f, ...data } : f) })),
+
+      // Visit CRUD
+      addVisit: async (visit) => {
+        const saved = await createVisit(visit as any);
+        if (saved) {
+          set((s) => ({ visits: [saved as Visit, ...s.visits] }));
+        } else {
+          set((s) => ({ visits: [visit, ...s.visits] }));
+        }
+      },
+
+      // Project CRUD
+      addProject: async (project) => {
+        const saved = await createProject(project as any);
+        if (saved) {
+          set((s) => ({ projects: [saved as Project, ...s.projects] }));
+        } else {
+          set((s) => ({ projects: [project, ...s.projects] }));
+        }
+      },
+
+      updateProject: async (id, data) => {
+        const saved = await updateProjectDb(id, data as any);
+        if (saved) {
+          set((s) => ({ projects: s.projects.map((p) => p.id === id ? { ...p, ...saved } as Project : p) }));
+        } else {
+          set((s) => ({ projects: s.projects.map((p) => p.id === id ? { ...p, ...data } : p) }));
+        }
+      },
+
+      // Loan Inquiry CRUD
+      addLoanInquiry: async (inquiry) => {
+        const saved = await createLoanInquiry(inquiry as any);
+        if (saved) {
+          set((s) => ({ loanInquiries: [saved as LoanInquiry, ...s.loanInquiries] }));
+        } else {
+          set((s) => ({ loanInquiries: [inquiry, ...s.loanInquiries] }));
+        }
+      },
+
+      // Notifications
+      markNotificationRead: async (id) => {
+        await markNotificationReadDb(id);
+        set((s) => {
+          const updated = s.notifications.map((n) => n.id === id ? { ...n, read: true } : n);
+          return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
+        });
+      },
+
+      markAllNotificationsRead: () =>
+        set((s) => {
+          const updated = s.notifications.map((n) => ({ ...n, read: true }));
+          return { notifications: updated, unreadCount: 0 };
+        }),
+
+      markNotificationsReadByIds: (ids) =>
+        set((s) => {
+          const updated = s.notifications.map((n) => ids.includes(n.id) ? { ...n, read: true } : n);
+          return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
+        }),
+
+      deleteNotification: (id) =>
+        set((s) => {
+          const updated = s.notifications.map((n) => n.id === id ? { ...n, deleted: true } : n);
+          return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
+        }),
+
+      deleteNotificationsByIds: (ids) =>
+        set((s) => {
+          const updated = s.notifications.map((n) => ids.includes(n.id) ? { ...n, deleted: true } : n);
+          return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
+        }),
+
+      createNotification: async (notification) => {
+        const n = { ...notification, id: `not_${Date.now()}`, createdAt: new Date().toISOString() } as Notification;
+        const saved = await createNotification(n as any);
+        set((s) => {
+          const item = (saved || n) as Notification;
+          const updated = [item, ...s.notifications];
+          return { notifications: updated, unreadCount: updated.filter((n) => !n.read && !n.deleted).length };
+        });
+      },
+
       getUnreadCount: () => get().notifications.filter((n) => !n.read && !n.deleted).length,
 
-      toggleAutomationRule: (id) => set((s) => ({
-        automationRules: s.automationRules.map((r) =>
-          r.id === id ? { ...r, enabled: !r.enabled } : r
-        ),
-      })),
+      toggleAutomationRule: (id) =>
+        set((s) => ({
+          automationRules: s.automationRules.map((r) =>
+            r.id === id ? { ...r, enabled: !r.enabled } : r
+          ),
+        })),
     }),
     {
       name: 'p13-data-store',

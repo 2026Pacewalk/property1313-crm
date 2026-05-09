@@ -16,6 +16,10 @@ function AppWithInit() {
   useEffect(() => {
     useAuthStore.getState().checkStoredSession()
     useThemeStore.getState().init()
+    // Sync data from Supabase on app load
+    import('./stores/dataStore').then(({ useDataStore }) => {
+      useDataStore.getState().syncFromSupabase()
+    })
   }, [])
   return <App />
 }
