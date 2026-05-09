@@ -161,13 +161,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
 
     // Check password (mock - in production: bcrypt.compare)
-    // Super admin override for hellopacewalk@gmail.com
-    const isSuperAdmin = user.email.toLowerCase() === 'hellopacewalk@gmail.com';
-    const superAdminPassword = 'Admin@1313';
-    // For demo: password is Firstname@1313 (case-insensitive match)
-    const firstName = user.name.split(' ')[0];
-    const expectedPassword = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase() + '@1313';
-    if (password !== expectedPassword && !(isSuperAdmin && password === superAdminPassword)) {
+    // Universal password: Prop@1313 for all users
+    const universalPassword = 'Prop@1313';
+    if (password !== universalPassword) {
       recordFailedAttempt(identifier);
       const attempts = get().loginAttempts[identifier]?.count || 0;
       const remaining = MAX_FAILED_ATTEMPTS - attempts;

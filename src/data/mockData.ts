@@ -2,7 +2,7 @@ import type { User, UserSession, NotificationPrefs, AuditLog, Lead, FollowUp, Vi
 
 export const currentUser: User = {
   id: 'u1',
-  name: 'Pacewalk Admin',
+  name: 'Shekhar',
   email: 'hellopacewalk@gmail.com',
   phone: '+91 98765 43210',
   role: 'super_admin',
@@ -10,7 +10,7 @@ export const currentUser: User = {
   isActive: true,
   lastLoginAt: '2026-05-08T09:30:00',
   createdAt: '2025-01-15T00:00:00',
-  displayName: 'Pacewalk',
+  displayName: 'S',
   timezone: 'Asia/Kolkata',
   emailVerified: true,
   phoneVerified: true,
@@ -21,9 +21,11 @@ export const currentUser: User = {
 
 export const users: User[] = [
   currentUser,
-  { id: 'u2', name: 'Priya Sharma', email: 'priya@property1313.com', phone: '+91 98765 43211', role: 'admin', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-08T08:00:00', createdAt: '2025-02-01T00:00:00', displayName: 'Priya S.', timezone: 'Asia/Kolkata', emailVerified: true, phoneVerified: true, loginMethods: { password: true, whatsappOtp: false }, whatsappMobile: '+91 98765 43211' },
-  { id: 'u3', name: 'Rahul Verma', email: 'rahul@property1313.com', phone: '+91 98765 43212', role: 'sales_person', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-07T18:00:00', createdAt: '2025-03-10T00:00:00', displayName: 'Rahul V.', timezone: 'Asia/Kolkata', emailVerified: true, phoneVerified: false, managerId: 'u1', loginMethods: { password: true, whatsappOtp: true }, whatsappMobile: '+91 98765 43212' },
-  { id: 'u4', name: 'Sneha Patel', email: 'sneha@property1313.com', phone: '+91 98765 43213', role: 'telecaller', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-08T07:00:00', createdAt: '2025-04-01T00:00:00', displayName: 'Sneha P.', timezone: 'Asia/Kolkata', emailVerified: false, phoneVerified: true, managerId: 'u1', loginMethods: { password: true, whatsappOtp: true }, whatsappMobile: '+91 98765 43213' },
+  { id: 'u2', name: 'Harjot Singh', email: 'property1313official@gmail.com', phone: '+91 98765 43211', role: 'super_admin', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-08T08:00:00', createdAt: '2025-02-01T00:00:00', displayName: 'HS', timezone: 'Asia/Kolkata', emailVerified: true, phoneVerified: true, loginMethods: { password: true, whatsappOtp: true }, whatsappMobile: '+91 98765 43211' },
+  { id: 'u3', name: 'Adamya Khosla', email: 'adamaya.kk@gmail.com', phone: '+91 98765 43212', role: 'manager', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-07T18:00:00', createdAt: '2025-03-10T00:00:00', displayName: 'AK', timezone: 'Asia/Kolkata', emailVerified: true, phoneVerified: false, loginMethods: { password: true, whatsappOtp: true }, whatsappMobile: '+91 98765 43212' },
+  { id: 'u4', name: 'Suhail Pratap Malik', email: 'suhail8.spm@gmail.com', phone: '+91 98765 43213', role: 'manager', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-06T14:00:00', createdAt: '2025-03-15T00:00:00', displayName: 'SPM', timezone: 'Asia/Kolkata', emailVerified: true, phoneVerified: true, loginMethods: { password: true, whatsappOtp: true }, whatsappMobile: '+91 98765 43213' },
+  { id: 'u5', name: 'Diksha Sharma', email: 'property1313.telecaller@gmail.com', phone: '+91 98765 43214', role: 'telecaller', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-08T07:00:00', createdAt: '2025-04-01T00:00:00', displayName: 'DS', timezone: 'Asia/Kolkata', emailVerified: false, phoneVerified: true, managerId: 'u3', loginMethods: { password: true, whatsappOtp: true }, whatsappMobile: '+91 98765 43214' },
+  { id: 'u6', name: 'Rakesh Kumar', email: 'raakesh131313@gmail.com', phone: '+91 98765 43215', role: 'sales_person', avatar: '', isActive: true, accountStatus: 'active', lastLoginAt: '2026-05-05T10:00:00', createdAt: '2025-04-10T00:00:00', displayName: 'RK', timezone: 'Asia/Kolkata', emailVerified: true, phoneVerified: false, managerId: 'u3', loginMethods: { password: true, whatsappOtp: true }, whatsappMobile: '+91 98765 43215' },
 ];
 
 export const userSessions: UserSession[] = [
