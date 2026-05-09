@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { MasterType, MasterValue, FieldSetting, MasterAuditLog } from '@/types';
 
 // ===================== MASTER TYPE DEFINITIONS =====================
@@ -387,7 +388,9 @@ interface MasterState {
   getAuditLogs: () => MasterAuditLog[];
 }
 
-export const useMasterStore = create<MasterState>((set, get) => ({
+export const useMasterStore = create<MasterState>()(
+  persist(
+    (set, get) => ({
   masterTypes: MASTER_TYPES,
   masterValues: [...SEED_MASTER_VALUES],
   fieldSettings: [...SEED_FIELD_SETTINGS],
@@ -637,4 +640,14 @@ export const useMasterStore = create<MasterState>((set, get) => ({
 
   // ===== Audit =====
   getAuditLogs: () => [...get().auditLogs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
-}));
+  }),
+  {
+    name: 'p13-master-store',
+    partialize: (state) => ({
+      masterValues: state.masterValues,
+      fieldSettings: state.fieldSettings,
+      auditLogs: state.auditLogs,
+    }),
+  }
+  )
+);

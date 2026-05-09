@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { User, UserRole, Permission, AccountStatus, AuditAction, AuditLog, RoleDefinition } from '@/types';
 import { users as initialUsers, auditLogs as initialAuditLogs } from '@/data/mockData';
 
@@ -143,7 +144,9 @@ interface RBACState {
   getUserStats: () => { total: number; active: number; disabled: number; invitePending: number; locked: number; archived: number; online: number };
 }
 
-export const useRBACStore = create<RBACState>((set, get) => ({
+export const useRBACStore = create(
+  persist<RBACState>(
+    (set, get) => ({
   users: initialUsers,
   auditLogs: initialAuditLogs,
   impersonating: null,
@@ -455,4 +458,10 @@ export const useRBACStore = create<RBACState>((set, get) => ({
       online: all.filter((u) => u.isActive && u.accountStatus === 'active').length,
     };
   },
-}));
+  }),
+  {
+    name: 'p13-rbac-store',
+    partialize: (state: RBACState) => ({ users: state.users, auditLogs: state.auditLogs } as RBACState),
+  }
+  )
+);
