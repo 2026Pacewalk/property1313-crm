@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router';
+import { Analytics } from '@vercel/analytics/react';
 import AppLayout from './components/layout/AppLayout';
 
 import Login from './pages/Login';
@@ -49,6 +50,7 @@ export default function App() {
         </Route>
       </Routes>
       <ToastContainer />
+      <Analytics />
     </>
   );
 }
