@@ -6,7 +6,12 @@ import App from './App.tsx'
 import { useAuthStore } from './stores/authStore'
 import { useThemeStore } from './stores/themeStore'
 
-// Init auth and theme on app mount
+// Set theme class on <html> BEFORE React renders to prevent flash
+const stored = localStorage.getItem('p13-theme')
+const systemDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
+const mode = stored === 'dark' || (!stored && systemDark) ? 'dark' : 'light'
+if (mode === 'dark') document.documentElement.classList.add('dark')
+
 function AppWithInit() {
   useEffect(() => {
     useAuthStore.getState().checkStoredSession()

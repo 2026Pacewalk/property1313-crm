@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router';
-import { ArrowLeft, Bell, Search } from 'lucide-react';
-import { useDataStore } from '@/stores/dataStore';
+import { Bell } from 'lucide-react';
+import ThemeToggle from '@/components/shared/ThemeToggle';
+import { cn } from '@/lib/utils';
 
 interface MobileHeaderProps {
   title: string;
@@ -8,31 +9,25 @@ interface MobileHeaderProps {
 
 export default function MobileHeader({ title }: MobileHeaderProps) {
   const navigate = useNavigate();
-  const { notifications } = useDataStore();
-  const unreadCount = notifications.filter((n) => !n.read && !n.deleted).length;
 
   return (
-    <header className="h-12 bg-p13-black flex items-center px-4 sticky top-0 z-10 flex-shrink-0">
-      <button onClick={() => navigate(-1)} className="text-neutral-400 hover:text-white mr-3">
-        <ArrowLeft size={20} />
+    <header className={cn(
+      'sticky top-0 z-30 flex items-center gap-3 px-4 h-12',
+      'bg-background/90 backdrop-blur-md border-b border-border',
+      'transition-colors duration-200'
+    )}>
+      <h1 className="flex-1 text-sm font-semibold text-foreground truncate">{title}</h1>
+
+      {/* Theme Toggle */}
+      <ThemeToggle className="w-8 h-8" />
+
+      {/* Notification */}
+      <button
+        onClick={() => navigate('/notifications')}
+        className="relative w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+      >
+        <Bell size={18} />
       </button>
-      <h1 className="text-white text-[15px] font-semibold flex-1 text-center">{title}</h1>
-      <div className="flex items-center gap-3">
-        <button className="text-neutral-400 hover:text-white">
-          <Search size={18} />
-        </button>
-        <button
-          onClick={() => navigate('/notifications')}
-          className="text-neutral-400 hover:text-white relative"
-        >
-          <Bell size={18} />
-          {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 bg-p13-yellow text-p13-black rounded-full flex items-center justify-center font-bold text-[8px] w-3.5 h-3.5">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
-          )}
-        </button>
-      </div>
     </header>
   );
 }
