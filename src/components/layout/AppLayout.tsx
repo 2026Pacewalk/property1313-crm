@@ -62,8 +62,10 @@ export default function AppLayout() {
 
       {/* Main Content */}
       <div
-        className="flex-1 flex flex-col overflow-hidden transition-all duration-300"
-        style={{ marginLeft: !isMobile ? (sidebarCollapsed ? 64 : 240) : 0 }}
+        className={cn(
+          'flex-1 flex flex-col overflow-hidden transition-all duration-300',
+          !isMobile && (sidebarCollapsed ? 'ml-16' : 'ml-60')
+        )}
       >
         <ImpersonationBanner />
 
