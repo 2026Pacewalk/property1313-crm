@@ -248,6 +248,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.removeItem('p13_session');
     sessionStorage.removeItem('p13_session');
     set({ user: null, isAuthenticated: false, token: null });
+    window.location.href = '/login';
   },
 
   setLoginMethod: (method) => set({ loginMethod: method }),

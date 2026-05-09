@@ -98,12 +98,25 @@ export default function DesktopSidebar() {
         <ThemeToggle className={cn('w-full', sidebarCollapsed && 'w-9 h-9')} />
       </div>
 
-      {/* User */}
+      {/* Logout */}
       <div className="p-3 border-t border-white/[0.06]">
         <button
           onClick={logout}
           className={cn(
-            'flex items-center text-neutral-400 hover:text-white transition-colors w-full',
+            'flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors w-full rounded-lg hover:bg-red-500/10 py-2',
+            sidebarCollapsed ? 'justify-center px-0' : 'px-3'
+          )}
+        >
+          <LogOut size={18} />
+          {!sidebarCollapsed && <span className="text-xs font-medium">Logout</span>}
+        </button>
+      </div>
+
+      {/* User */}
+      <div className="p-3 border-t border-white/[0.06]">
+        <div
+          className={cn(
+            'flex items-center text-neutral-400 w-full',
             sidebarCollapsed ? 'justify-center' : 'px-2'
           )}
         >
@@ -120,7 +133,7 @@ export default function DesktopSidebar() {
             </div>
           )}
           {!sidebarCollapsed && <LogOut size={14} className="text-neutral-500" />}
-        </button>
+        </div>
       </div>
     </aside>
   );
