@@ -132,7 +132,6 @@ export default function DesktopSidebar() {
               <p className="text-[10px] text-neutral-500 capitalize truncate">{user?.role?.replace('_', ' ')}</p>
             </div>
           )}
-          {!sidebarCollapsed && <LogOut size={14} className="text-neutral-500" />}
         </div>
       </div>
     </aside>
