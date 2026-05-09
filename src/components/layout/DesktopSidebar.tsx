@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router';
+import { useLocation, Link } from 'react-router';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -48,13 +48,15 @@ export default function DesktopSidebar() {
     )}>
       {/* Logo */}
       <div className="h-14 flex items-center px-4 border-b border-sidebar-border flex-shrink-0">
-        <img src="/logo-website.png" alt="Property1313" className={cn('h-5 w-auto transition-opacity', sidebarCollapsed && 'hidden')} />
+        {!sidebarCollapsed && (
+          <img src="/logo-website.png" alt="Property1313" className="h-7 w-auto" />
+        )}
         {sidebarCollapsed && (
-          <img src="/logo-icon.png" alt="P1313" className="h-7 w-auto" />
+          <img src="/logo-icon.png" alt="P1313" className="h-8 w-auto mx-auto" />
         )}
         <button
           onClick={toggleSidebar}
-          className="ml-auto text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
+          className={cn('text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors p-1 rounded-md hover:bg-sidebar-accent', sidebarCollapsed && 'mx-auto')}
         >
           {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
@@ -65,20 +67,20 @@ export default function DesktopSidebar() {
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <a
+            <Link
               key={item.path}
-              href={item.path}
+              to={item.path}
               className={cn(
                 'flex items-center gap-3 rounded-lg transition-all duration-150',
                 sidebarCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5',
                 isActive
-                  ? 'bg-sidebar-primary/10 text-sidebar-primary font-medium'
-                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
+                  ? 'bg-p13-yellow/10 text-p13-yellow font-medium border-l-2 border-p13-yellow'
+                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground border-l-2 border-transparent'
               )}
             >
               <item.icon size={18} />
               {!sidebarCollapsed && <span className="text-sm">{item.label}</span>}
-            </a>
+            </Link>
           );
         })}
 
@@ -94,20 +96,20 @@ export default function DesktopSidebar() {
             {adminItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
-                <a
+                <Link
                   key={item.path}
-                  href={item.path}
+                  to={item.path}
                   className={cn(
                     'flex items-center gap-3 rounded-lg transition-all duration-150',
                     sidebarCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5',
                     isActive
-                      ? 'bg-sidebar-primary/10 text-sidebar-primary font-medium'
-                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
+                      ? 'bg-p13-yellow/10 text-p13-yellow font-medium border-l-2 border-p13-yellow'
+                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground border-l-2 border-transparent'
                   )}
                 >
                   <item.icon size={18} />
                   {!sidebarCollapsed && <span className="text-sm">{item.label}</span>}
-                </a>
+                </Link>
               );
             })}
           </>
