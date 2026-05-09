@@ -18,6 +18,7 @@ import AdminUsers from './pages/AdminUsers';
 import AuditLogs from './pages/AuditLogs';
 import EditProject from './pages/EditProject';
 import MasterDatabase from './pages/MasterDatabase';
+import Profile from './pages/Profile';
 import ToastContainer from './components/shared/ToastContainer';
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/automation" element={<Automation />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/audit-logs" element={<AuditLogs />} />
