@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, X, Star, Clock, Sparkles, MessageCircle, Heart,
@@ -26,7 +26,7 @@ const toneIcons: Record<string, React.ReactNode> = {
 export default function TemplatePicker() {
   const {
     isPickerOpen, closePicker, pickerContext, pendingConfirmation,
-    getFavorites, getRecent, getSuggested, getFilteredTemplates,
+    getFavorites, getRecent, getSuggested, getFilteredTemplates, getTemplateById,
     toggleFavorite, renderMessage, logWhatsAppOpen, markAsSent,
     clearPendingConfirmation, categories,
   } = useWhatsAppStore();
@@ -46,6 +46,17 @@ export default function TemplatePicker() {
   const favorites = getFavorites();
   const recent = getRecent();
   const suggested = getSuggested(leadScore);
+
+  // Auto-select template when templateId is provided (Quick Send flow)
+  useEffect(() => {
+    if (pickerContext?.templateId && !selectedTemplate) {
+      const template = getTemplateById(pickerContext.templateId);
+      if (template) {
+        setSelectedTemplate(template);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickerContext?.templateId]);
 
   // Validation - normalize user phone before checking
   let userPhone = '';

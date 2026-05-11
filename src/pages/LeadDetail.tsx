@@ -184,8 +184,9 @@ export default function LeadDetail() {
                   leadName: lead.name,
                   leadPhone: normalizeMobile(lead.phone || ''),
                   projectName: lead.projectInterest,
+                  templateId: t.id,
                 })}
-                className="snap-start flex-shrink-0 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:border-p13-yellow transition-colors"
+                className="snap-start flex-shrink-0 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:border-p13-yellow hover:text-foreground transition-colors"
               >
                 <MessageCircle size={14} className="text-green-600" />{t.name}
               </button>
@@ -206,6 +207,7 @@ export default function LeadDetail() {
                       leadName: lead.name,
                       leadPhone: normalizeMobile(lead.phone || ''),
                       projectName: lead.projectInterest,
+                      templateId: t.id,
                     })}
                     className="snap-start flex-shrink-0 bg-gradient-to-br from-p13-black to-neutral-800 text-foreground rounded-lg px-3 py-2 text-left min-w-[140px]"
                   >

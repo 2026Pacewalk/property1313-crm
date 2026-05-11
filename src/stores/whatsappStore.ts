@@ -31,7 +31,7 @@ interface WhatsAppState {
   selectedTemplateId: string | null;
   isEditorOpen: boolean;
   isPickerOpen: boolean;
-  pickerContext: { leadId?: string; leadName?: string; leadPhone?: string; projectName?: string } | null;
+  pickerContext: { leadId?: string; leadName?: string; leadPhone?: string; projectName?: string; templateId?: string } | null;
 
   // Pending confirmation (after deep link opens)
   pendingConfirmation: { logId: string; leadName: string } | null;
@@ -58,7 +58,7 @@ interface WhatsAppState {
   cloneTemplate: (id: string) => WhatsAppTemplate;
   openEditor: (templateId?: string) => void;
   closeEditor: () => void;
-  openPicker: (context: { leadId?: string; leadName?: string; leadPhone?: string; projectName?: string }) => void;
+  openPicker: (context: { leadId?: string; leadName?: string; leadPhone?: string; projectName?: string; templateId?: string }) => void;
   closePicker: () => void;
 
   // AI Tone Engine
