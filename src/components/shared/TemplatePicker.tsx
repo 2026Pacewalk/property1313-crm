@@ -51,8 +51,32 @@ export default function TemplatePicker() {
   useEffect(() => {
     if (pickerContext?.templateId && !selectedTemplate) {
       const template = getTemplateById(pickerContext.templateId);
-      if (template) {
+      if (template && pickerContext.leadName) {
         setSelectedTemplate(template);
+        // Render the template with ALL variable names that templates use
+        const now = new Date();
+        const rendered = renderMessage(template, {
+          // Customer / lead
+          customer_name: pickerContext.leadName,
+          leadName: pickerContext.leadName,
+          // Project
+          project_name: pickerContext.projectName || 'our project',
+          projectName: pickerContext.projectName || 'our project',
+          project_location: pickerContext.projectLocation || 'Prime Location',
+          // Visit date/time
+          visit_date: now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+          visit_time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+          // Sales person
+          sales_person_name: user?.name || 'Team',
+          agent_name: user?.name || 'Team',
+          agent_phone: user?.phone || '',
+          // Company
+          company_name: 'Property1313',
+          company_mobile: '8910001313',
+          // Links
+          public_project_link: `https://p1313.com/p/${(pickerContext.projectName || 'project').toLowerCase().replace(/\s+/g, '-')}`,
+        });
+        setPreviewMessage(rendered);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,19 +107,33 @@ export default function TemplatePicker() {
     });
   }, [activeTab, activeCategory, search, favorites, recent, getFilteredTemplates]);
 
-  const buildContext = useCallback((): Record<string, string> => ({
-    customer_name: pickerContext?.leadName || 'Customer',
-    project_name: pickerContext?.projectName || 'Our Project',
-    project_location: 'Prime Location',
-    sales_person_name: user?.name || 'Team',
-    user_mobile: user?.whatsappMobile || user?.phone || '',
-    company_name: 'Property1313',
-    company_mobile: '8910001313',
-    visit_date: new Date().toLocaleDateString(),
-    visit_time: '10:30 AM',
-    callback_time: '2:00 PM today',
-    public_project_link: `https://p1313.com/p/${pickerContext?.projectName?.toLowerCase().replace(/\s+/g, '-') || 'project'}`,
-  }), [pickerContext, user]);
+  const buildContext = useCallback((): Record<string, string> => {
+    const now = new Date();
+    return {
+      // Customer / lead
+      customer_name: pickerContext?.leadName || 'Customer',
+      leadName: pickerContext?.leadName || 'Customer',
+      // Project
+      project_name: pickerContext?.projectName || 'Our Project',
+      projectName: pickerContext?.projectName || 'Our Project',
+      project_location: pickerContext?.projectLocation || 'Prime Location',
+      // Visit date/time (dynamic)
+      visit_date: now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      visit_time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+      // Sales person
+      sales_person_name: user?.name || 'Team',
+      agent_name: user?.name || 'Team',
+      agent_phone: user?.phone || '',
+      user_mobile: user?.whatsappMobile || user?.phone || '',
+      // Company
+      company_name: 'Property1313',
+      company_mobile: '8910001313',
+      // Callback
+      callback_time: '2:00 PM today',
+      // Links
+      public_project_link: `https://p1313.com/p/${(pickerContext?.projectName || 'project').toLowerCase().replace(/\s+/g, '-')}`,
+    };
+  }, [pickerContext, user]);
 
   const handleSelectTemplate = (template: WhatsAppTemplate) => {
     const rendered = renderMessage(template, buildContext());
@@ -408,12 +446,12 @@ export default function TemplatePicker() {
                 </div>
               </div>
 
-              {/* Main: Open WhatsApp Button — called DIRECTLY from onClick */}
+              {/* Main: Open WhatsApp Button */}
               {!openFailed && (
                 <button
                   onClick={handleOpenWhatsApp}
                   disabled={opening || !userHasMobile || !leadPhoneValid}
-                  className="w-full h-12 bg-green-500 text-foreground rounded-xl text-sm font-semibold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+                  className="w-full h-12 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
                 >
                   {opening ? (
                     <>
@@ -423,7 +461,7 @@ export default function TemplatePicker() {
                   ) : (
                     <>
                       <ExternalLink size={16} />
-                      Open WhatsApp {deviceLabel} for {pickerContext?.leadName || 'Lead'}
+                      Send via WhatsApp
                     </>
                   )}
                 </button>
@@ -443,9 +481,9 @@ export default function TemplatePicker() {
                     href={manualUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full h-12 bg-green-500 text-foreground rounded-xl text-sm font-semibold hover:bg-green-600 flex items-center justify-center gap-2 transition-all"
+                    className="w-full h-12 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 flex items-center justify-center gap-2 transition-all"
                   >
-                    <Link2 size={16} /> Open WhatsApp Manually
+                    <Link2 size={16} /> Open WhatsApp
                   </a>
                 </div>
               )}

@@ -185,6 +185,7 @@ export default function LeadDetail() {
                   leadName: lead.name,
                   leadPhone: normalizeMobile(lead.phone || ''),
                   projectName: lead.projectInterest,
+                  projectLocation: lead.preferredLocation || lead.targetCity || 'Prime Location',
                   templateId: t.id,
                 })}
                 className="snap-start flex-shrink-0 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:border-p13-yellow hover:text-foreground transition-colors"
@@ -253,6 +254,7 @@ export default function LeadDetail() {
             leadName: lead.name,
             leadPhone: normalizeMobile(lead.phone || ''),
             projectName: lead.projectInterest,
+            projectLocation: lead.preferredLocation || lead.targetCity || 'Prime Location',
           })}
           className="flex-1 h-10 bg-green-600 text-white rounded-lg text-[13px] font-medium flex items-center justify-center gap-1.5 hover:bg-green-700 transition-colors"
         >
