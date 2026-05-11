@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useAuthStore } from '@/stores/authStore';
 import { useWhatsAppStore } from '@/stores/whatsappStore';
 import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps, normalizeMobile } from '@/lib/phone-validation';
 import { getInitials, getAvatarColor } from '@/data/mockData';
@@ -18,7 +19,8 @@ import { cn } from '@/lib/utils';
 export default function LeadDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { leads, followups, visits, updateLead, projects } = useDataStore();
+  const { leads, followups, visits, updateLead, addFollowup, projects } = useDataStore();
+  const { user } = useAuthStore();
   const { addToast } = useUIStore();
   const { openPicker, isPickerOpen, getFavorites, getSuggested } = useWhatsAppStore();
   const lead = leads.find(l => l.id === id);
@@ -103,9 +105,50 @@ export default function LeadDetail() {
   };
 
   const handleAddFollowup = () => {
-    if (!followupNote || !followupDate) { addToast({ type: 'error', message: 'Please fill all fields' }); return; }
+    if (!followupNote.trim() || !followupDate) { addToast({ type: 'error', message: 'Please fill all fields' }); return; }
+    // Actually save the follow-up
+    addFollowup({
+      id: `fu_${Date.now()}`,
+      leadId: lead.id,
+      leadName: lead.name,
+      leadPhone: lead.phone || '',
+      note: followupNote.trim(),
+      scheduledAt: new Date(followupDate).toISOString(),
+      status: 'pending',
+      assignedTo: user?.id || '',
+      createdAt: new Date().toISOString(),
+    });
     addToast({ type: 'success', message: 'Follow-up added!' });
     setShowFollowup(false);
+    setFollowupNote('');
+    setFollowupDate('');
+  };
+
+  // Action handlers for top icon buttons
+  const handleCall = () => {
+    if (lead.phone) {
+      window.location.href = `tel:+91${normalizeMobile(lead.phone)}`;
+    } else {
+      addToast({ type: 'error', message: 'No phone number available' });
+    }
+  };
+  const handleQuickWhatsApp = () => {
+    openPicker({
+      leadId: lead.id,
+      leadName: lead.name,
+      leadPhone: normalizeMobile(lead.phone || ''),
+      projectName: lead.projectInterest,
+      projectLocation: lead.preferredLocation || lead.targetCity || 'Prime Location',
+    });
+  };
+  const handleQuickFollowup = () => setShowFollowup(true);
+  const handleMap = () => {
+    const loc = lead.preferredLocation || lead.targetCity || '';
+    if (loc) {
+      window.open(`https://maps.google.com/?q=${encodeURIComponent(loc)}`, '_blank');
+    } else {
+      addToast({ type: 'error', message: 'No location set for this lead' });
+    }
   };
 
   return (
@@ -115,8 +158,13 @@ export default function LeadDetail() {
         <button onClick={() => navigate('/leads')} className="text-muted-foreground"><ArrowLeft size={18} /></button>
         <span className="text-[15px] font-semibold truncate flex-1">{lead.name}</span>
         <div className="flex gap-2">
-          {[{ icon: Phone, bg: 'bg-green-500' }, { icon: MessageCircle, bg: 'bg-p13-yellow' }, { icon: Bell, bg: 'bg-blue-500' }, { icon: MapPin, bg: 'bg-orange-500' }].map((a, i) => (
-            <motion.button key={i} whileTap={{ scale: 0.9 }} className={`w-8 h-8 ${a.bg} rounded-full flex items-center justify-center`}>
+          {[
+            { icon: Phone, bg: 'bg-green-500', onClick: handleCall, title: 'Call' },
+            { icon: MessageCircle, bg: 'bg-p13-yellow', onClick: handleQuickWhatsApp, title: 'WhatsApp' },
+            { icon: Bell, bg: 'bg-blue-500', onClick: handleQuickFollowup, title: 'Follow-up' },
+            { icon: MapPin, bg: 'bg-orange-500', onClick: handleMap, title: 'Map' },
+          ].map((a, i) => (
+            <motion.button key={i} whileTap={{ scale: 0.9 }} onClick={a.onClick} title={a.title} className={`w-8 h-8 ${a.bg} rounded-full flex items-center justify-center`}>
               <a.icon size={13} className="text-foreground" />
             </motion.button>
           ))}
@@ -163,13 +211,20 @@ export default function LeadDetail() {
               <Sparkles size={16} className="text-p13-yellow" />
               <span className="text-[13px] font-semibold text-p13-yellow">AI Suggestions</span>
             </div>
-            {aiSuggestions.map((s, i) => (
-              <div key={i} className="border-l-2 border-p13-yellow pl-3 mb-2.5 last:mb-0">
-                <p className="text-[13px] font-medium text-foreground">{s.title}</p>
-                <p className="text-xs text-muted-foreground">{s.desc}</p>
-                <span className="text-xs text-p13-yellow cursor-pointer font-medium">{s.action}</span>
-              </div>
-            ))}
+            {aiSuggestions.map((s, i) => {
+              // Map action text to actual handler
+              let handleAction = () => {};
+              if (s.action === 'Schedule Now') handleAction = () => navigate('/visits');
+              else if (s.action === 'Add Follow-up') handleAction = handleQuickFollowup;
+              else if (s.action === 'Send via WhatsApp') handleAction = handleQuickWhatsApp;
+              return (
+                <div key={i} className="border-l-2 border-p13-yellow pl-3 mb-2.5 last:mb-0">
+                  <p className="text-[13px] font-medium text-foreground">{s.title}</p>
+                  <p className="text-xs text-muted-foreground">{s.desc}</p>
+                  <button onClick={handleAction} className="text-xs text-p13-yellow font-medium hover:underline mt-0.5">{s.action}</button>
+                </div>
+              );
+            })}
           </div>
         )}
 
