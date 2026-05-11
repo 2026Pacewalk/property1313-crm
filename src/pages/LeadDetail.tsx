@@ -12,6 +12,7 @@ import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileI
 import { getInitials, getAvatarColor } from '@/data/mockData';
 import StatusBadge from '@/components/shared/StatusBadge';
 import BottomSheet from '@/components/shared/BottomSheet';
+import TemplatePicker from '@/components/shared/TemplatePicker';
 import { cn } from '@/lib/utils';
 
 export default function LeadDetail() {
@@ -19,7 +20,7 @@ export default function LeadDetail() {
   const navigate = useNavigate();
   const { leads, followups, visits, updateLead, projects } = useDataStore();
   const { addToast } = useUIStore();
-  const { openPicker, getFavorites, getSuggested } = useWhatsAppStore();
+  const { openPicker, isPickerOpen, getFavorites, getSuggested } = useWhatsAppStore();
   const lead = leads.find(l => l.id === id);
 
   // Edit lead state
@@ -478,6 +479,9 @@ export default function LeadDetail() {
           </div>
         )}
       </BottomSheet>
+
+      {/* WhatsApp Template Picker */}
+      {isPickerOpen && <TemplatePicker />}
     </div>
   );
 }
