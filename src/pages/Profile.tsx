@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
+import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps } from '@/lib/phone-validation';
 import {
   getInitials, getAvatarColor, users as allUsers,
   userSessions, notificationPrefs, auditLogs, loginActivity
@@ -71,7 +72,12 @@ export default function Profile() {
   const myAuditLogs = auditLogs.filter(al => al.userId === user.id);
 
   const handleSaveProfile = () => {
-    updateUser({ name: editName, displayName: editDisplayName, phone: editPhone, whatsappMobile: editWhatsappMobile, timezone: editTimezone });
+    // Validate mobile numbers
+    const phoneResult = validateMobile(editPhone);
+    const waResult = editWhatsappMobile.trim() ? validateMobile(editWhatsappMobile) : { valid: true, normalized: editWhatsappMobile };
+    if (!phoneResult.valid) { addToast({ type: 'error', message: phoneResult.error || 'Invalid mobile number' }); return; }
+    if (!waResult.valid) { addToast({ type: 'error', message: 'Invalid WhatsApp number' }); return; }
+    updateUser({ name: editName, displayName: editDisplayName, phone: phoneResult.normalized, whatsappMobile: waResult.normalized, timezone: editTimezone });
     addToast({ type: 'success', message: 'Profile updated successfully' });
     setShowEdit(false);
   };
@@ -556,13 +562,29 @@ export default function Profile() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Mobile Number</label>
-            <input value={editPhone} onChange={e => setEditPhone(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+            <div className="flex">
+              <span className="h-11 px-2 flex items-center bg-muted border border-r-0 border-border rounded-l-lg text-xs text-muted-foreground font-medium">+91</span>
+              <input
+                {...mobileInputProps}
+                value={editPhone}
+                onChange={e => handleMobileInputChange(e.target.value, setEditPhone)}
+                onBlur={() => handleMobileInputBlur(editPhone, setEditPhone)}
+                className="flex-1 h-11 px-3 rounded-r-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none font-mono tracking-wide"
+              />
+            </div>
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">WhatsApp Mobile</label>
-            <input value={editWhatsappMobile} onChange={e => setEditWhatsappMobile(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none" />
+            <div className="flex">
+              <span className="h-11 px-2 flex items-center bg-muted border border-r-0 border-border rounded-l-lg text-xs text-muted-foreground font-medium">+91</span>
+              <input
+                {...mobileInputProps}
+                value={editWhatsappMobile}
+                onChange={e => handleMobileInputChange(e.target.value, setEditWhatsappMobile)}
+                onBlur={() => handleMobileInputBlur(editWhatsappMobile, setEditWhatsappMobile)}
+                className="flex-1 h-11 px-3 rounded-r-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none font-mono tracking-wide"
+              />
+            </div>
             <p className="text-[10px] text-muted-foreground mt-1">Used for WhatsApp template sending</p>
           </div>
           <div>

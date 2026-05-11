@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import {
   Search, SlidersHorizontal, Plus, Phone, MessageCircle, Bell,
   LayoutList, LayoutGrid, X, User, Home, Users,
@@ -9,6 +9,7 @@ import {
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useMasterStore } from '@/stores/masterStore';
+import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps, mobileInputClasses } from '@/lib/phone-validation';
 import { getInitials, getAvatarColor, users as allUsers } from '@/data/mockData';
 import StatusBadge from '@/components/shared/StatusBadge';
 import BottomSheet from '@/components/shared/BottomSheet';
@@ -265,20 +266,18 @@ export default function Leads() {
       )}
 
       {/* Lead List */}
-      <motion.div layout className={viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-3 gap-3' : 'space-y-2'}>
-        <AnimatePresence>
-          {filtered.map((lead, i) => (
-            viewMode === 'grid'
-              ? <LeadGridCard key={lead.id} lead={lead} index={i} onClick={() => navigate(`/leads/${lead.id}`)} />
-              : <LeadListCard key={lead.id} lead={lead} index={i} onClick={() => navigate(`/leads/${lead.id}`)} />
-          ))}
-        </AnimatePresence>
+      <div className={viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-3 gap-3' : 'space-y-2'}>
+        {filtered.map((lead, i) => (
+          viewMode === 'grid'
+            ? <LeadGridCard key={lead.id} lead={lead} index={i} onClick={() => navigate(`/leads/${lead.id}`)} />
+            : <LeadListCard key={lead.id} lead={lead} index={i} onClick={() => navigate(`/leads/${lead.id}`)} />
+        ))}
         {filtered.length === 0 && (
           <div className="text-center py-12 col-span-full">
             <p className="text-sm text-muted-foreground">No leads found</p>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Filter Bottom Sheet */}
       <BottomSheet isOpen={showFilter} onClose={() => setShowFilter(false)} title="Filters">
@@ -399,9 +398,44 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
     addToast({ type: 'success', message: `Added "${val}" to sources` });
   };
 
+  const [mobileError, setMobileError] = useState('');
+  const [altMobileError, setAltMobileError] = useState('');
+
+  const handleMobileBlur = () => {
+    const normalized = handleMobileInputBlur(mobileNumber, setMobileNumber);
+    const result = validateMobile(normalized);
+    setMobileError(result.valid ? '' : (result.error || ''));
+  };
+
+  const handleAltMobileBlur = () => {
+    if (!alternateMobile.trim()) { setAltMobileError(''); return; }
+    const normalized = handleMobileInputBlur(alternateMobile, setAlternateMobile);
+    const result = validateMobile(normalized);
+    setAltMobileError(result.valid ? '' : (result.error || ''));
+  };
+
   const handleSubmit = () => {
     if (!fullName.trim()) { addToast({ type: 'error', message: 'Full Name is required' }); return; }
     if (!mobileNumber.trim()) { addToast({ type: 'error', message: 'Mobile Number is required' }); return; }
+    
+    // Validate mobile number
+    const mobileResult = validateMobile(mobileNumber);
+    if (!mobileResult.valid) {
+      addToast({ type: 'error', message: mobileResult.error || 'Please enter a valid 10-digit mobile number' });
+      setMobileError(mobileResult.error || '');
+      return;
+    }
+    
+    // Validate alternate mobile if provided
+    if (alternateMobile.trim()) {
+      const altResult = validateMobile(alternateMobile);
+      if (!altResult.valid) {
+        addToast({ type: 'error', message: 'Alternate mobile: ' + (altResult.error || 'Invalid number') });
+        setAltMobileError(altResult.error || '');
+        return;
+      }
+    }
+    
     if (!targetCity.trim()) { addToast({ type: 'error', message: 'Target City is required' }); return; }
     if (!lookingFor.trim()) { addToast({ type: 'error', message: 'Looking For is required' }); return; }
     if (!inquirySource.trim()) { addToast({ type: 'error', message: 'Inquiry Source is required' }); return; }
@@ -410,8 +444,8 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
     addLead({
       id: `l${Date.now()}`,
       name: fullName.trim(),
-      phone: mobileNumber.trim(),
-      alternateMobile: alternateMobile.trim() || undefined,
+      phone: mobileResult.normalized,
+      alternateMobile: alternateMobile.trim() ? validateMobile(alternateMobile).normalized : undefined,
       status: 'new',
       source: inquirySource,
       inquirySource,
@@ -452,24 +486,37 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
           <div className="flex">
             <span className="h-10 px-2 flex items-center bg-muted border border-r-0 border-border rounded-l-lg text-xs text-muted-foreground font-medium">+91</span>
             <input
+              {...mobileInputProps}
               value={mobileNumber}
-              onChange={e => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-              placeholder="9876543210"
-              className="flex-1 h-10 px-3 rounded-r-lg border border-border bg-card text-sm placeholder:text-muted-foreground/50 focus:border-p13-yellow outline-none transition-all"
+              onChange={e => handleMobileInputChange(e.target.value, setMobileNumber)}
+              onBlur={handleMobileBlur}
+              className={cn(
+                'flex-1 h-10 px-3 rounded-r-lg border bg-card text-sm placeholder:text-muted-foreground/50 focus:border-p13-yellow outline-none transition-all',
+                mobileInputClasses,
+                mobileError ? 'border-red-400 focus:border-red-400' : 'border-border'
+              )}
             />
           </div>
+          {mobileError && <p className="text-[10px] text-red-500 mt-0.5">{mobileError}</p>}
         </div>
         <div>
           <Label>Alternate Mobile</Label>
           <div className="flex">
             <span className="h-10 px-2 flex items-center bg-muted border border-r-0 border-border rounded-l-lg text-xs text-muted-foreground font-medium">+91</span>
             <input
+              {...mobileInputProps}
               value={alternateMobile}
-              onChange={e => setAlternateMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              onChange={e => handleMobileInputChange(e.target.value, setAlternateMobile)}
+              onBlur={handleAltMobileBlur}
               placeholder="Optional"
-              className="flex-1 h-10 px-3 rounded-r-lg border border-border bg-card text-sm placeholder:text-muted-foreground/50 focus:border-p13-yellow outline-none transition-all"
+              className={cn(
+                'flex-1 h-10 px-3 rounded-r-lg border bg-card text-sm placeholder:text-muted-foreground/50 focus:border-p13-yellow outline-none transition-all',
+                mobileInputClasses,
+                altMobileError ? 'border-red-400 focus:border-red-400' : 'border-border'
+              )}
             />
           </div>
+          {altMobileError && <p className="text-[10px] text-red-500 mt-0.5">{altMobileError}</p>}
         </div>
       </div>
 
@@ -589,12 +636,12 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
 /* ============================================================
    LEAD CARDS
    ============================================================ */
-function LeadListCard({ lead, index, onClick }: { lead: Lead; index: number; onClick: () => void }) {
+function LeadListCard({ lead, onClick }: { lead: Lead; index: number; onClick: () => void }) {
   const color = getAvatarColor(lead.name);
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.15 }}
+    <div
       onClick={onClick}
-      className="bg-muted rounded-lg p-3 shadow-xs flex items-center gap-3 cursor-pointer hover:shadow-md transition-all hover:-translate-y-0.5"
+      className="bg-card rounded-lg p-3 shadow-xs border border-border/50 flex items-center gap-3 cursor-pointer hover:shadow-md transition-all active:scale-[0.98]"
       style={{ borderLeft: `3px solid ${getLeadStatusColor(lead.leadScore)}` }}
     >
       <div className="w-10 h-10 rounded-full flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0" style={{ backgroundColor: color }}>
@@ -614,15 +661,15 @@ function LeadListCard({ lead, index, onClick }: { lead: Lead; index: number; onC
           </span>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-function LeadGridCard({ lead, index, onClick }: { lead: Lead; index: number; onClick: () => void }) {
+function LeadGridCard({ lead, onClick }: { lead: Lead; index: number; onClick: () => void }) {
   const color = getAvatarColor(lead.name);
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.15 }}
-      onClick={onClick} className="bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50 cursor-pointer hover:shadow-md transition-all hover:-translate-y-0.5"
+    <div
+      onClick={onClick} className="bg-card rounded-xl p-4 shadow-xs border border-border/50 cursor-pointer hover:shadow-md transition-all active:scale-[0.98]"
     >
       <div className="flex items-start justify-between mb-2">
         <StatusBadge status={lead.status} />
@@ -644,7 +691,7 @@ function LeadGridCard({ lead, index, onClick }: { lead: Lead; index: number; onC
         <button className="w-8 h-8 rounded-full bg-p13-yellow/10 flex items-center justify-center"><MessageCircle size={12} className="text-green-600" /></button>
         <button className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center"><Bell size={12} className="text-blue-500" /></button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

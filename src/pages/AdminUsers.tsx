@@ -11,6 +11,7 @@ import { useAuthStore, usePermission } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useRBACStore } from '@/stores/rbacStore';
 import { getInitials, getAvatarColor, userSessions, loginActivity } from '@/data/mockData';
+import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps } from '@/lib/phone-validation';
 import BottomSheet from '@/components/shared/BottomSheet';
 import { cn } from '@/lib/utils';
 
@@ -74,10 +75,17 @@ export default function AdminUsers() {
   const handleCreateUser = () => {
     if (!newName.trim() || !newEmail.trim()) { addToast({ type: 'error', message: 'Name and email are required' }); return; }
     if (newPassword.length < 8) { addToast({ type: 'error', message: 'Password must be at least 8 characters' }); return; }
+    // Validate mobile if provided
+    let normalizedPhone = newPhone;
+    if (newPhone.trim()) {
+      const result = validateMobile(newPhone);
+      if (!result.valid) { addToast({ type: 'error', message: result.error || 'Invalid mobile number' }); return; }
+      normalizedPhone = result.normalized;
+    }
     rbac.createUser({
       name: newName.trim(),
       email: newEmail.trim(),
-      phone: newPhone || '+91 00000 00000',
+      phone: normalizedPhone || '0000000000',
       role: newRole as 'admin' | 'manager' | 'sales_person' | 'telecaller' | 'project_team',
       avatar: '',
       isActive: true,
@@ -379,8 +387,17 @@ export default function AdminUsers() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Mobile</label>
-            <input value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="+91 98765 43210"
-              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
+            <div className="flex">
+              <span className="h-11 px-2 flex items-center bg-muted border border-r-0 border-border rounded-l-lg text-xs text-muted-foreground font-medium">+91</span>
+              <input
+                {...mobileInputProps}
+                value={newPhone}
+                onChange={e => handleMobileInputChange(e.target.value, setNewPhone)}
+                onBlur={() => handleMobileInputBlur(newPhone, setNewPhone)}
+                placeholder="9876543210"
+                className="flex-1 h-11 px-3 rounded-r-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow font-mono tracking-wide"
+              />
+            </div>
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Role</label>

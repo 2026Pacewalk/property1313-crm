@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import { MapPin, Calendar, Phone, Clock, List, CalendarDays } from 'lucide-react';
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
@@ -58,18 +58,18 @@ export default function Visits() {
         <Calendar size={16} /> Schedule Visit
       </button>
 
-      <AnimatePresence mode="wait">
+      <div>
         {viewMode === 'list' ? (
-          <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <div>
             {Object.keys(grouped).sort().map(date => (
               <div key={date}>
-                <div className="sticky top-0 bg-p13-white z-[5] py-2 border-b border-border mb-2">
+                <div className="sticky top-0 bg-background z-[5] py-2 border-b border-border mb-2">
                   <p className="text-sm font-semibold">{new Date(date).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
                   <p className="text-xs text-muted-foreground">{grouped[date].length} visits</p>
                 </div>
-                {grouped[date].map((v, i) => (
-                  <motion.div key={v.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                    className={`bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50 mb-3 ${statusColors[v.status] || ''} border-l-[3px]`}>
+                {grouped[date].map((v) => (
+                  <div key={v.id}
+                    className={`bg-card rounded-xl p-4 shadow-xs border border-border/50 mb-3 ${statusColors[v.status] || ''} border-l-[3px]`}>
                     <div className="flex items-center justify-between mb-2">
                       <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${statusBg[v.status] || ''}`}>{v.status.replace('_', ' ')}</span>
                       <span className="text-xs text-muted-foreground">{v.visitType === 'first_visit' ? 'First Visit' : 'Revisit'}</span>
@@ -95,13 +95,13 @@ export default function Visits() {
                       {v.status === 'scheduled' && <button className="flex-1 h-8 bg-p13-yellow text-p13-black rounded-lg text-xs font-semibold">Start Visit</button>}
                       <button className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center"><Phone size={12} className="text-green-500" /></button>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             ))}
-          </motion.div>
+          </div>
         ) : (
-          <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <div>
             <div className="bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50">
               <div className="grid grid-cols-7 gap-1 text-center">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
@@ -124,9 +124,9 @@ export default function Visits() {
                 })}
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </div>
 
       <BottomSheet isOpen={showSchedule} onClose={() => setShowSchedule(false)} title="Schedule Visit">
         <div className="space-y-4 py-2">

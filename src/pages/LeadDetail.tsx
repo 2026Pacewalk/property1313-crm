@@ -8,6 +8,7 @@ import {
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useWhatsAppStore } from '@/stores/whatsappStore';
+import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps } from '@/lib/phone-validation';
 import { getInitials, getAvatarColor } from '@/data/mockData';
 import StatusBadge from '@/components/shared/StatusBadge';
 import BottomSheet from '@/components/shared/BottomSheet';
@@ -79,10 +80,14 @@ export default function LeadDetail() {
     if (!lead) return;
     if (!editName.trim()) { addToast({ type: 'error', message: 'Name is required' }); return; }
     if (!editPhone.trim()) { addToast({ type: 'error', message: 'Phone is required' }); return; }
+    
+    // Validate mobile number
+    const phoneResult = validateMobile(editPhone);
+    if (!phoneResult.valid) { addToast({ type: 'error', message: phoneResult.error || 'Invalid mobile number' }); return; }
 
     updateLead(lead.id, {
       name: editName.trim(),
-      phone: editPhone.trim(),
+      phone: phoneResult.normalized,
       email: editEmail.trim() || undefined,
       status: editStatus,
       leadScore: editLeadScore,
@@ -280,9 +285,16 @@ export default function LeadDetail() {
             {/* Phone */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone *</label>
-              <input value={editPhone} onChange={(e) => setEditPhone(e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none"
-              />
+              <div className="flex">
+                <span className="h-11 px-2 flex items-center bg-muted border border-r-0 border-border rounded-l-lg text-xs text-muted-foreground font-medium">+91</span>
+                <input
+                  {...mobileInputProps}
+                  value={editPhone}
+                  onChange={(e) => handleMobileInputChange(e.target.value, setEditPhone)}
+                  onBlur={() => handleMobileInputBlur(editPhone, setEditPhone)}
+                  className="flex-1 h-11 px-3 rounded-r-lg border border-border bg-card text-sm focus:border-p13-yellow focus:ring-2 focus:ring-p13-yellow/20 outline-none font-mono tracking-wide"
+                />
+              </div>
             </div>
 
             {/* Email */}

@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -37,49 +36,43 @@ export default function FloatingActionButton({ actions, className }: FABProps) {
   }, [open]);
 
   return (
-    <div ref={ref} className={cn('fixed bottom-20 md:bottom-6 right-4 md:right-6 z-[55] flex flex-col items-end gap-2', className)}>
-      {/* Speed Dial Actions */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="flex flex-col items-end gap-2 mb-1"
-          >
-            {actions.map((action, i) => (
-              <motion.button
-                key={action.id}
-                initial={{ opacity: 0, y: 12, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.9 }}
-                transition={{ duration: 0.12, delay: i * 0.03 }}
-                onClick={() => { action.onClick(); setOpen(false); }}
-                className="flex items-center gap-2 group"
-              >
-                <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground/50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-2.5 py-1 rounded-md shadow-sm whitespace-nowrap border border-border dark:border-slate-700">
-                  {action.label}
-                </span>
-                <span
-                  className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg text-foreground text-sm transition-transform active:scale-90"
-                  style={{ backgroundColor: action.color || '#FBBD08' }}
-                >
-                  {action.icon}
-                </span>
-              </motion.button>
-            ))}
-          </motion.div>
+    <div ref={ref} className={cn('fixed bottom-20 right-4 z-[55] flex flex-col items-end gap-2', className)}>
+      {/* Speed Dial Actions - CSS transitions only, no spring/bounce */}
+      <div
+        className={cn(
+          'flex flex-col items-end gap-2 mb-1 transition-all duration-200 ease-out',
+          open ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-2 pointer-events-none'
         )}
-      </AnimatePresence>
+      >
+        {actions.map((action) => (
+          <button
+            key={action.id}
+            onClick={() => { action.onClick(); setOpen(false); }}
+            className="flex items-center gap-2 group active:scale-95 transition-transform"
+          >
+            <span className={cn(
+              'text-xs font-medium px-2.5 py-1 rounded-md shadow-sm whitespace-nowrap border transition-colors',
+              'bg-card text-foreground border-border'
+            )}>
+              {action.label}
+            </span>
+            <span
+              className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg text-white text-sm"
+              style={{ backgroundColor: action.color || '#FBBD08' }}
+            >
+              {action.icon}
+            </span>
+          </button>
+        ))}
+      </div>
 
       {/* Main FAB Button */}
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          'w-14 h-14 rounded-full bg-p13-yellow text-p13-black shadow-lg shadow-p13-yellow/30',
+          'w-14 h-14 rounded-full bg-p13-yellow text-p13-black shadow-xl',
           'flex items-center justify-center transition-all duration-200 active:scale-90',
-          open && 'rotate-45 shadow-xl'
+          open && 'rotate-45'
         )}
       >
         {open ? <X size={22} /> : <Plus size={24} />}

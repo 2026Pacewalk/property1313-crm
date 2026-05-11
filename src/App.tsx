@@ -4,6 +4,7 @@ import AppLayout from './components/layout/AppLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Leads from './pages/Leads';
+import LeadDetail from './pages/LeadDetail';
 import Projects from './pages/Projects';
 import Visits from './pages/Visits';
 import Followups from './pages/Followups';
@@ -31,7 +32,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/leads" element={<Leads />} />
-          <Route path="/leads/:id" element={<Leads />} />
+          <Route path="/leads/:id" element={<LeadDetail />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug/edit" element={<EditProject />} />
           <Route path="/visits" element={<Visits />} />

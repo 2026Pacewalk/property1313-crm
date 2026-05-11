@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router';
-import { Users, Bell, MapPin, Building2, MoreHorizontal, LogOut, Settings, User, Shield } from 'lucide-react';
+import { Home, Users, Bell, MapPin, Building2, MoreHorizontal, LogOut, Settings, User, Shield } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
 
 const tabs = [
+  { path: '/dashboard', label: 'Home', icon: Home },
   { path: '/leads', label: 'Leads', icon: Users },
   { path: '/follow-ups', label: 'Follow-ups', icon: Bell },
   { path: '/visits', label: 'Visits', icon: MapPin },

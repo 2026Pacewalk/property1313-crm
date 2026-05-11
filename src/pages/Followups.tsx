@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import {
   Check, Phone, MessageCircle, Clock, ChevronRight,
   Bell, Calendar, Pause, X, Plus,
@@ -215,27 +215,26 @@ export default function Followups() {
       </button>
 
       {/* Reminder List */}
-      <AnimatePresence mode="wait">
-        <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          {filtered.length === 0 ? (
-            <div className="text-center py-12">
-              <Bell size={40} className="text-muted-foreground/50 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">No {tabs.find(t => t.key === activeTab)?.label.toLowerCase()} reminders</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {filtered.map((reminder, i) => {
-                const TypeIcon = typeIcons[reminder.reminderType] || Bell;
-                const cfg = statusConfig[reminder.status] || statusConfig.pending;
-                const lead = leads.find((l) => l.id === reminder.leadId);
-                return (
-                  <motion.div key={reminder.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                    onClick={() => setShowDetail(reminder)}
-                    className={cn('bg-card rounded-lg p-3 shadow-xs border border-neutral-200/50 cursor-pointer hover:shadow-md transition-all',
-                      reminder.status === 'overdue' && 'border-l-[3px] border-l-red-500',
-                      reminder.status === 'triggered' && 'border-l-[3px] border-l-orange-500',
-                      reminder.status === 'snoozed' && 'border-l-[3px] border-l-blue-400',
-                    )}>
+      <div>
+        {filtered.length === 0 ? (
+          <div className="text-center py-12">
+            <Bell size={40} className="text-muted-foreground/50 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">No {tabs.find(t => t.key === activeTab)?.label.toLowerCase()} reminders</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filtered.map((reminder) => {
+              const TypeIcon = typeIcons[reminder.reminderType] || Bell;
+              const cfg = statusConfig[reminder.status] || statusConfig.pending;
+              const lead = leads.find((l) => l.id === reminder.leadId);
+              return (
+                <div key={reminder.id}
+                  onClick={() => setShowDetail(reminder)}
+                  className={cn('bg-card rounded-lg p-3 shadow-xs border border-border/50 cursor-pointer hover:shadow-md transition-all',
+                    reminder.status === 'overdue' && 'border-l-[3px] border-l-red-500',
+                    reminder.status === 'triggered' && 'border-l-[3px] border-l-orange-500',
+                    reminder.status === 'snoozed' && 'border-l-[3px] border-l-blue-400',
+                  )}>
                     <div className="flex items-start gap-3">
                       <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0', cfg.bg)}>
                         <TypeIcon size={16} className={cfg.color} />
@@ -258,13 +257,12 @@ export default function Followups() {
                       </div>
                       <ChevronRight size={14} className="text-muted-foreground/50 mt-1" />
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
           )}
-        </motion.div>
-      </AnimatePresence>
+        </div>
 
       {/* ==================== ADD REMINDER SHEET ==================== */}
       <BottomSheet isOpen={showAdd} onClose={() => { setShowAdd(false); resetForm(); }} title="Add Follow-up" maxHeight="90vh">

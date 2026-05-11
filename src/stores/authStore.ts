@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { User, UserRole } from '@/types';
 import { users } from '@/data/mockData';
+import { normalizeMobile } from '@/lib/phone-validation';
 
 interface LoginAttempt {
   count: number;
@@ -44,14 +45,7 @@ interface AuthState {
   checkStoredSession: () => boolean;
 }
 
-// Normalize mobile: handles +91, 91, 10-digit, spaces, hyphens
-const normalizeMobile = (input: string): string => {
-  const cleaned = input.replace(/[\s\-]/g, '');
-  if (cleaned.startsWith('+91')) return cleaned; // +919876543210
-  if (cleaned.startsWith('91') && cleaned.length === 12) return '+' + cleaned; // 919876543210
-  if (cleaned.length === 10) return '+91' + cleaned; // 9876543210
-  return cleaned;
-};
+// Use centralized normalizeMobile - returns 10 digits only
 
 const isIdentifierEmail = (input: string): boolean => input.includes('@');
 
