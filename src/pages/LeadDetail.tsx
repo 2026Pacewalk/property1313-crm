@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { motion } from 'framer-motion';
 import {
   ArrowLeft, Phone, MessageCircle, Bell, MapPin, Pencil,
   User, Calendar, Tag, IndianRupee, Flame, Sparkles, Building2, Save, Search, X, Check
@@ -164,9 +163,9 @@ export default function LeadDetail() {
             { icon: Bell, bg: 'bg-blue-500', onClick: handleQuickFollowup, title: 'Follow-up' },
             { icon: MapPin, bg: 'bg-orange-500', onClick: handleMap, title: 'Map' },
           ].map((a, i) => (
-            <motion.button key={i} whileTap={{ scale: 0.9 }} onClick={a.onClick} title={a.title} className={`w-8 h-8 ${a.bg} rounded-full flex items-center justify-center`}>
-              <a.icon size={13} className="text-foreground" />
-            </motion.button>
+            <button key={i} onClick={a.onClick} title={a.title} className={`w-8 h-8 ${a.bg} rounded-full flex items-center justify-center active:scale-90 transition-transform`}>
+              <a.icon size={13} className="text-white" />
+            </button>
           ))}
         </div>
       </div>

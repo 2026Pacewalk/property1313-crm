@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
-import { motion } from 'framer-motion';
-import { Search, Eye, Building2, Share2, MoreVertical, Plus, IndianRupee, Users, MapPin, ExternalLink, Pencil, Trash2 } from 'lucide-react';
+import { Search, Eye, Building2, Share2, MoreVertical, Plus, IndianRupee, Users, MapPin, ExternalLink, Pencil, Trash2, Upload, X } from 'lucide-react';
 import { useAuthStore, usePermission } from '@/stores/authStore';
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
@@ -39,8 +38,8 @@ export default function Projects() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map((project, i) => (
-          <motion.div key={project.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.06, 0.5) }}
+        {filtered.map((project) => (
+          <div key={project.id}
             className="bg-card rounded-xl shadow-xs border border-neutral-200/50 overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group">
             {/* Media */}
             <div className="relative h-44 md:h-52 overflow-hidden">
@@ -87,7 +86,7 @@ export default function Projects() {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -138,33 +137,195 @@ export default function Projects() {
         })()}
       </BottomSheet>
 
-      <BottomSheet isOpen={showAdd} onClose={() => setShowAdd(false)} title="Add Project">
-        <div className="space-y-4 py-2">
-          {['Project Name', 'Location', 'Description'].map(label => (
-            <div key={label}><label className="text-xs font-medium text-muted-foreground mb-1 block">{label}</label>
-              {label === 'Description' ? (
-                <textarea rows={3} placeholder={`Enter ${label.toLowerCase()}`} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
-              ) : (
-                <input placeholder={`Enter ${label.toLowerCase()}`} className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm" />
-              )}
-            </div>
-          ))}
-          <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Property Type</label>
-            <div className="flex flex-wrap gap-2">
-              {['Apartment', 'Villa', 'Plot', 'Commercial'].map(t => (
-                <button key={t} className="px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-200 text-muted-foreground">{t}</button>
-              ))}
-            </div>
-          </div>
-          <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Cover Image</label>
-            <div className="border-2 border-dashed border-neutral-300 rounded-lg h-24 flex items-center justify-center">
-              <span className="text-xs text-muted-foreground">Drag & drop or click to upload</span>
-            </div>
-          </div>
-          <button onClick={() => { addToast({ type: 'success', message: 'Project added!' }); setShowAdd(false); }}
-            className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold">Save Project</button>
-        </div>
-      </BottomSheet>
+      <AddProjectSheet
+        isOpen={showAdd}
+        onClose={() => setShowAdd(false)}
+        onSaved={() => addToast({ type: 'success', message: 'Project added!' })}
+      />
     </div>
+  );
+}
+
+// Add Project Bottom Sheet with Image Upload
+interface AddProjectSheetProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSaved: () => void;
+}
+
+function AddProjectSheet({ isOpen, onClose, onSaved }: AddProjectSheetProps) {
+  const { addProject } = useDataStore();
+  const [projectName, setProjectName] = useState('');
+  const [projectLocation, setProjectLocation] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [coverPreview, setCoverPreview] = useState<string>('');
+  const [coverData, setCoverData] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { addToast } = useUIStore();
+
+  const propertyTypes = ['Apartment', 'Villa', 'Plot', 'Commercial', 'Penthouse', 'Studio'];
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      addToast({ type: 'error', message: 'Please select an image file' });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      addToast({ type: 'error', message: 'Image must be less than 5MB' });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      setCoverPreview(result);
+      setCoverData(result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const toggleType = (type: string) => {
+    setSelectedTypes(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
+
+  const handleSave = () => {
+    if (!projectName.trim()) { addToast({ type: 'error', message: 'Project name is required' }); return; }
+    if (!projectLocation.trim()) { addToast({ type: 'error', message: 'Location is required' }); return; }
+
+    addProject({
+      id: `p_${Date.now()}`,
+      name: projectName.trim(),
+      location: projectLocation.trim(),
+      description: description.trim() || projectName.trim(),
+      propertyType: selectedTypes.length > 0 ? selectedTypes : ['Apartment'],
+      coverImage: coverData || '',
+      status: 'active',
+      minPrice: 0,
+      maxPrice: 0,
+      galleryImages: coverData ? [coverData] : [''],
+      slug: projectName.trim().toLowerCase().replace(/\s+/g, '-'),
+      shareLink: `https://p1313.xyz/project/${projectName.trim().toLowerCase().replace(/\s+/g, '-')}`,
+      amenities: [],
+      viewCount: 0,
+      leadCount: 0,
+      conversionCount: 0,
+      createdAt: new Date().toISOString(),
+    });
+
+    onSaved();
+    onClose();
+    // Reset form
+    setProjectName('');
+    setProjectLocation('');
+    setDescription('');
+    setSelectedTypes([]);
+    setCoverPreview('');
+    setCoverData('');
+  };
+
+  return (
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Add Project">
+      <div className="space-y-4 py-2">
+        {/* Project Name */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Project Name *</label>
+          <input
+            value={projectName}
+            onChange={e => setProjectName(e.target.value)}
+            placeholder="e.g. Sunset Residences"
+            className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none transition-all"
+          />
+        </div>
+
+        {/* Location */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Location *</label>
+          <input
+            value={projectLocation}
+            onChange={e => setProjectLocation(e.target.value)}
+            placeholder="e.g. Zirakpur, Punjab"
+            className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none transition-all"
+          />
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Description</label>
+          <textarea
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            rows={3}
+            placeholder="Brief description of the project"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none focus:border-p13-yellow outline-none transition-all"
+          />
+        </div>
+
+        {/* Property Type */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Property Type</label>
+          <div className="flex flex-wrap gap-2">
+            {propertyTypes.map(t => (
+              <button
+                key={t}
+                onClick={() => toggleType(t)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  selectedTypes.includes(t)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Cover Image Upload */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Cover Image</label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          {coverPreview ? (
+            <div className="relative rounded-lg overflow-hidden border border-border">
+              <img src={coverPreview} alt="Cover preview" className="w-full h-32 object-cover" />
+              <button
+                onClick={() => { setCoverPreview(''); setCoverData(''); }}
+                className="absolute top-2 right-2 w-7 h-7 bg-black/60 text-white rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
+              >
+                <X size={14} />
+              </button>
+              <p className="absolute bottom-2 left-2 text-[10px] text-white bg-black/50 px-2 py-0.5 rounded">Image selected</p>
+            </div>
+          ) : (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full border-2 border-dashed border-border rounded-lg h-24 flex flex-col items-center justify-center gap-1.5 hover:border-p13-yellow hover:bg-p13-yellow/5 transition-all cursor-pointer"
+            >
+              <Upload size={20} className="text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Click to upload cover image</span>
+              <span className="text-[10px] text-muted-foreground/60">JPG, PNG up to 5MB</span>
+            </button>
+          )}
+        </div>
+
+        {/* Save Button */}
+        <button
+          onClick={handleSave}
+          disabled={!projectName.trim() || !projectLocation.trim()}
+          className="w-full h-11 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        >
+          Save Project
+        </button>
+      </div>
+    </BottomSheet>
   );
 }
