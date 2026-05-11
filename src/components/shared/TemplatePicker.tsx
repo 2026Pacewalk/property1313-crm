@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import type { WhatsAppTemplate } from '@/types';
 import {
   isMobileDevice, isValidWhatsAppNumber, getSendMethodLabel, openWhatsApp,
+  normalizeMobileForWhatsApp,
 } from '@/lib/whatsapp';
 import MessagePreview from './MessagePreview';
 import BottomSheet from './BottomSheet';
@@ -46,8 +47,12 @@ export default function TemplatePicker() {
   const recent = getRecent();
   const suggested = getSuggested(leadScore);
 
-  // Validation
-  const userHasMobile = !!(user?.whatsappMobile || user?.phone);
+  // Validation - normalize user phone before checking
+  let userPhone = '';
+  try {
+    userPhone = normalizeMobileForWhatsApp(user?.whatsappMobile || user?.phone || '');
+  } catch { /* user has no valid phone */ }
+  const userHasMobile = userPhone.length >= 11;
   const leadPhone = pickerContext?.leadPhone || '';
   const leadPhoneValid = isValidWhatsAppNumber(leadPhone);
   const deviceLabel = getSendMethodLabel();
@@ -95,14 +100,39 @@ export default function TemplatePicker() {
    * This function is called directly from onClick — no async, no setTimeout.
    */
   const handleOpenWhatsApp = () => {
-    if (!selectedTemplate || !pickerContext?.leadName || !leadPhoneValid || !userHasMobile) return;
+    // Show clear errors instead of silently returning
+    if (!selectedTemplate) {
+      addToast({ type: 'error', message: 'Please select a template first' });
+      return;
+    }
+    if (!pickerContext?.leadName) {
+      addToast({ type: 'error', message: 'Lead name is missing' });
+      return;
+    }
+    if (!pickerContext?.leadPhone) {
+      addToast({ type: 'error', message: 'Lead phone number is missing' });
+      return;
+    }
+    if (!userHasMobile) {
+      addToast({ type: 'error', message: 'Your mobile number is not set. Please update your profile.' });
+      return;
+    }
+
+    // Normalize phone to 10 digits then convert to WhatsApp format (91XXXXXXXXXX)
+    let waPhone: string;
+    try {
+      waPhone = normalizeMobileForWhatsApp(pickerContext.leadPhone);
+    } catch (e) {
+      addToast({ type: 'error', message: 'Invalid phone number format. Please check the lead phone number.' });
+      return;
+    }
 
     setOpening(true);
     setOpenFailed(false);
 
     // STEP 1: Open WhatsApp synchronously from click handler (REQUIRED for popup permission)
     const result = openWhatsApp({
-      phone: pickerContext.leadPhone || '',
+      phone: waPhone,
       message: previewMessage,
     });
 
@@ -122,7 +152,7 @@ export default function TemplatePicker() {
         templateId: selectedTemplate.id,
         leadId: pickerContext.leadId,
         leadName: pickerContext.leadName,
-        leadPhone: pickerContext.leadPhone || '',
+        leadPhone: waPhone,
         userId: user?.id || 'unknown',
         userName: user?.name || 'Unknown',
         userMobile: user?.whatsappMobile || user?.phone || '',

@@ -48,7 +48,8 @@ export function normalizeMobileForWhatsApp(phone: string): string {
   }
 
   // Case: 9876543210 (10 digits) -> prepend 91
-  if (cleaned.length === 10 && cleaned[0] >= '7' && cleaned[0] <= '9') {
+  // Indian mobile numbers start with 6, 7, 8, or 9
+  if (cleaned.length === 10 && cleaned[0] >= '6' && cleaned[0] <= '9') {
     const result = '91' + cleaned;
     debug('Format: 10-digit -> ', result);
     return result;

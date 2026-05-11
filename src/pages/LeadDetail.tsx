@@ -8,7 +8,7 @@ import {
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useWhatsAppStore } from '@/stores/whatsappStore';
-import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps } from '@/lib/phone-validation';
+import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps, normalizeMobile } from '@/lib/phone-validation';
 import { getInitials, getAvatarColor } from '@/data/mockData';
 import StatusBadge from '@/components/shared/StatusBadge';
 import BottomSheet from '@/components/shared/BottomSheet';
@@ -182,7 +182,7 @@ export default function LeadDetail() {
                 onClick={() => openPicker({
                   leadId: lead.id,
                   leadName: lead.name,
-                  leadPhone: lead.phone,
+                  leadPhone: normalizeMobile(lead.phone || ''),
                   projectName: lead.projectInterest,
                 })}
                 className="snap-start flex-shrink-0 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:border-p13-yellow transition-colors"
@@ -204,7 +204,7 @@ export default function LeadDetail() {
                     onClick={() => openPicker({
                       leadId: lead.id,
                       leadName: lead.name,
-                      leadPhone: lead.phone,
+                      leadPhone: normalizeMobile(lead.phone || ''),
                       projectName: lead.projectInterest,
                     })}
                     className="snap-start flex-shrink-0 bg-gradient-to-br from-p13-black to-neutral-800 text-foreground rounded-lg px-3 py-2 text-left min-w-[140px]"
@@ -248,10 +248,10 @@ export default function LeadDetail() {
           onClick={() => openPicker({
             leadId: lead.id,
             leadName: lead.name,
-            leadPhone: lead.phone,
+            leadPhone: normalizeMobile(lead.phone || ''),
             projectName: lead.projectInterest,
           })}
-          className="flex-1 h-10 bg-white/10 text-foreground rounded-lg text-[13px] font-medium flex items-center justify-center gap-1.5 hover:bg-white/20 transition-colors"
+          className="flex-1 h-10 bg-green-600 text-white rounded-lg text-[13px] font-medium flex items-center justify-center gap-1.5 hover:bg-green-700 transition-colors"
         >
           <MessageCircle size={14} /> Send WhatsApp
         </button>
