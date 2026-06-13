@@ -1,46 +1,25 @@
 import { Navigate, useLocation } from 'react-router';
 import { useAuthStore } from '@/stores/authStore';
-import { useEffect } from 'react';
 
 interface RouteGuardProps {
   children: React.ReactNode;
-  requireAuth?: boolean;
   allowedRoles?: string[];
 }
 
-export default function RouteGuard({ children, requireAuth = true, allowedRoles }: RouteGuardProps) {
-  const { isAuthenticated, checkStoredSession } = useAuthStore();
+/**
+ * Role gate for routes rendered inside AppLayout (which already enforces authentication).
+ * Reads reactive store state so it re-renders correctly when auth/user changes.
+ */
+export default function RouteGuard({ children, allowedRoles }: RouteGuardProps) {
+  const { isAuthenticated, user } = useAuthStore();
   const location = useLocation();
 
-  // Try to restore session on mount
-  useEffect(() => {
-    if (!isAuthenticated) {
-      checkStoredSession();
-    }
-  }, []);
-
-  const currentAuth = useAuthStore.getState().isAuthenticated;
-
-  // Not authenticated, redirect to login
-  if (requireAuth && !currentAuth) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // Check role restrictions
-  if (requireAuth && allowedRoles && allowedRoles.length > 0) {
-    const currentUser = useAuthStore.getState().user;
-    if (!currentUser || !allowedRoles.includes(currentUser.role)) {
-      return <Navigate to="/dashboard" replace />;
-    }
-  }
-
-  // Authenticated but on login page, redirect to dashboard
-  if (!requireAuth && currentAuth) {
-    const currentUser = useAuthStore.getState().user;
-    if (currentUser) {
-      const { getRedirectPath } = useAuthStore.getState();
-      return <Navigate to={getRedirectPath(currentUser.role)} replace />;
-    }
+  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;

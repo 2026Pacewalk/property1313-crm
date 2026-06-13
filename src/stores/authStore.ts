@@ -1,7 +1,13 @@
 import { create } from 'zustand';
 import type { User, UserRole } from '@/types';
-import { users } from '@/data/mockData';
 import { normalizeMobile } from '@/lib/phone-validation';
+import { useRBACStore } from './rbacStore';
+
+/**
+ * Resolve the live user list from the RBAC store (persisted + mutated by admin actions),
+ * not the static mock — so creating/disabling users and role changes actually affect login.
+ */
+const getUsers = (): User[] => useRBACStore.getState().users;
 
 interface LoginAttempt {
   count: number;
@@ -19,8 +25,11 @@ interface AuthState {
   // Impersonation
   originalUser: User | null;
   isImpersonating: boolean;
+  // User pending a forced password change (NOT yet authenticated)
+  pendingForcePasswordChange: User | null;
   // Actions
   login: (identifier: string, password: string) => { success: boolean; error?: string; user?: User; requiresPasswordChange?: boolean };
+  completeForcedPasswordChange: (newPassword: string, confirmPassword: string) => { success: boolean; error?: string; user?: User };
   loginWithOtp: (identifier: string, otp: string) => { success: boolean; error?: string; user?: User };
   logout: () => void;
   setLoginMethod: (method: 'password' | 'whatsapp') => void;
@@ -52,6 +61,17 @@ const isIdentifierEmail = (input: string): boolean => input.includes('@');
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
+const ATTEMPTS_KEY = 'p13_login_attempts';
+const loadAttempts = (): Record<string, LoginAttempt> => {
+  try {
+    if (typeof localStorage === 'undefined') return {};
+    return JSON.parse(localStorage.getItem(ATTEMPTS_KEY) || '{}');
+  } catch { return {}; }
+};
+const saveAttempts = (attempts: Record<string, LoginAttempt>) => {
+  try { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts)); } catch { /* ignore */ }
+};
+
 const getRedirectPath = (role: UserRole): string => {
   switch (role) {
     case 'super_admin': return '/dashboard';
@@ -70,9 +90,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   token: null,
   loginMethod: 'password',
   rememberMe: false,
-  loginAttempts: {},
+  loginAttempts: loadAttempts(),
   originalUser: null,
   isImpersonating: false,
+  pendingForcePasswordChange: null,
 
   normalizeMobile,
   isIdentifierEmail,
@@ -80,11 +101,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   getUserForIdentifier: (identifier: string) => {
     const trimmed = identifier.trim();
+    const allUsers = getUsers();
     if (isIdentifierEmail(trimmed)) {
-      return users.find(u => u.email.toLowerCase() === trimmed.toLowerCase()) || null;
+      return allUsers.find(u => u.email.toLowerCase() === trimmed.toLowerCase()) || null;
     }
     const normalized = normalizeMobile(trimmed);
-    return users.find(u => {
+    return allUsers.find(u => {
       const userMobile = normalizeMobile(u.phone);
       return userMobile === normalized;
     }) || null;
@@ -112,15 +134,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       lastAttemptAt: Date.now(),
       lockedUntil: newCount >= MAX_FAILED_ATTEMPTS ? Date.now() + LOCKOUT_DURATION_MS : null,
     };
-    set((state) => ({
-      loginAttempts: { ...state.loginAttempts, [identifier]: updated },
-    }));
+    set((state) => {
+      const next = { ...state.loginAttempts, [identifier]: updated };
+      saveAttempts(next);
+      return { loginAttempts: next };
+    });
   },
 
   clearAttempts: (identifier: string) => {
     set((state) => {
       const copy = { ...state.loginAttempts };
       delete copy[identifier];
+      saveAttempts(copy);
       return { loginAttempts: copy };
     });
   },
@@ -167,8 +192,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       return { success: false, error: 'Account temporarily locked. Try again in 15 minutes.' };
     }
 
-    // Success
+    // Password correct, attempts cleared
     clearAttempts(identifier);
+
+    // Forced password change: do NOT authenticate yet — hold the user as pending
+    // so they cannot bypass the reset screen by navigating to a URL directly.
+    if (user.forcePasswordChange) {
+      set({ pendingForcePasswordChange: user, isAuthenticated: false, user: null, token: null });
+      return { success: true, user, requiresPasswordChange: true };
+    }
+
+    // Success
     const token = `jwt_${user.id}_${Date.now()}`;
     const sessionData = { userId: user.id, token, timestamp: Date.now() };
 
@@ -184,11 +218,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       token,
     });
 
-    if (user.forcePasswordChange) {
-      return { success: true, user, requiresPasswordChange: true };
-    }
-
     return { success: true, user };
+  },
+
+  completeForcedPasswordChange: (newPassword, confirmPassword) => {
+    const pending = get().pendingForcePasswordChange;
+    if (!pending) return { success: false, error: 'No pending password change.' };
+
+    const validation = get().resetPassword('', newPassword, confirmPassword);
+    if (!validation.success) return validation;
+
+    // Clear the flag on the persisted user record so it isn't required again
+    useRBACStore.getState().updateUser(pending.id, { forcePasswordChange: false });
+
+    // Now authenticate the user and persist the session
+    const updatedUser = { ...pending, forcePasswordChange: false, lastLoginAt: new Date().toISOString() };
+    const token = `jwt_${pending.id}_${Date.now()}`;
+    const sessionData = { userId: pending.id, token, timestamp: Date.now() };
+    if (get().rememberMe) {
+      localStorage.setItem('p13_session', JSON.stringify({ ...sessionData, remember: true }));
+    } else {
+      sessionStorage.setItem('p13_session', JSON.stringify(sessionData));
+    }
+    set({ user: updatedUser, isAuthenticated: true, token, pendingForcePasswordChange: null });
+    return { success: true, user: updatedUser };
   },
 
   loginWithOtp: (identifier: string, otp: string) => {
@@ -267,7 +320,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (!stored) return false;
 
       const data = JSON.parse(stored);
-      const user = users.find(u => u.id === data.userId);
+      const user = getUsers().find(u => u.id === data.userId);
       if (!user || !user.isActive) {
         localStorage.removeItem('p13_session');
         sessionStorage.removeItem('p13_session');

@@ -15,6 +15,23 @@ export default function Visits() {
   const [activeStatus, setActiveStatus] = useState<string>('all');
 
   const filtered = activeStatus === 'all' ? visits : visits.filter(v => v.status === activeStatus);
+  const today = new Date().toISOString().split('T')[0];
+
+  // Compute a visit's end time from its start time + duration (e.g. "1 hour", "1.5 hours", "30 mins")
+  const getEndTime = (visitTime: string, duration: string) => {
+    const [h, m] = visitTime.split(':').map(Number);
+    let durationMins = 60;
+    const lower = (duration || '').toLowerCase();
+    const numMatch = lower.match(/[\d.]+/);
+    if (numMatch) {
+      const val = parseFloat(numMatch[0]);
+      durationMins = lower.includes('min') ? val : val * 60;
+    }
+    const total = h * 60 + m + durationMins;
+    const endH = Math.floor(total / 60) % 24;
+    const endM = total % 60;
+    return `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`;
+  };
 
   const statusColors: Record<string, string> = {
     scheduled: 'border-l-blue-500', 'in_progress': 'border-l-yellow-500', completed: 'border-l-green-500', cancelled: 'border-l-red-500',
@@ -35,10 +52,10 @@ export default function Visits() {
         <div className="flex items-center gap-2">
           <h1 className="text-h1-mobile md:text-h1-desktop font-semibold">Visits</h1>
           <div className="flex gap-1">
-            <span className="px-2 py-0.5 bg-p13-yellow text-p13-black rounded-full text-[10px] font-bold">Today: {visits.filter(v => v.visitDate === '2026-05-08').length}</span>
+            <span className="px-2 py-0.5 bg-p13-yellow text-p13-black rounded-full text-[10px] font-bold">Today: {visits.filter(v => v.visitDate === today).length}</span>
           </div>
         </div>
-        <div className="flex bg-neutral-200 rounded-lg p-0.5">
+        <div className="flex bg-muted rounded-lg p-0.5">
           <button onClick={() => setViewMode('list')} className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-card shadow-sm' : ''}`}><List size={14} /></button>
           <button onClick={() => setViewMode('calendar')} className={`p-1.5 rounded ${viewMode === 'calendar' ? 'bg-card shadow-sm' : ''}`}><CalendarDays size={14} /></button>
         </div>
@@ -48,7 +65,7 @@ export default function Visits() {
       <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
         {['all', 'scheduled', 'completed', 'cancelled'].map(s => (
           <button key={s} onClick={() => setActiveStatus(s)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize whitespace-nowrap transition-colors ${activeStatus === s ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground'}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize whitespace-nowrap transition-colors ${activeStatus === s ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground'}`}>
             {s === 'all' ? 'All' : s.replace('_', ' ')}
           </button>
         ))}
@@ -76,7 +93,7 @@ export default function Visits() {
                     </div>
                     <div className="flex items-center gap-2 mb-1">
                       <Clock size={14} className="text-muted-foreground" />
-                      <span className="text-sm font-semibold">{v.visitTime} - {String(Number(v.visitTime.split(':')[0]) + (v.duration.includes('1.5') ? 1 : 1)).padStart(2, '0')}:{v.visitTime.split(':')[1]}</span>
+                      <span className="text-sm font-semibold">{v.visitTime} - {getEndTime(v.visitTime, v.duration)}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0" style={{ backgroundColor: getAvatarColor(v.leadName) }}>
@@ -102,26 +119,36 @@ export default function Visits() {
           </div>
         ) : (
           <div>
-            <div className="bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50">
+            <div className="bg-card rounded-xl p-4 shadow-xs border border-border">
               <div className="grid grid-cols-7 gap-1 text-center">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
                   <div key={d} className="text-[10px] font-medium text-muted-foreground py-1">{d}</div>
                 ))}
-                {Array.from({ length: 35 }, (_, i) => {
-                  const day = i - 4;
-                  const hasVisit = day > 0 && day < 32 && visits.some(v => {
-                    const d = new Date(v.visitDate).getDate();
-                    return d === day;
+                {(() => {
+                  const nowDate = new Date();
+                  const year = nowDate.getFullYear();
+                  const month = nowDate.getMonth();
+                  const todayDay = nowDate.getDate();
+                  const daysInMonth = new Date(year, month + 1, 0).getDate();
+                  // Monday-first offset: getDay() returns 0 (Sun)..6 (Sat)
+                  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
+                  return Array.from({ length: 42 }, (_, i) => {
+                    const day = i - firstWeekday + 1;
+                    const inMonth = day > 0 && day <= daysInMonth;
+                    const hasVisit = inMonth && visits.some(v => {
+                      const d = new Date(v.visitDate);
+                      return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+                    });
+                    return (
+                      <div key={i} className={`aspect-square flex flex-col items-center justify-center rounded-lg text-xs ${
+                        inMonth && day === todayDay ? 'bg-p13-yellow text-p13-black font-bold' : inMonth ? 'bg-muted text-foreground/80 hover:bg-muted' : ''
+                      }`}>
+                        {inMonth ? day : ''}
+                        {hasVisit && <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-0.5" />}
+                      </div>
+                    );
                   });
-                  return (
-                    <div key={i} className={`aspect-square flex flex-col items-center justify-center rounded-lg text-xs ${
-                      day === 8 ? 'bg-p13-yellow text-p13-black font-bold' : day > 0 && day < 32 ? 'bg-muted text-foreground/80 hover:bg-neutral-200' : ''
-                    }`}>
-                      {day > 0 && day < 32 ? day : ''}
-                      {hasVisit && day > 0 && day < 32 && <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-0.5" />}
-                    </div>
-                  );
-                })}
+                })()}
               </div>
             </div>
           </div>

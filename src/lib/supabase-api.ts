@@ -26,6 +26,23 @@ async function fetchTable(table: string): Promise<any[]> {
   }
 }
 
+// Insert a record whose keys are ALREADY in DB (snake_case) shape — skips the camel->snake transform.
+async function insertRaw(table: string, dbRecord: any): Promise<any | null> {
+  if (!checkReady()) return null;
+  try {
+    const { data, error } = await supabase.from(table).insert([dbRecord]).select();
+    if (error) {
+      console.error(`[Supabase] insert ${table}:`, error.message, '| Code:', error.code);
+      return null;
+    }
+    if (!data || data.length === 0) return null;
+    return toCamelCase(data[0]);
+  } catch (e) {
+    console.error(`[Supabase] insert ${table} exception:`, e);
+    return null;
+  }
+}
+
 async function insertInto(table: string, record: any): Promise<any | null> {
   if (!checkReady()) return null;
   const dbRecord = toSnakeCase(record);
@@ -94,18 +111,156 @@ export const updateUserDb = (id: string, data: any) => updateIn('users', id, dat
 export const deleteUserDb = (id: string) => deleteFrom('users', id);
 
 // ==================== FOLLOWUPS ====================
-export const fetchFollowups = () => fetchTable('followups');
-export const createFollowup = (followup: any) => insertInto('followups', followup);
+// The frontend FollowUp shape (scheduledAt/note/assignedTo) differs from the DB columns
+// (scheduled_date+scheduled_time/notes/user_id), so map in both directions.
+function followupToDb(f: any) {
+  const dt = f.scheduledAt ? new Date(f.scheduledAt) : null;
+  return {
+    lead_id: f.leadId ?? null,
+    lead_name: f.leadName ?? null,
+    user_id: f.assignedTo || null,
+    type: 'Reminder',
+    status: f.status || 'pending',
+    scheduled_date: dt ? dt.toISOString().split('T')[0] : null,
+    scheduled_time: dt ? dt.toISOString().split('T')[1].slice(0, 5) : null,
+    notes: f.note ?? '',
+    completed_at: f.completedAt || null,
+  };
+}
+function followupFromDb(r: any) {
+  if (!r) return r;
+  const scheduledAt = r.scheduledDate
+    ? (r.scheduledTime ? `${r.scheduledDate}T${r.scheduledTime}:00` : `${r.scheduledDate}T00:00:00`)
+    : r.createdAt;
+  return {
+    id: r.id,
+    leadId: r.leadId,
+    leadName: r.leadName,
+    leadPhone: '',
+    note: r.notes ?? '',
+    scheduledAt,
+    status: r.status,
+    assignedTo: r.userId ?? '',
+    completedAt: r.completedAt ?? undefined,
+    createdAt: r.createdAt,
+  };
+}
+export const fetchFollowups = async () => (await fetchTable('followups')).map(followupFromDb);
+export const createFollowup = async (followup: any) => {
+  const saved = await insertRaw('followups', followupToDb(followup));
+  return saved ? followupFromDb(saved) : null;
+};
 
 // ==================== VISITS ====================
-export const fetchVisits = () => fetchTable('visits');
-export const createVisit = (visit: any) => insertInto('visits', visit);
+const VISIT_DB_STATUSES = ['scheduled', 'completed', 'no_show', 'cancelled', 'rescheduled', 'revisit_required'];
+function visitToDb(v: any) {
+  return {
+    lead_id: v.leadId ?? null,
+    lead_name: v.leadName ?? null,
+    project_name: v.projectName ?? null,
+    user_id: v.assignedTo || null,
+    visit_date: v.visitDate ?? null,
+    visit_time: v.visitTime ?? null,
+    status: VISIT_DB_STATUSES.includes(v.status) ? v.status : 'scheduled',
+    feedback: v.notes ?? null,
+  };
+}
+function visitFromDb(r: any) {
+  if (!r) return r;
+  return {
+    id: r.id,
+    leadId: r.leadId,
+    leadName: r.leadName,
+    leadPhone: '',
+    projectName: r.projectName ?? '',
+    visitDate: r.visitDate,
+    visitTime: r.visitTime,
+    duration: '1 hour',
+    visitType: 'first_visit',
+    status: r.status,
+    assignedTo: r.userId ?? '',
+    notes: r.feedback ?? '',
+    createdAt: r.createdAt,
+  };
+}
+export const fetchVisits = async () => (await fetchTable('visits')).map(visitFromDb);
+export const createVisit = async (visit: any) => {
+  const saved = await insertRaw('visits', visitToDb(visit));
+  return saved ? visitFromDb(saved) : null;
+};
 
 // ==================== LOAN INQUIRIES ====================
-export const fetchLoanInquiries = () => fetchTable('loan_inquiries');
-export const createLoanInquiry = (inquiry: any) => insertInto('loan_inquiries', inquiry);
+function loanToDb(l: any) {
+  return {
+    applicant_name: l.name ?? l.applicantName ?? 'Unknown',
+    phone: l.phone ?? '',
+    email: l.email ?? null,
+    loan_amount: l.loanAmount ?? null,
+    loan_type: l.loanType ?? 'Home Loan',
+    bank_name: l.bankName ?? null,
+    status: l.status || 'new',
+    notes: l.notes ?? null,
+    assigned_to: l.assignedTo || null,
+  };
+}
+function loanFromDb(r: any) {
+  if (!r) return r;
+  return {
+    id: r.id,
+    name: r.applicantName ?? '',
+    phone: r.phone ?? '',
+    email: r.email ?? undefined,
+    loanAmount: r.loanAmount ?? 0,
+    loanType: r.loanType ?? 'Home Loan',
+    bankName: r.bankName ?? undefined,
+    status: r.status,
+    notes: r.notes ?? undefined,
+    assignedTo: r.assignedTo ?? undefined,
+    createdAt: r.createdAt,
+  };
+}
+export const fetchLoanInquiries = async () => (await fetchTable('loan_inquiries')).map(loanFromDb);
+export const createLoanInquiry = async (inquiry: any) => {
+  const saved = await insertRaw('loan_inquiries', loanToDb(inquiry));
+  return saved ? loanFromDb(saved) : null;
+};
 
 // ==================== NOTIFICATIONS ====================
+// Map the broad frontend NotificationType union onto the DB's CHECK-constrained enum.
+const NOTIF_DB_TYPES = ['lead_assigned', 'followup_reminder', 'visit_reminder', 'loan_alert', 'automation', 'security', 'mention', 'system'];
+function notifTypeToDb(type: string): string {
+  if (NOTIF_DB_TYPES.includes(type)) return type;
+  if (/follow/.test(type)) return 'followup_reminder';
+  if (/visit/.test(type)) return 'visit_reminder';
+  if (/loan/.test(type)) return 'loan_alert';
+  if (/lead/.test(type)) return 'lead_assigned';
+  if (/login|security|password/.test(type)) return 'security';
+  if (/mention/.test(type)) return 'mention';
+  if (/automation/.test(type)) return 'automation';
+  return 'system';
+}
+function notifToDb(n: any) {
+  return {
+    user_id: n.userId || null,
+    type: notifTypeToDb(n.type || 'system'),
+    title: n.title ?? '',
+    message: n.description ?? n.message ?? '',
+    read: !!n.read,
+    deleted: !!n.deleted,
+    action_url: n.actionUrl ?? null,
+    related_entity_id: n.entityId ?? null,
+    related_entity_type: n.entityType ?? null,
+  };
+}
+function notifFromDb(r: any) {
+  if (!r) return r;
+  return {
+    ...r,
+    description: r.message ?? r.description ?? '',
+    entityId: r.relatedEntityId ?? r.entityId,
+    entityType: r.relatedEntityType ?? r.entityType,
+  };
+}
 export const fetchNotifications = async (): Promise<any[]> => {
   if (!checkReady()) return [];
   try {
@@ -115,10 +270,13 @@ export const fetchNotifications = async (): Promise<any[]> => {
       .eq('deleted', false)
       .order('created_at', { ascending: false });
     if (error) { console.error('[Supabase] fetch notifications:', error.message); return []; }
-    return (data || []).map((r) => toCamelCase(r));
+    return (data || []).map((r) => notifFromDb(toCamelCase(r)));
   } catch (e) { console.error('[Supabase] fetch notifications exception:', e); return []; }
 };
-export const createNotification = (notification: any) => insertInto('notifications', notification);
+export const createNotification = async (notification: any) => {
+  const saved = await insertRaw('notifications', notifToDb(notification));
+  return saved ? notifFromDb(saved) : null;
+};
 export const markNotificationReadDb = (id: string) => updateIn('notifications', id, { read: true });
 
 // ==================== MASTER VALUES ====================

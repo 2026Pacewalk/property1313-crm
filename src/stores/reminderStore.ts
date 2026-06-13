@@ -162,7 +162,8 @@ export const useReminderStore = create<ReminderState>((set, get) => ({
     const n = now();
     return get().reminders.filter((r) => {
       if (r.isCompleted || r.status === 'cancelled' || r.status === 'snoozed') return false;
-      return r.reminderDateTime < n && r.status !== 'triggered';
+      // A past-due reminder is overdue regardless of whether its notification already fired ('triggered')
+      return r.reminderDateTime < n;
     }).sort((a, b) => new Date(b.reminderDateTime).getTime() - new Date(a.reminderDateTime).getTime());
   },
 

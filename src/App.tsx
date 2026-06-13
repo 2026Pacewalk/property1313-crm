@@ -21,6 +21,11 @@ import EditProject from './pages/EditProject';
 import MasterDatabase from './pages/MasterDatabase';
 import Profile from './pages/Profile';
 import ToastContainer from './components/shared/ToastContainer';
+import RouteGuard from './components/shared/RouteGuard';
+
+// Roles allowed to reach manager+ and admin-only areas
+const MANAGER_ROLES = ['super_admin', 'admin', 'manager'];
+const ADMIN_ROLES = ['super_admin', 'admin'];
 
 export default function App() {
   return (
@@ -39,14 +44,14 @@ export default function App() {
           <Route path="/follow-ups" element={<Followups />} />
           <Route path="/loan-inquiry" element={<LoanInquiry />} />
           <Route path="/whatsapp-templates" element={<WhatsAppTemplates />} />
-          <Route path="/automation" element={<Automation />} />
-          <Route path="/reports" element={<Reports />} />
+          <Route path="/automation" element={<RouteGuard allowedRoles={MANAGER_ROLES}><Automation /></RouteGuard>} />
+          <Route path="/reports" element={<RouteGuard allowedRoles={MANAGER_ROLES}><Reports /></RouteGuard>} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/audit-logs" element={<AuditLogs />} />
-          <Route path="/master-database" element={<MasterDatabase />} />
+          <Route path="/admin/users" element={<RouteGuard allowedRoles={ADMIN_ROLES}><AdminUsers /></RouteGuard>} />
+          <Route path="/admin/audit-logs" element={<RouteGuard allowedRoles={ADMIN_ROLES}><AuditLogs /></RouteGuard>} />
+          <Route path="/master-database" element={<RouteGuard allowedRoles={ADMIN_ROLES}><MasterDatabase /></RouteGuard>} />
         </Route>
       </Routes>
       <ToastContainer />

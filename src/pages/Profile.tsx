@@ -130,7 +130,7 @@ export default function Profile() {
   return (
     <div className="pb-6">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-border px-4 py-2 flex items-center gap-3">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-2 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft size={18} />
         </button>
@@ -180,12 +180,12 @@ export default function Profile() {
             <p className="text-lg font-bold text-foreground">12</p>
             <p className="text-[10px] text-muted-foreground">Leads</p>
           </div>
-          <div className="w-px bg-white/10" />
+          <div className="w-px bg-border" />
           <div className="text-center flex-1">
             <p className="text-lg font-bold text-foreground">8</p>
             <p className="text-[10px] text-muted-foreground">Follow-ups</p>
           </div>
-          <div className="w-px bg-white/10" />
+          <div className="w-px bg-border" />
           <div className="text-center flex-1">
             <p className="text-lg font-bold text-foreground">5</p>
             <p className="text-[10px] text-muted-foreground">Visits</p>
@@ -194,7 +194,7 @@ export default function Profile() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex bg-neutral-200 px-4 py-1 gap-0.5">
+      <div className="flex bg-muted px-4 py-1 gap-0.5">
         {tabs.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
             className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${activeTab === tab.key ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground/80'}`}>
@@ -209,7 +209,7 @@ export default function Profile() {
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* Personal Info Card */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Personal Information</h3>
                   <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 text-xs text-p13-yellow font-medium">
@@ -231,7 +231,7 @@ export default function Profile() {
               </div>
 
               {/* Account Status Card */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Account Status</h3>
                 </div>
@@ -268,7 +268,7 @@ export default function Profile() {
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <button onClick={() => setShowChangePass(true)} className="flex items-center gap-3 w-full px-4 py-3 border-b border-border/50 hover:bg-muted/50 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-p13-yellow/10 flex items-center justify-center">
                     <Lock size={14} className="text-p13-yellow" />
@@ -313,7 +313,7 @@ export default function Profile() {
 
               {/* Recent Audit Log */}
               {myAuditLogs.length > 0 && (
-                <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+                <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                   <div className="px-4 py-3 border-b border-border/50">
                     <h3 className="text-sm font-semibold">Recent Account Activity</h3>
                   </div>
@@ -342,7 +342,7 @@ export default function Profile() {
           {activeTab === 'security' && (
             <motion.div key="security" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* Login Methods */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Login Methods</h3>
                 </div>
@@ -369,7 +369,7 @@ export default function Profile() {
                     </div>
                     <button
                       onClick={() => addToast({ type: 'success', message: `WhatsApp OTP ${user.loginMethods.whatsappOtp ? 'disabled' : 'enabled'}` })}
-                      className={`w-10 h-5 rounded-full relative flex-shrink-0 transition-colors ${user.loginMethods.whatsappOtp ? 'bg-p13-yellow' : 'bg-neutral-300'}`}>
+                      className={`w-10 h-5 rounded-full relative flex-shrink-0 transition-colors ${user.loginMethods.whatsappOtp ? 'bg-p13-yellow' : 'bg-muted'}`}>
                       <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-all ${user.loginMethods.whatsappOtp ? 'left-[22px]' : 'left-0.5'}`} />
                     </button>
                   </div>
@@ -377,12 +377,12 @@ export default function Profile() {
               </div>
 
               {/* Active Sessions */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Active Sessions</h3>
                   <span className="text-[10px] text-muted-foreground">{userSessions.filter(s => s.userId === user.id).length} devices</span>
                 </div>
-                <div className="divide-y divide-neutral-100">
+                <div className="divide-y divide-border">
                   {userSessions.filter(s => s.userId === user.id).map(session => (
                     <div key={session.id} className="flex items-center gap-3 px-4 py-3">
                       <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
@@ -410,7 +410,7 @@ export default function Profile() {
               </div>
 
               {/* Two-Factor Auth */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Two-Factor Authentication</h3>
                 </div>
@@ -451,15 +451,15 @@ export default function Profile() {
               <div className="flex gap-1.5 mb-3">
                 {(['all', 'success', 'failed'] as const).map(f => (
                   <button key={f} onClick={() => setActivityFilter(f)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-colors ${activityFilter === f ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground'}`}>
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-colors ${activityFilter === f ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground'}`}>
                     {f}
                   </button>
                 ))}
               </div>
 
               {/* Activity List */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50">
-                <div className="divide-y divide-neutral-100">
+              <div className="bg-card rounded-xl shadow-xs border border-border">
+                <div className="divide-y divide-border">
                   {filteredActivity.map((activity, i) => (
                     <motion.div key={activity.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                       className="flex items-start gap-3 px-4 py-3">
@@ -491,11 +491,11 @@ export default function Profile() {
           {activeTab === 'notifications' && (
             <motion.div key="notifications" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* CRM Alerts */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">CRM Alerts</h3>
                 </div>
-                <div className="divide-y divide-neutral-100">
+                <div className="divide-y divide-border">
                   <NotificationToggleRow label="Lead Assigned Alerts" desc="When a new lead is assigned to you" enabled={prefs.leadAssigned} onToggle={() => togglePref('leadAssigned')} />
                   <NotificationToggleRow label="Follow-up Reminders" desc="Reminders for upcoming follow-ups" enabled={prefs.followUpReminders} onToggle={() => togglePref('followUpReminders')} />
                   <NotificationToggleRow label="Visit Reminders" desc="Alerts for scheduled visits" enabled={prefs.visitReminders} onToggle={() => togglePref('visitReminders')} />
@@ -505,21 +505,21 @@ export default function Profile() {
               </div>
 
               {/* Security Alerts */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Security</h3>
                 </div>
-                <div className="divide-y divide-neutral-100">
+                <div className="divide-y divide-border">
                   <NotificationToggleRow label="Login Security Alerts" desc="New device or suspicious login alerts" enabled={prefs.loginSecurityAlerts} onToggle={() => togglePref('loginSecurityAlerts')} />
                 </div>
               </div>
 
               {/* Delivery Channels */}
-              <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+              <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
                 <div className="px-4 py-3 border-b border-border/50">
                   <h3 className="text-sm font-semibold">Delivery Channels</h3>
                 </div>
-                <div className="divide-y divide-neutral-100">
+                <div className="divide-y divide-border">
                   <NotificationToggleRow label="Email Notifications" desc="Receive alerts via email" enabled={prefs.emailNotifications} onToggle={() => togglePref('emailNotifications')} />
                   <NotificationToggleRow label="Push Notifications" desc="Browser push notifications" enabled={prefs.pushNotifications} onToggle={() => togglePref('pushNotifications')} />
                   <NotificationToggleRow label="WhatsApp Notifications" desc="Alerts via WhatsApp" enabled={prefs.whatsappNotifications} onToggle={() => togglePref('whatsappNotifications')} />
@@ -631,7 +631,7 @@ export default function Profile() {
               <div className="mt-2">
                 <div className="flex gap-1 mb-1">
                   {[1, 2, 3, 4].map(i => (
-                    <div key={i} className={`h-1 flex-1 rounded-full ${i <= strength ? strengthColors[strength - 1] : 'bg-neutral-200'}`} />
+                    <div key={i} className={`h-1 flex-1 rounded-full ${i <= strength ? strengthColors[strength - 1] : 'bg-muted'}`} />
                   ))}
                 </div>
                 <p className="text-[10px] text-muted-foreground">{strengthLabels[strength - 1] || 'Too weak'}</p>
@@ -645,7 +645,7 @@ export default function Profile() {
                 { label: 'One special character (!@#$%^&*)', valid: /[!@#$%^&*]/.test(newPass) },
               ].map(req => (
                 <div key={req.label} className="flex items-center gap-1.5">
-                  <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center ${req.valid ? 'bg-green-500' : 'bg-neutral-300'}`}>
+                  <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center ${req.valid ? 'bg-green-500' : 'bg-muted'}`}>
                     <Check size={8} className="text-foreground" />
                   </div>
                   <span className={`text-[11px] ${req.valid ? 'text-green-600' : 'text-muted-foreground'}`}>{req.label}</span>
@@ -682,7 +682,7 @@ export default function Profile() {
             const sColor = getAvatarColor(staff.name);
             const sLeads = [12, 8, 5, 0][Math.abs(staff.name.charCodeAt(0)) % 4];
             return (
-              <div key={staff.id} className="bg-card rounded-lg p-3 border border-neutral-200/50">
+              <div key={staff.id} className="bg-card rounded-lg p-3 border border-border">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0"
                     style={{ backgroundColor: sColor }}>
@@ -799,7 +799,7 @@ function ProfileInfoRow({ icon, label, value, verified }: { icon: React.ReactNod
         <span className="text-xs text-muted-foreground">{label}</span>
       </div>
       <div className="flex items-center gap-1.5">
-        <span className="text-sm font-medium text-neutral-800">{value}</span>
+        <span className="text-sm font-medium text-foreground">{value}</span>
         {verified !== undefined && (
           verified ? <BadgeCheck size={14} className="text-green-500" /> : <AlertCircle size={14} className="text-yellow-500" />
         )}
@@ -816,7 +816,7 @@ function NotificationToggleRow({ label, desc, enabled, onToggle }: { label: stri
         <p className="text-[11px] text-muted-foreground">{desc}</p>
       </div>
       <button onClick={onToggle}
-        className={cn('w-10 h-5 rounded-full relative flex-shrink-0 transition-colors', enabled ? 'bg-p13-yellow' : 'bg-neutral-300')}>
+        className={cn('w-10 h-5 rounded-full relative flex-shrink-0 transition-colors', enabled ? 'bg-p13-yellow' : 'bg-muted')}>
         <div className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-all', enabled ? 'left-[22px]' : 'left-0.5')} />
       </button>
     </div>

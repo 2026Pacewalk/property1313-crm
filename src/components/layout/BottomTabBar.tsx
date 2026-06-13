@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router';
-import { Home, Users, Bell, MapPin, Building2, MoreHorizontal, LogOut, Settings, User, Shield } from 'lucide-react';
+import { NavLink, useNavigate, useLocation } from 'react-router';
+import { Home, Users, Bell, MapPin, Building2, MoreHorizontal, LogOut, Settings, User, Shield, BarChart3, MessageCircle, FileText, Zap } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
 
@@ -15,12 +15,15 @@ const tabs = [
 export default function BottomTabBar() {
   const [showMore, setShowMore] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout, user } = useAuthStore();
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin' || user?.role === 'manager';
+  // "More" is active whenever the current route isn't one of the primary tabs
+  const moreActive = showMore || !tabs.some(t => location.pathname === t.path || location.pathname.startsWith(t.path + '/'));
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 h-14 bg-card border-t border-white/[0.08] z-50 flex items-center justify-around px-2">
+      <nav className="fixed bottom-0 left-0 right-0 h-14 bg-card border-t border-border z-50 flex items-center justify-around px-2">
         {tabs.map((tab) => (
           <NavLink
             key={tab.path}
@@ -40,7 +43,7 @@ export default function BottomTabBar() {
           onClick={() => setShowMore(!showMore)}
           className={cn(
             'flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-lg transition-colors',
-            showMore ? 'text-p13-yellow' : 'text-muted-foreground'
+            moreActive ? 'text-p13-yellow' : 'text-muted-foreground'
           )}
         >
           <MoreHorizontal size={20} />
@@ -65,6 +68,33 @@ export default function BottomTabBar() {
                 className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
                 <Settings size={16} className="text-p13-yellow" />
                 <span className="text-sm font-medium dark:text-foreground">Master Database</span>
+              </button>
+            )}
+            <button onClick={() => { navigate('/reports'); setShowMore(false); }}
+              className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
+              <BarChart3 size={16} className="text-muted-foreground" />
+              <span className="text-sm font-medium dark:text-foreground">Reports</span>
+            </button>
+            <button onClick={() => { navigate('/notifications'); setShowMore(false); }}
+              className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
+              <Bell size={16} className="text-muted-foreground" />
+              <span className="text-sm font-medium dark:text-foreground">Notifications</span>
+            </button>
+            <button onClick={() => { navigate('/whatsapp-templates'); setShowMore(false); }}
+              className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
+              <MessageCircle size={16} className="text-green-500" />
+              <span className="text-sm font-medium dark:text-foreground">WhatsApp Templates</span>
+            </button>
+            <button onClick={() => { navigate('/loan-inquiry'); setShowMore(false); }}
+              className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
+              <FileText size={16} className="text-muted-foreground" />
+              <span className="text-sm font-medium dark:text-foreground">Loan Inquiry</span>
+            </button>
+            {isAdmin && (
+              <button onClick={() => { navigate('/automation'); setShowMore(false); }}
+                className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
+                <Zap size={16} className="text-muted-foreground" />
+                <span className="text-sm font-medium dark:text-foreground">Automation</span>
               </button>
             )}
             <button onClick={() => { navigate('/settings'); setShowMore(false); }}

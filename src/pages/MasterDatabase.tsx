@@ -90,6 +90,9 @@ export default function MasterDatabase() {
     return grouped;
   }, [filteredTypes]);
 
+  // All module names (from the full list, so the filter bar never loses options)
+  const allModules = useMemo(() => [...new Set(MASTER_TYPES.map(mt => mt.module))], []);
+
   // Values for selected type
   const typeValues = masterValues
     .filter(v => v.masterTypeId === selectedTypeId)
@@ -221,7 +224,7 @@ export default function MasterDatabase() {
               filterModule === 'all' ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}>
             All
           </button>
-          {Object.keys(typesByModule).map(mod => (
+          {allModules.map(mod => (
             <button key={mod} onClick={() => setFilterModule(mod)}
               className={cn('px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap transition-all',
                 filterModule === mod ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}>
@@ -242,7 +245,7 @@ export default function MasterDatabase() {
                     className={cn('w-full flex items-center gap-2.5 px-4 py-2.5 text-left transition-all hover:bg-muted/50',
                       selectedTypeId === mt.id ? 'bg-p13-yellow/10 border-r-2 border-p13-yellow' : '')}>
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: mt.isActive ? '#10B981' : '#EF4444' }} />
-                    <span className={cn('text-xs flex-1', selectedTypeId === mt.id ? 'font-semibold text-p13-black' : 'text-muted-foreground')}>
+                    <span className={cn('text-xs flex-1', selectedTypeId === mt.id ? 'font-semibold text-foreground' : 'text-muted-foreground')}>
                       {mt.name}
                     </span>
                     <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">{count}</span>
@@ -266,7 +269,7 @@ export default function MasterDatabase() {
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className={cn('flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-all',
                 activeTab === tab.key
-                  ? 'border-p13-yellow text-p13-black'
+                  ? 'border-p13-yellow text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-muted-foreground')}>
               <tab.icon size={13} />
               {tab.label}
@@ -400,7 +403,7 @@ export default function MasterDatabase() {
                   {['add_lead', 'add_project', 'schedule_visit', 'add_followup', 'loan_inquiry', 'add_user'].map(mod => (
                     <button key={mod}
                       onClick={() => { /* re-render with module */ }}
-                      className="px-3 py-1.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground hover:bg-neutral-200 transition-all whitespace-nowrap">
+                      className="px-3 py-1.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground hover:bg-muted transition-all whitespace-nowrap">
                       {mod.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                     </button>
                   ))}
@@ -421,19 +424,19 @@ export default function MasterDatabase() {
                       </div>
                       <div className="flex justify-center">
                         <button onClick={() => updateFieldSetting(fs.id, { isRequired: !fs.isRequired })}
-                          className={cn('w-9 h-5 rounded-full transition-all relative', fs.isRequired ? 'bg-p13-yellow' : 'bg-neutral-300')}>
+                          className={cn('w-9 h-5 rounded-full transition-all relative', fs.isRequired ? 'bg-p13-yellow' : 'bg-muted')}>
                           <div className={cn('w-3.5 h-3.5 bg-card rounded-full absolute top-0.5 transition-all shadow-sm', fs.isRequired ? 'left-[18px]' : 'left-0.5')} />
                         </button>
                       </div>
                       <div className="flex justify-center">
                         <button onClick={() => updateFieldSetting(fs.id, { isVisible: !fs.isVisible })}
-                          className={cn('w-9 h-5 rounded-full transition-all relative', fs.isVisible ? 'bg-green-400' : 'bg-neutral-300')}>
+                          className={cn('w-9 h-5 rounded-full transition-all relative', fs.isVisible ? 'bg-green-400' : 'bg-muted')}>
                           <div className={cn('w-3.5 h-3.5 bg-card rounded-full absolute top-0.5 transition-all shadow-sm', fs.isVisible ? 'left-[18px]' : 'left-0.5')} />
                         </button>
                       </div>
                       <div className="flex justify-center">
                         <button onClick={() => updateFieldSetting(fs.id, { isEditable: !fs.isEditable })}
-                          className={cn('w-9 h-5 rounded-full transition-all relative', fs.isEditable ? 'bg-blue-400' : 'bg-neutral-300')}>
+                          className={cn('w-9 h-5 rounded-full transition-all relative', fs.isEditable ? 'bg-blue-400' : 'bg-muted')}>
                           <div className={cn('w-3.5 h-3.5 bg-card rounded-full absolute top-0.5 transition-all shadow-sm', fs.isEditable ? 'left-[18px]' : 'left-0.5')} />
                         </button>
                       </div>
@@ -560,7 +563,7 @@ export default function MasterDatabase() {
             </select>
           </div>
           <button onClick={handleMerge}
-            className="w-full h-11 bg-card text-foreground rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+            className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold hover:bg-p13-yellow/90 transition-all flex items-center justify-center gap-2">
             <Merge size={15} /> Merge Values
           </button>
         </div>
@@ -585,14 +588,14 @@ export default function MasterDatabase() {
                 <p className="text-sm font-medium text-center">Delete &quot;{v.name}&quot;?</p>
                 <div className="flex gap-3">
                   <button onClick={() => setDeleteConfirm(null)}
-                    className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-neutral-200">
+                    className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-muted">
                     Cancel
                   </button>
                   <button onClick={() => handleDelete(v.id)} disabled={v.usageCount > 0 || v.isSystemDefault}
                     className={cn('flex-1 h-11 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5',
                       v.usageCount > 0 || v.isSystemDefault
-                        ? 'bg-neutral-200 text-muted-foreground cursor-not-allowed'
-                        : 'bg-red-500 text-foreground hover:bg-red-600')}>
+                        ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                        : 'bg-red-500 text-white hover:bg-red-600')}>
                     <Trash2 size={14} /> Delete
                   </button>
                 </div>

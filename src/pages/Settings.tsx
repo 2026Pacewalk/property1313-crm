@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { Moon, Globe, Calendar, DollarSign, Bell, Lock, Shield, Smartphone, Users, UserPlus, FileText, Trash2, ChevronRight, LogOut, UserCircle } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useThemeStore } from '@/stores/themeStore';
 import { getInitials, getAvatarColor } from '@/data/mockData';
 import BottomSheet from '@/components/shared/BottomSheet';
 
@@ -11,7 +12,22 @@ export default function Settings() {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const { addToast } = useUIStore();
+  const { mode, toggle: toggleTheme } = useThemeStore();
   const [showChangePass, setShowChangePass] = useState(false);
+  const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>({
+    'Push Notifications': true,
+    'Email Notifications': true,
+    'WhatsApp Notifications': false,
+    'Sound': true,
+  });
+
+  const toggleNotif = (label: string) => {
+    setNotifPrefs(prev => {
+      const next = { ...prev, [label]: !prev[label] };
+      addToast({ type: 'success', message: `${label} ${next[label] ? 'enabled' : 'disabled'}` });
+      return next;
+    });
+  };
 
   const initials = user ? getInitials(user.name) : 'U';
   const avatarColor = user ? getAvatarColor(user.name) : '#FBBD08';
@@ -47,8 +63,8 @@ export default function Settings() {
     {
       title: 'Team Management',
       items: [
-        { icon: Users, label: 'Manage Users', control: 'link' },
-        { icon: UserPlus, label: 'Invite User', control: 'link' },
+        { icon: Users, label: 'Manage Users', control: 'link', action: () => navigate('/admin/users') },
+        { icon: UserPlus, label: 'Invite User', control: 'link', action: () => navigate('/admin/users') },
       ],
     },
     {
@@ -67,7 +83,7 @@ export default function Settings() {
       {/* Profile Card */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
         onClick={() => navigate('/profile')}
-        className="bg-card rounded-xl p-5 mb-5 cursor-pointer hover:bg-neutral-800 transition-colors">
+        className="bg-card rounded-xl p-5 mb-5 cursor-pointer hover:bg-muted transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 rounded-full border-2 border-p13-yellow flex items-center justify-center text-foreground text-lg font-bold flex-shrink-0"
             style={{ backgroundColor: avatarColor }}>
@@ -85,7 +101,7 @@ export default function Settings() {
       </motion.div>
 
       {/* My Profile Quick Link */}
-      <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4">
+      <div className="bg-card rounded-xl shadow-xs border border-border mb-4">
         <button onClick={() => navigate('/profile')} className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 transition-colors text-left">
           <div className="w-8 h-8 rounded-full bg-p13-yellow/10 flex items-center justify-center">
             <UserCircle size={16} className="text-p13-yellow" />
@@ -101,7 +117,7 @@ export default function Settings() {
       {/* Settings Groups */}
       {settingsGroups.map((group: any, gi: number) => (
         <motion.div key={group.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: gi * 0.05 }}
-          className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-4 overflow-hidden">
+          className="bg-card rounded-xl shadow-xs border border-border mb-4 overflow-hidden">
           <div className="px-4 py-2.5 border-b border-border/50">
             <h3 className="text-sm font-semibold">{group.title}</h3>
           </div>
@@ -111,22 +127,29 @@ export default function Settings() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm">{item.label}</p>
               </div>
-              {item.control === 'select' && (
+              {item.control === 'select' && item.label === 'Theme' && (
+                <button onClick={toggleTheme} className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground capitalize">{mode}</span>
+                  <ChevronRight size={14} className="text-muted-foreground" />
+                </button>
+              )}
+              {item.control === 'select' && item.label !== 'Theme' && (
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-muted-foreground">{item.value}</span>
                   <ChevronRight size={14} className="text-muted-foreground" />
                 </div>
               )}
               {item.control === 'toggle' && (
-                <button className={`w-10 h-5 rounded-full transition-colors relative ${item.value ? 'bg-p13-yellow' : 'bg-neutral-300'}`}>
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-transform ${item.value ? 'left-[22px]' : 'left-0.5'}`} />
+                <button onClick={() => toggleNotif(item.label)}
+                  className={`w-10 h-5 rounded-full transition-colors relative ${notifPrefs[item.label] ? 'bg-p13-yellow' : 'bg-muted'}`}>
+                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-transform ${notifPrefs[item.label] ? 'left-[22px]' : 'left-0.5'}`} />
                 </button>
               )}
               {item.control === 'link' && (
                 <button onClick={item.action}><ChevronRight size={16} className="text-muted-foreground" /></button>
               )}
               {item.control === 'badge' && (
-                <span className="text-[11px] px-2 py-0.5 bg-neutral-200 text-muted-foreground rounded-full">{item.value}</span>
+                <span className="text-[11px] px-2 py-0.5 bg-muted text-muted-foreground rounded-full">{item.value}</span>
               )}
               {item.control === 'button' && (
                 <span className="text-xs text-blue-600 font-medium cursor-pointer">Export</span>
@@ -140,7 +163,7 @@ export default function Settings() {
       ))}
 
       {/* About */}
-      <div className="bg-card rounded-xl shadow-xs border border-neutral-200/50 mb-6">
+      <div className="bg-card rounded-xl shadow-xs border border-border mb-6">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between py-1">
             <span className="text-sm text-muted-foreground">Version</span>

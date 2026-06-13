@@ -10,7 +10,7 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { useDataStore } from '@/stores/dataStore';
 import { useReminderStore } from '@/stores/reminderStore';
-import { leads, followups, visits, getInitials, getAvatarColor } from '@/data/mockData';
+import { leads, getInitials, getAvatarColor } from '@/data/mockData';
 import StatusBadge from '@/components/shared/StatusBadge';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell } from 'recharts';
 import BottomSheet from '@/components/shared/BottomSheet';
@@ -21,7 +21,7 @@ const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transiti
 
 export default function Dashboard() {
   const { user } = useAuthStore();
-  const { leads: storeLeads, activityData, notifications, markNotificationRead } = useDataStore();
+  const { leads: storeLeads, followups: storeFollowups, visits: storeVisits, activityData, notifications, markNotificationRead } = useDataStore();
   const { getTodayReminders, getOverdueReminders, getUpcomingReminders, startScheduler } = useReminderStore();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -35,8 +35,9 @@ export default function Dashboard() {
 
   // Use store leads if available, else mock
   const allLeads = storeLeads.length > 0 ? storeLeads : leads;
-  const todayFollowups = followups.filter(f => f.scheduledAt.startsWith('2026-05-08'));
-  const overdueFollowups = followups.filter(f => f.status === 'overdue');
+  const today = new Date().toISOString().split('T')[0];
+  const todayFollowups = storeFollowups.filter(f => f.scheduledAt?.startsWith(today));
+  const overdueFollowups = storeFollowups.filter(f => f.status === 'overdue');
   const recentLeads = allLeads.slice(0, 5);
   const todayReminders = getTodayReminders();
   const overdueReminders = getOverdueReminders();
@@ -49,7 +50,7 @@ export default function Dashboard() {
 
   const totalLeadsCount = allLeads.length;
   const hotLeadsCount = allLeads.filter(l => l.status === 'hot').length;
-  const pendingVisitsCount = visits.filter(v => v.status === 'scheduled').length;
+  const pendingVisitsCount = storeVisits.filter(v => v.status === 'scheduled').length;
 
   // Revenue metrics (mock calculation)
   const convertedLeads = allLeads.filter(l => l.status === 'converted');
@@ -68,20 +69,21 @@ export default function Dashboard() {
 
   // Dynamic insights from real data
   const uncontactedLeads = allLeads.filter(l => l.leadScore === 'cold');
-  const hotLeadsNoVisit = allLeads.filter(l => l.leadScore === 'hot');
+  const visitedLeadIds = new Set(storeVisits.map(v => v.leadId));
+  const hotLeadsNoVisit = allLeads.filter(l => l.status === 'hot' && !visitedLeadIds.has(l.id));
   const dynamicInsights = [
     uncontactedLeads.length > 0 ? { title: `${uncontactedLeads.length} cold lead${uncontactedLeads.length > 1 ? 's' : ''}`, desc: "Haven't been contacted recently", action: 'Follow up now', onClick: () => navigate('/leads') } : null,
-    hotLeadsNoVisit.length > 0 ? { title: `${hotLeadsNoVisit.length} hot lead${hotLeadsNoVisit.length > 1 ? 's' : ''}`, desc: 'Needs immediate attention', action: 'Schedule visit', onClick: () => navigate('/leads') } : null,
+    hotLeadsNoVisit.length > 0 ? { title: `${hotLeadsNoVisit.length} hot lead${hotLeadsNoVisit.length > 1 ? 's' : ''} without a visit`, desc: 'Needs immediate attention', action: 'Schedule visit', onClick: () => navigate('/visits') } : null,
     overdueFollowups.length > 0 ? { title: `${overdueFollowups.length} follow-up${overdueFollowups.length > 1 ? 's' : ''} overdue`, desc: 'Due today - needs attention', action: 'View follow-ups', onClick: () => navigate('/follow-ups') } : null,
   ].filter(Boolean) as { title: string; desc: string; action: string; onClick: () => void }[];
 
   const quickActions = [
     { label: 'Add Lead', icon: Plus, color: 'bg-primary', textColor: 'text-primary-foreground', action: () => navigate('/leads') },
-    { label: 'Schedule Visit', icon: Calendar, color: 'bg-blue-500', textColor: 'text-foreground', action: () => navigate('/visits') },
-    { label: 'Send WhatsApp', icon: MessageCircle, color: 'bg-green-500', textColor: 'text-foreground', action: () => navigate('/whatsapp-templates') },
-    { label: 'Add Follow-up', icon: Bell, color: 'bg-purple-500', textColor: 'text-foreground', action: () => navigate('/follow-ups') },
-    { label: 'Add Project', icon: Building2, color: 'bg-orange-500', textColor: 'text-foreground', action: () => navigate('/projects') },
-    { label: 'Loan Inquiry', icon: FileText, color: 'bg-pink-500', textColor: 'text-foreground', action: () => navigate('/loan-inquiry') },
+    { label: 'Schedule Visit', icon: Calendar, color: 'bg-blue-500', textColor: 'text-white', action: () => navigate('/visits') },
+    { label: 'Send WhatsApp', icon: MessageCircle, color: 'bg-green-500', textColor: 'text-white', action: () => navigate('/whatsapp-templates') },
+    { label: 'Add Follow-up', icon: Bell, color: 'bg-purple-500', textColor: 'text-white', action: () => navigate('/follow-ups') },
+    { label: 'Add Project', icon: Building2, color: 'bg-orange-500', textColor: 'text-white', action: () => navigate('/projects') },
+    { label: 'Loan Inquiry', icon: FileText, color: 'bg-pink-500', textColor: 'text-white', action: () => navigate('/loan-inquiry') },
   ];
 
   const quickAddActions = [
@@ -138,7 +140,7 @@ export default function Dashboard() {
             </button>
             <div className="w-px bg-border" />
             <button className="text-center hover:bg-muted rounded-lg px-2 py-1 transition-colors" onClick={() => navigate('/visits')}>
-              <span className="text-sm font-semibold text-foreground">{todayFollowups.length}</span>
+              <span className="text-sm font-semibold text-foreground">{pendingVisitsCount}</span>
               <span className="text-[11px] text-muted-foreground ml-1">Visits</span>
             </button>
           </div>
@@ -490,7 +492,7 @@ export default function Dashboard() {
             <button key={action.label} onClick={action.onClick}
               className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted transition-colors"
             >
-              <div className={`w-11 h-11 rounded-full flex items-center justify-center text-foreground ${action.color}`}>
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center text-white ${action.color}`}>
                 <action.icon size={20} />
               </div>
               <span className="text-xs text-foreground font-medium">{action.label}</span>

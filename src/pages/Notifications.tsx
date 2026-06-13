@@ -261,21 +261,21 @@ export default function Notifications() {
       {/* Quick Filters Row */}
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-2 scrollbar-none">
         <button onClick={() => setReadFilter('all')}
-          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'all' ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground')}>
+          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'all' ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}>
           All ({activeNotifications.length})
         </button>
         <button onClick={() => setReadFilter(readFilter === 'unread' ? 'all' : 'unread')}
-          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'unread' ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground')}>
+          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors', readFilter === 'unread' ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}>
           Unread ({unreadCount})
         </button>
         {(['urgent', 'high'] as const).map(p => (
           <button key={p} onClick={() => setPriorityFilter(priorityFilter === p ? 'all' : p)}
-            className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition-colors', priorityFilter === p ? 'bg-red-100 text-red-700' : 'bg-neutral-200 text-muted-foreground')}>
+            className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition-colors', priorityFilter === p ? 'bg-red-100 text-red-700' : 'bg-muted text-muted-foreground')}>
             {p} ({activeNotifications.filter(n => !n.read && n.priority === p).length})
           </button>
         ))}
         <button onClick={() => setShowFilters(!showFilters)}
-          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1', showFilters || hasFilters ? 'bg-card text-foreground' : 'bg-neutral-200 text-muted-foreground')}>
+          className={cn('px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1', showFilters || hasFilters ? 'bg-card text-foreground' : 'bg-muted text-muted-foreground')}>
           <Filter size={12} /> Filter {hasFilters && <span className="w-1.5 h-1.5 bg-p13-yellow rounded-full" />}
         </button>
       </div>
@@ -285,7 +285,7 @@ export default function Notifications() {
         {showFilters && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden mb-3">
-            <div className="bg-card rounded-xl p-3 border border-neutral-200/50 space-y-3">
+            <div className="bg-card rounded-xl p-3 border border-border space-y-3">
               {/* Type filter */}
               <div>
                 <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">Type</p>
@@ -363,7 +363,7 @@ export default function Notifications() {
         ) : (
           Object.keys(grouped).sort((a, b) => new Date(b).getTime() - new Date(a).getTime()).map(date => (
             <div key={date} className="mb-4">
-              <div className="sticky top-0 bg-p13-white z-[5] py-2 border-b border-border mb-1">
+              <div className="sticky top-0 bg-background z-[5] py-2 border-b border-border mb-1">
                 <p className="text-xs font-semibold text-muted-foreground">{dateLabel(date)}</p>
               </div>
               {grouped[date].map((n, i) => {
@@ -380,7 +380,7 @@ export default function Notifications() {
                     onClick={() => handleNotificationClick(n)}
                     className={cn(
                       'flex items-start gap-3 p-3 rounded-xl mb-1.5 cursor-pointer transition-all hover:shadow-md',
-                      !n.read ? 'bg-card border-l-[3px] border-l-p13-yellow shadow-xs' : 'bg-white/60 border border-transparent',
+                      !n.read ? 'bg-card border-l-[3px] border-l-p13-yellow shadow-xs' : 'bg-muted/40 border border-transparent',
                       isSelected && selectionMode ? 'ring-2 ring-p13-yellow bg-p13-yellow/5' : ''
                     )}
                   >

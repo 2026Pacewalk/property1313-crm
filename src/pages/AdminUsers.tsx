@@ -147,7 +147,7 @@ export default function AdminUsers() {
   return (
     <div className="pb-6">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-border px-4 py-3">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
           <button onClick={() => navigate(-1)} className="text-muted-foreground"><ArrowLeft size={18} /></button>
           <h1 className="text-[17px] font-semibold flex-1">User Management</h1>
@@ -196,7 +196,7 @@ export default function AdminUsers() {
       <div className="px-4 space-y-2">
         {filteredUsers.map((u, i) => (
           <motion.div key={u.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-            className="bg-card rounded-lg border border-neutral-200/50 p-3 hover:shadow-md transition-all">
+            className="bg-card rounded-lg border border-border p-3 hover:shadow-md transition-all">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0"
                 style={{ backgroundColor: getAvatarColor(u.name) }}>
@@ -424,7 +424,7 @@ export default function AdminUsers() {
               className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
             <p className="text-[10px] text-muted-foreground mt-1">Min 8 characters with uppercase, number, special char</p>
           </div>
-          <button onClick={handleCreateUser} className="w-full h-12 bg-card text-foreground rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+          <button onClick={handleCreateUser} className="w-full h-12 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold hover:bg-p13-yellow/90 transition-all flex items-center justify-center gap-2">
             <UserPlus size={16} /> Send Invite
           </button>
         </div>
@@ -440,7 +440,7 @@ function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: strin
         {icon}
         <span className="text-xs">{label}</span>
       </div>
-      <span className="text-sm text-neutral-800 font-medium">{value}</span>
+      <span className="text-sm text-foreground font-medium">{value}</span>
     </div>
   );
 }

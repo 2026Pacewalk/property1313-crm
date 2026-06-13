@@ -149,9 +149,9 @@ function LeadScoreToggle({ value, onChange }: { value: string; onChange: (v: 'ho
   return (
     <div className="flex gap-2">
       {[
-        { key: 'hot' as const, label: 'HOT', color: 'bg-red-500 text-foreground' },
+        { key: 'hot' as const, label: 'HOT', color: 'bg-red-500 text-white' },
         { key: 'warm' as const, label: 'WARM', color: 'bg-p13-yellow text-p13-black' },
-        { key: 'cold' as const, label: 'COLD', color: 'bg-neutral-200 text-muted-foreground' },
+        { key: 'cold' as const, label: 'COLD', color: 'bg-muted text-muted-foreground' },
       ].map(opt => (
         <button
           key={opt.key}
@@ -206,8 +206,13 @@ export default function Leads() {
   };
   const clearFilters = () => setActiveFilters({ statuses: [], sources: [] });
 
+  let digitsSearch = search.replace(/\D/g, '');
+  if (digitsSearch.length > 10 && digitsSearch.startsWith('91')) digitsSearch = digitsSearch.slice(2);
+
   const filtered = leads.filter(l => {
-    const matchesSearch = !search || l.name.toLowerCase().includes(search.toLowerCase()) || l.phone.includes(search);
+    const matchesSearch = !search
+      || l.name.toLowerCase().includes(search.toLowerCase())
+      || (digitsSearch.length > 0 && l.phone.replace(/\D/g, '').includes(digitsSearch));
     const matchesStatus = activeFilters.statuses.length === 0 || activeFilters.statuses.includes(l.status);
     const matchesSource = activeFilters.sources.length === 0 || activeFilters.sources.includes(l.source);
     return matchesSearch && matchesStatus && matchesSource;
@@ -242,7 +247,7 @@ export default function Leads() {
           <SlidersHorizontal size={16} className="text-muted-foreground" />
           {hasFilters && <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-p13-yellow rounded-full border-2 border-white" />}
         </button>
-        <div className="hidden md:flex bg-neutral-200 rounded-lg p-0.5">
+        <div className="hidden md:flex bg-muted rounded-lg p-0.5">
           <button onClick={() => setViewMode('list')} className={cn('p-1.5 rounded', viewMode === 'list' ? 'bg-card shadow-sm' : '')}><LayoutList size={14} /></button>
           <button onClick={() => setViewMode('grid')} className={cn('p-1.5 rounded', viewMode === 'grid' ? 'bg-card shadow-sm' : '')}><LayoutGrid size={14} /></button>
         </div>
@@ -252,12 +257,12 @@ export default function Leads() {
       {hasFilters && (
         <div className="flex flex-wrap gap-1.5 mb-3">
           {activeFilters.statuses.map(s => (
-            <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-p13-yellow/10 border border-p13-yellow/30 text-xs font-medium text-neutral-800">
+            <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-p13-yellow/10 border border-p13-yellow/30 text-xs font-medium text-foreground">
               {s} <button onClick={() => toggleStatusFilter(s)}><X size={10} /></button>
             </span>
           ))}
           {activeFilters.sources.map(s => (
-            <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-p13-yellow/10 border border-p13-yellow/30 text-xs font-medium text-neutral-800">
+            <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-p13-yellow/10 border border-p13-yellow/30 text-xs font-medium text-foreground">
               {s} <button onClick={() => toggleSourceFilter(s)}><X size={10} /></button>
             </span>
           ))}
@@ -288,7 +293,7 @@ export default function Leads() {
               {statuses.map(s => (
                 <button key={s} onClick={() => toggleStatusFilter(s)}
                   className={cn('px-3 py-1.5 rounded-full text-xs font-medium transition-colors capitalize',
-                    activeFilters.statuses.includes(s) ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground')}
+                    activeFilters.statuses.includes(s) ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}
                 >{s}</button>
               ))}
             </div>
@@ -299,7 +304,7 @@ export default function Leads() {
               {sources.map(s => (
                 <button key={s} onClick={() => toggleSourceFilter(s)}
                   className={cn('px-3 py-1.5 rounded-full text-xs font-medium transition-colors',
-                    activeFilters.sources.includes(s) ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground')}
+                    activeFilters.sources.includes(s) ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground')}
                 >{s}</button>
               ))}
             </div>
@@ -372,7 +377,7 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
 
   // First Step
   const [nextCallDate, setNextCallDate] = useState(new Date().toISOString().split('T')[0]);
-  const [nextCallTime, setNextCallTime] = useState('17:43');
+  const [nextCallTime, setNextCallTime] = useState('');
   const [leadScore, setLeadScore] = useState<'hot' | 'warm' | 'cold'>('warm');
   const [initialRemark, setInitialRemark] = useState('');
 

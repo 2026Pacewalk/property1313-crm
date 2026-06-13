@@ -278,7 +278,7 @@ export default function TemplatePicker() {
             <div className="flex gap-2">
               <button
                 onClick={handleMarkAsSent}
-                className="flex-1 h-10 bg-green-600 text-foreground rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-700 transition-all"
+                className="flex-1 h-10 bg-green-600 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-700 transition-all"
               >
                 <CheckCircle size={14} /> Mark as Sent
               </button>
@@ -324,7 +324,7 @@ export default function TemplatePicker() {
                   key={t.key}
                   onClick={() => setActiveTab(t.key)}
                   className={cn('flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-md text-xs font-medium transition-all',
-                    activeTab === t.key ? 'bg-card text-p13-black shadow-sm' : 'text-muted-foreground')}
+                    activeTab === t.key ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground')}
                 >
                   <t.icon size={12} />{t.label}
                 </button>

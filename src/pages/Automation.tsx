@@ -17,7 +17,7 @@ export default function Automation() {
       <h1 className="text-h1-mobile md:text-h1-desktop font-semibold mb-4">Automation Center</h1>
 
       {/* Mode Selector */}
-      <div className="flex bg-neutral-200 rounded-lg p-0.5 mb-5">
+      <div className="flex bg-muted rounded-lg p-0.5 mb-5">
         {(['manual', 'semi', 'full'] as const).map(mode => (
           <button key={mode} className={`flex-1 py-2.5 px-3 rounded-md text-xs font-semibold capitalize transition-all ${
             mode === 'semi' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground/80'
@@ -34,7 +34,7 @@ export default function Automation() {
           return (
             <motion.div key={rule.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
               className={cn('bg-card rounded-xl p-4 shadow-xs border transition-all',
-                rule.enabled ? 'border-l-[3px]' : 'border-neutral-200/50',
+                rule.enabled ? 'border-l-[3px]' : 'border-border',
                 rule.enabled ? '' : 'opacity-75'
               )}
               style={rule.enabled ? { borderLeftColor: rule.iconColor } : {}}>
@@ -49,8 +49,8 @@ export default function Automation() {
                   </div>
                 </div>
                 <button
-                  onClick={() => { toggleAutomationRule(rule.id); addToast({ type: 'success', message: `${rule.name} ${rule.enabled ? 'disabled' : 'enabled'}` }); }}
-                  className={cn('w-11 h-6 rounded-full transition-colors relative flex-shrink-0', rule.enabled ? 'bg-p13-yellow' : 'bg-neutral-300')}>
+                  onClick={() => { const next = !rule.enabled; toggleAutomationRule(rule.id); addToast({ type: 'success', message: `${rule.name} ${next ? 'enabled' : 'disabled'}` }); }}
+                  className={cn('w-11 h-6 rounded-full transition-colors relative flex-shrink-0', rule.enabled ? 'bg-p13-yellow' : 'bg-muted')}>
                   <div className={cn('absolute top-0.5 w-5 h-5 rounded-full bg-card shadow transition-transform', rule.enabled ? 'left-[22px]' : 'left-0.5')} />
                 </button>
               </div>

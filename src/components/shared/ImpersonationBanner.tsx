@@ -1,20 +1,24 @@
 import { LogOut } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { useRBACStore } from '@/stores/rbacStore';
 import { cn } from '@/lib/utils';
 
 export default function ImpersonationBanner() {
   const { isImpersonating, originalUser, exitImpersonation, user } = useAuthStore();
+  const { endImpersonation } = useRBACStore();
 
   if (!isImpersonating || !originalUser || !user) return null;
 
   const handleExit = () => {
+    // Clear RBAC-side impersonation state + write the audit log entry, then restore auth state
+    endImpersonation(originalUser.id);
     exitImpersonation();
     window.location.reload();
   };
 
   return (
     <div className={cn(
-      'w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-foreground px-4 py-2',
+      'w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2',
       'flex items-center justify-between gap-3 z-[60] relative'
     )}>
       <div className="flex items-center gap-2 min-w-0">

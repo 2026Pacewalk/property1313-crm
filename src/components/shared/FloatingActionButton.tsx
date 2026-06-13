@@ -57,7 +57,7 @@ export default function FloatingActionButton({ actions, className }: FABProps) {
               {action.label}
             </span>
             <span
-              className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg text-white text-sm"
+              className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg text-p13-black text-sm"
               style={{ backgroundColor: action.color || '#FBBD08' }}
             >
               {action.icon}

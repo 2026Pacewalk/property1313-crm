@@ -168,7 +168,7 @@ export default function AuditLogs() {
   return (
     <div className="pb-6">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-border px-4 py-3">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
           <button onClick={() => navigate(-1)} className="text-muted-foreground"><ArrowLeft size={18} /></button>
           <h1 className="text-[17px] font-semibold flex-1">Audit Logs</h1>
@@ -264,7 +264,7 @@ export default function AuditLogs() {
           const colors = ACTION_COLORS[log.action] || { bg: 'bg-muted', text: 'text-muted-foreground' };
           return (
             <motion.div key={log.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
-              className="bg-card rounded-lg border border-neutral-200/50 overflow-hidden">
+              className="bg-card rounded-lg border border-border overflow-hidden">
               <div className="p-3 flex items-start gap-3 cursor-pointer" onClick={() => { setSelectedLogId(log.id); setShowLogDetail(true); }}>
                 {/* Action Icon */}
                 <div className={cn('w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5', colors.bg, colors.text)}>
@@ -274,7 +274,7 @@ export default function AuditLogs() {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[11px] font-medium text-neutral-800">
+                    <span className="text-[11px] font-medium text-foreground">
                       {log.userName}
                     </span>
                     <span className="text-[10px] text-muted-foreground">
@@ -376,7 +376,7 @@ function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: strin
       <span className="text-muted-foreground mt-0.5 flex-shrink-0">{icon}</span>
       <div>
         <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{label}</p>
-        <p className="text-sm text-neutral-800">{value}</p>
+        <p className="text-sm text-foreground">{value}</p>
       </div>
     </div>
   );

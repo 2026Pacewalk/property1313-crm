@@ -259,7 +259,9 @@ export const useWhatsAppStore = create<WhatsAppState>((set, get) => ({
   renderMessage: (template, context) => {
     let rendered = template.content;
     Object.entries(context).forEach(([key, value]) => {
-      rendered = rendered.replace(new RegExp(`{{${key}}}`, 'g'), value || `{{${key}}}`);
+      // Only substitute when the key is actually present in the context (even if empty);
+      // a missing key keeps the placeholder, but a provided empty value renders blank.
+      rendered = rendered.replace(new RegExp(`{{${key}}}`, 'g'), value != null ? value : `{{${key}}}`);
     });
     return rendered;
   },

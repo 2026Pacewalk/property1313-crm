@@ -197,7 +197,7 @@ export default function NotificationDropdown() {
                               {!n.read && (
                                 <button
                                   onClick={(e) => { e.stopPropagation(); markNotificationRead(n.id); }}
-                                  className="p-1 hover:bg-neutral-200 rounded"
+                                  className="p-1 hover:bg-muted rounded"
                                   title="Mark as read"
                                 >
                                   <Check size={12} className="text-muted-foreground" />

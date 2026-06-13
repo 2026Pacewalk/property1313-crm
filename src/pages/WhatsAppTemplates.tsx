@@ -110,7 +110,7 @@ export default function WhatsAppTemplates() {
         <div className="px-4 py-3 border-b border-border bg-card">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h1 className="text-lg font-bold text-p13-black">WhatsApp Templates</h1>
+              <h1 className="text-lg font-bold text-foreground">WhatsApp Templates</h1>
               <p className="text-xs text-muted-foreground">{templates.filter(t => t.status === 'active').length} active templates</p>
             </div>
             <div className="flex gap-2">
@@ -123,7 +123,7 @@ export default function WhatsAppTemplates() {
               </button>
               <button
                 onClick={() => openEditor()}
-                className="h-9 px-3 bg-card text-foreground rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-neutral-800 transition-all"
+                className="h-9 px-3 bg-card text-foreground rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-muted transition-all"
               >
                 <Plus size={13} /> Create
               </button>
@@ -220,7 +220,7 @@ export default function WhatsAppTemplates() {
         </div>
 
         {/* Analytics strip */}
-        <div className="grid grid-cols-4 gap-px bg-neutral-200 border-b border-border">
+        <div className="grid grid-cols-4 gap-px bg-muted border-b border-border">
           {[
             { label: 'Total', value: analytics.totalSent, icon: Send, color: 'text-blue-500' },
             { label: 'Confirmed', value: analytics.totalConfirmed, icon: CheckCircle, color: 'text-green-500' },
@@ -229,7 +229,7 @@ export default function WhatsAppTemplates() {
           ].map((stat) => (
             <div key={stat.label} className="bg-card px-3 py-2 text-center">
               <p className="text-[10px] text-muted-foreground">{stat.label}</p>
-              <p className="text-sm font-bold text-p13-black">{stat.value}</p>
+              <p className="text-sm font-bold text-foreground">{stat.value}</p>
             </div>
           ))}
         </div>
@@ -243,7 +243,7 @@ export default function WhatsAppTemplates() {
               <p className="text-xs text-muted-foreground">Try adjusting your filters</p>
             </div>
           ) : (
-            <div className="divide-y divide-neutral-100">
+            <div className="divide-y divide-border">
               {sorted.map((template) => (
                 <TemplateRow
                   key={template.id}
@@ -348,7 +348,7 @@ export default function WhatsAppTemplates() {
                   <p className="text-[11px] font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Variables</p>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedTemplate.variables.map((v) => (
-                      <span key={v} className="px-2 py-1 bg-p13-yellow/10 text-p13-black text-[11px] font-medium rounded-md">
+                      <span key={v} className="px-2 py-1 bg-p13-yellow/10 text-foreground text-[11px] font-medium rounded-md">
                         {'{{'}{v}{'}}'}
                       </span>
                     ))}

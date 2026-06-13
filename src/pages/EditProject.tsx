@@ -38,7 +38,7 @@ function Section({ title, icon, children, defaultOpen = true }: {
     <div className="border border-border rounded-lg bg-card overflow-hidden">
       <button onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
-        <div className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           {icon}
           {title}
         </div>
@@ -171,7 +171,7 @@ function ComboboxInput({ value, onChange, options, placeholder }: {
                   key={opt}
                   onClick={() => handleSelect(opt)}
                   className={cn('w-full text-left px-3 py-2 text-sm hover:bg-muted/50 transition-colors flex items-center gap-2',
-                    value === opt && 'bg-p13-yellow/10 text-p13-black font-medium')}
+                    value === opt && 'bg-p13-yellow/10 text-foreground font-medium')}
                 >
                   {value === opt && <Check size={12} className="text-p13-yellow flex-shrink-0" />}
                   <span className="truncate">{opt}</span>
@@ -664,7 +664,7 @@ export default function EditProject() {
                 <p className="text-[11px] text-muted-foreground">Make this project visible on the public site</p>
               </div>
               <button onClick={() => setPublicEnabled(!publicEnabled)}
-                className={cn('w-12 h-7 rounded-full transition-all relative', publicEnabled ? 'bg-p13-yellow' : 'bg-neutral-300')}>
+                className={cn('w-12 h-7 rounded-full transition-all relative', publicEnabled ? 'bg-p13-yellow' : 'bg-muted')}>
                 <div className={cn('w-5 h-5 bg-card rounded-full absolute top-1 transition-all shadow-sm', publicEnabled ? 'left-6' : 'left-1')} />
               </button>
             </div>
@@ -673,7 +673,7 @@ export default function EditProject() {
               <div className="flex gap-2">
                 <TextInput value={publicSlug} onChange={setPublicSlug} placeholder="project-slug" />
                 <button onClick={handleRegenerateSlug}
-                  className="h-11 px-3 bg-muted text-muted-foreground rounded-lg text-xs font-medium whitespace-nowrap hover:bg-neutral-200 transition-all">
+                  className="h-11 px-3 bg-muted text-muted-foreground rounded-lg text-xs font-medium whitespace-nowrap hover:bg-muted transition-all">
                   Regenerate
                 </button>
               </div>
@@ -681,11 +681,11 @@ export default function EditProject() {
             </div>
             <div className="flex gap-2">
               <button onClick={handleCopyLink}
-                className="flex-1 h-10 bg-muted text-foreground/80 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-neutral-200 transition-all">
+                className="flex-1 h-10 bg-muted text-foreground/80 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-muted transition-all">
                 {copiedLink ? <><Check size={14} className="text-green-500" /> Copied</> : <><Copy size={14} /> Copy Link</>}
               </button>
               <a href={`/project/${publicSlug}`} target="_blank" rel="noopener noreferrer"
-                className="flex-1 h-10 bg-muted text-foreground/80 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-neutral-200 transition-all">
+                className="flex-1 h-10 bg-muted text-foreground/80 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-muted transition-all">
                 <ExternalLink size={14} /> Open Page
               </a>
             </div>

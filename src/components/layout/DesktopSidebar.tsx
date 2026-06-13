@@ -65,7 +65,7 @@ export default function DesktopSidebar() {
       {/* Main Nav */}
       <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
           return (
             <Link
               key={item.path}
@@ -94,7 +94,7 @@ export default function DesktopSidebar() {
             )}
             {sidebarCollapsed && <div className="my-2 mx-4 h-px bg-sidebar-border" />}
             {adminItems.map((item) => {
-              const isActive = location.pathname === item.path;
+              const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
               return (
                 <Link
                   key={item.path}

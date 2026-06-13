@@ -22,12 +22,25 @@ export default function PublicProject() {
   const { projects } = useDataStore();
   const { addToast } = useUIStore();
   const { can } = usePermission();
-  const project = projects.find(p => p.slug === slug) || projects[0];
+  const project = projects.find(p => p.slug === slug);
   const [activeTab, setActiveTab] = useState('photos');
   const [showLoan, setShowLoan] = useState(false);
   const [loanAmount, setLoanAmount] = useState(5000000);
   const [rate, setRate] = useState(8.5);
   const [tenure, setTenure] = useState(20);
+
+  if (!project) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+        <Home size={48} className="text-muted-foreground/40 mb-4" />
+        <h2 className="text-lg font-semibold">Project not found</h2>
+        <p className="text-sm text-muted-foreground mt-1">This project may have been removed or the link is incorrect.</p>
+        <button onClick={() => navigate('/projects')} className="mt-4 h-10 px-6 bg-p13-yellow text-p13-black rounded-lg text-sm font-medium">
+          Back to Projects
+        </button>
+      </div>
+    );
+  }
 
   const emi = Math.round(loanAmount * (rate / 1200) * Math.pow(1 + rate / 1200, tenure * 12) / (Math.pow(1 + rate / 1200, tenure * 12) - 1));
   const totalInterest = emi * tenure * 12 - loanAmount;
@@ -50,7 +63,7 @@ export default function PublicProject() {
         <div className="ml-auto flex gap-2 items-center">
           {can('manage_projects') && (
             <button onClick={() => navigate(`/projects/${project.slug}/edit`)}
-              className="flex items-center gap-1.5 h-9 px-3 bg-muted text-foreground/80 rounded-lg text-xs font-medium hover:bg-neutral-200 transition-all"
+              className="flex items-center gap-1.5 h-9 px-3 bg-muted text-foreground/80 rounded-lg text-xs font-medium hover:bg-muted transition-all"
               title="Edit Project">
               <Pencil size={13} /> Edit
             </button>
@@ -77,7 +90,7 @@ export default function PublicProject() {
       {/* Price */}
       <div className="px-4 py-5 border-b border-border">
         <div className="flex items-center gap-1.5">
-          <IndianRupee size={18} className="text-p13-black" />
+          <IndianRupee size={18} className="text-foreground" />
           <span className="text-xl md:text-2xl font-bold">Starting from Rs.{(project.minPrice / 100000).toFixed(0)} Lakhs</span>
         </div>
         <p className="text-sm text-muted-foreground mt-1">{project.propertyType.join(' | ')}</p>
@@ -116,7 +129,7 @@ export default function PublicProject() {
         <div className="flex gap-4 border-b border-border mb-4">
           {['photos', 'video', 'location'].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`pb-2 text-sm font-medium capitalize transition-colors ${activeTab === tab ? 'text-p13-black border-b-2 border-p13-yellow' : 'text-muted-foreground'}`}>
+              className={`pb-2 text-sm font-medium capitalize transition-colors ${activeTab === tab ? 'text-foreground border-b-2 border-p13-yellow' : 'text-muted-foreground'}`}>
               {tab}
             </button>
           ))}
@@ -129,13 +142,13 @@ export default function PublicProject() {
           </div>
         )}
         {activeTab === 'video' && (
-          <div className="aspect-video bg-neutral-200 rounded-lg flex items-center justify-center relative">
+          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative">
             <Play size={48} className="text-white/80" />
             {project.youtubeUrl && <p className="absolute bottom-2 text-xs text-muted-foreground">{project.youtubeUrl}</p>}
           </div>
         )}
         {activeTab === 'location' && (
-          <div className="aspect-video bg-neutral-200 rounded-lg flex items-center justify-center">
+          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
             <div className="text-center">
               <MapPin size={32} className="text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">{project.location}</p>
@@ -156,19 +169,19 @@ export default function PublicProject() {
               <label className="text-xs text-muted-foreground mb-1 block">Loan Amount: Rs.{(loanAmount / 100000).toFixed(0)}L</label>
               <input type="range" min="1000000" max="50000000" step="100000" value={loanAmount}
                 onChange={e => setLoanAmount(Number(e.target.value))}
-                className="w-full h-1 bg-neutral-300 rounded-full accent-p13-yellow" />
+                className="w-full h-1 bg-muted rounded-full accent-p13-yellow" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Interest Rate: {rate}%</label>
               <input type="range" min="6" max="15" step="0.1" value={rate}
                 onChange={e => setRate(Number(e.target.value))}
-                className="w-full h-1 bg-neutral-300 rounded-full accent-p13-yellow" />
+                className="w-full h-1 bg-muted rounded-full accent-p13-yellow" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Tenure: {tenure} Years</label>
               <input type="range" min="5" max="30" step="1" value={tenure}
                 onChange={e => setTenure(Number(e.target.value))}
-                className="w-full h-1 bg-neutral-300 rounded-full accent-p13-yellow" />
+                className="w-full h-1 bg-muted rounded-full accent-p13-yellow" />
             </div>
             <div className="bg-card rounded-lg p-3 text-center">
               <p className="text-xs text-muted-foreground">Monthly EMI</p>
@@ -213,7 +226,7 @@ export default function PublicProject() {
           <Phone size={14} /> Call Now
         </a>
         <button onClick={() => { addToast({ type: 'info', message: 'Opening WhatsApp...' }); }}
-          className="flex-1 h-10 bg-green-500 text-foreground rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5">
+          className="flex-1 h-10 bg-green-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5">
           <MessageCircle size={14} /> WhatsApp
         </button>
       </div>

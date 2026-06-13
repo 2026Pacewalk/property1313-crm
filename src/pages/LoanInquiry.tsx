@@ -28,7 +28,7 @@ export default function LoanInquiry() {
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none">
         {tabs.map(t => (
           <button key={t} onClick={() => setActiveTab(t)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition-colors ${activeTab === t ? 'bg-p13-yellow text-p13-black' : 'bg-neutral-200 text-muted-foreground'}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition-colors ${activeTab === t ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground'}`}>
             {t === 'all' ? `All (${loanInquiries.length})` : `${t.replace('_', ' ')} (${loanInquiries.filter(l => l.status === t).length})`}
           </button>
         ))}
@@ -37,7 +37,7 @@ export default function LoanInquiry() {
       <div className="space-y-2">
         {filtered.map((inquiry, i) => (
           <motion.div key={inquiry.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-            className={`bg-card rounded-lg p-3.5 shadow-xs border border-neutral-200/50 ${statusColors[inquiry.status] || ''} border-l-[3px]`}>
+            className={`bg-card rounded-lg p-3.5 shadow-xs border border-border ${statusColors[inquiry.status] || ''} border-l-[3px]`}>
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-semibold">{inquiry.name}</p>
               <div className="flex items-center gap-2">

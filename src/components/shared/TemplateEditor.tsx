@@ -260,10 +260,10 @@ export default function TemplateEditor() {
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <button onClick={closeEditor} className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-all">
+          <button onClick={closeEditor} className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-muted transition-all">
             Cancel
           </button>
-          <button onClick={handleSave} className="flex-1 h-11 bg-card text-foreground rounded-lg text-sm font-medium hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+          <button onClick={handleSave} className="flex-1 h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-medium hover:bg-p13-yellow/90 transition-all flex items-center justify-center gap-2">
             <Save size={14} />{existing ? 'Update' : 'Create'} Template
           </button>
         </div>

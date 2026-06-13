@@ -112,6 +112,10 @@ export default function Followups() {
       dateTime = new Date(newCustomDate).toISOString();
     }
 
+    const reminderLabel = newDateType === 'custom'
+      ? new Date(dateTime).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+      : `${newPresetDays} day${newPresetDays > 1 ? 's' : ''}`;
+
     createReminder({
       leadId: lead.id,
       userId: 'u1',
@@ -124,7 +128,7 @@ export default function Followups() {
       repeatType: 'none',
     });
 
-    addToast({ type: 'success', message: `Reminder set for ${newPresetDays > 0 ? `${newPresetDays} days` : 'today'}` });
+    addToast({ type: 'success', message: `Reminder set for ${reminderLabel}` });
     resetForm();
     setShowAdd(false);
   };
@@ -203,7 +207,7 @@ export default function Followups() {
             className={cn('flex-shrink-0 py-2 px-3 rounded-md text-xs font-medium transition-all whitespace-nowrap',
               activeTab === tab.key ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground')}>
             {tab.label}
-            {tab.count > 0 && <span className={cn('ml-1 text-[10px] px-1 py-0.5 rounded-full', activeTab === tab.key ? 'bg-p13-yellow' : 'bg-neutral-200')}>{tab.count}</span>}
+            {tab.count > 0 && <span className={cn('ml-1 text-[10px] px-1 py-0.5 rounded-full', activeTab === tab.key ? 'bg-p13-yellow' : 'bg-muted')}>{tab.count}</span>}
           </button>
         ))}
       </div>
@@ -348,7 +352,7 @@ export default function Followups() {
           )}
 
           <button onClick={handleCreate}
-            className="w-full h-12 bg-card text-foreground rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+            className="w-full h-12 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold hover:bg-p13-yellow/90 transition-all flex items-center justify-center gap-2">
             <Plus size={16} /> Set Reminder
           </button>
         </div>
@@ -388,17 +392,17 @@ export default function Followups() {
             {showDetail.status !== 'completed' && showDetail.status !== 'cancelled' && (
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={() => { setShowComplete(showDetail.id); setShowDetail(null); }}
-                  className="h-11 bg-green-500 text-foreground rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-600 transition-all">
+                  className="h-11 bg-green-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-green-600 transition-all">
                   <Check size={14} /> Complete
                 </button>
                 <button onClick={() => { setShowSnooze(showDetail.id); setShowDetail(null); }}
-                  className="h-11 bg-blue-500 text-foreground rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-blue-600 transition-all">
+                  className="h-11 bg-blue-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-blue-600 transition-all">
                   <Pause size={14} /> Snooze
                 </button>
                 {showDetail.leadId && (
                   <>
                     <button onClick={() => { navigate(`/leads/${showDetail.leadId}`); setShowDetail(null); }}
-                      className="h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-neutral-200 transition-all">
+                      className="h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-muted transition-all">
                       <User size={14} /> View Lead
                     </button>
                     <button onClick={() => {
@@ -454,7 +458,7 @@ export default function Followups() {
               className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm outline-none focus:border-green-300 focus:ring-2 focus:ring-green-100 resize-none" />
           </div>
           <button onClick={() => showComplete && handleComplete(showComplete)}
-            className="w-full h-12 bg-green-500 text-foreground rounded-lg text-sm font-semibold hover:bg-green-600 transition-all flex items-center justify-center gap-2">
+            className="w-full h-12 bg-green-500 text-white rounded-lg text-sm font-semibold hover:bg-green-600 transition-all flex items-center justify-center gap-2">
             <Check size={16} /> Mark as Complete
           </button>
         </div>

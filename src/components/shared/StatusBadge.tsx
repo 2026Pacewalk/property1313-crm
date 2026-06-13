@@ -16,7 +16,8 @@ export default function StatusBadge({ status, size = 'sm' }: StatusBadgeProps) {
         'inline-flex items-center rounded-full font-semibold uppercase',
         size === 'sm' ? 'text-[10px] px-2.5 py-0.5' : 'text-[11px] px-3 py-1',
         bgClass,
-        (status === 'warm' || status === 'cold') ? 'text-foreground' : 'text-foreground'
+        // Status backgrounds are light/saturated tints, so keep dark text in both light & dark themes
+        'text-p13-black'
       )}
     >
       {label}

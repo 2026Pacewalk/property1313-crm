@@ -10,6 +10,17 @@ interface BottomSheetProps {
   maxHeight?: string;
 }
 
+// Shared lock counter so multiple sheets don't stomp each other's body scroll-lock.
+let bodyLockCount = 0;
+function lockBody() {
+  bodyLockCount += 1;
+  document.body.style.overflow = 'hidden';
+}
+function unlockBody() {
+  bodyLockCount = Math.max(0, bodyLockCount - 1);
+  if (bodyLockCount === 0) document.body.style.overflow = '';
+}
+
 export default function BottomSheet({ isOpen, onClose, title, children, maxHeight = '85vh' }: BottomSheetProps) {
   const [visible, setVisible] = useState(false);
   const [dragY, setDragY] = useState(0);
@@ -20,15 +31,13 @@ export default function BottomSheet({ isOpen, onClose, title, children, maxHeigh
   // Smooth open/close with CSS transitions instead of spring physics
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      lockBody();
       setVisible(true);
-    } else {
-      document.body.style.overflow = '';
-      setDragY(0);
-      const timer = setTimeout(() => setVisible(false), 250);
-      return () => clearTimeout(timer);
+      return () => unlockBody();
     }
-    return () => { document.body.style.overflow = ''; };
+    setDragY(0);
+    const timer = setTimeout(() => setVisible(false), 250);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {

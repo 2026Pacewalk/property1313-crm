@@ -62,8 +62,10 @@ export function normalizeMobileForWhatsApp(phone: string): string {
     return result;
   }
 
-  // Case: already has country code other than 91
-  if (cleaned.length >= 11) {
+  // Case: already has a country code (12-13 digits, e.g. non-Indian numbers).
+  // Note: a bare 11-digit number is NOT valid (10-digit + CC=12, or 0-prefixed handled above),
+  // so we deliberately reject length 11 here to avoid building broken wa.me links.
+  if (cleaned.length >= 12 && cleaned.length <= 13 && /^\d+$/.test(cleaned)) {
     debug('Format: long number (assuming has CC):', cleaned);
     return cleaned;
   }

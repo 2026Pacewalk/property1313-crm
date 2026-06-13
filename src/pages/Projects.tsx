@@ -8,7 +8,7 @@ import BottomSheet from '@/components/shared/BottomSheet';
 import { Input } from '@/components/ui/input';
 
 export default function Projects() {
-  const { projects } = useDataStore();
+  const { projects, deleteProject } = useDataStore();
   const { addToast } = useUIStore();
   const navigate = useNavigate();
   const { can } = usePermission();
@@ -40,13 +40,13 @@ export default function Projects() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((project) => (
           <div key={project.id}
-            className="bg-card rounded-xl shadow-xs border border-neutral-200/50 overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group">
+            className="bg-card rounded-xl shadow-xs border border-border overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group">
             {/* Media */}
             <div className="relative h-44 md:h-52 overflow-hidden">
               <img src={project.coverImage} alt={project.name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute top-3 left-3 flex gap-1.5">
-                <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${project.status === 'active' ? 'bg-green-500 text-foreground' : 'bg-muted/500 text-foreground'}`}>
+                <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${project.status === 'active' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}>
                   {project.status === 'active' ? 'Active' : 'Inactive'}
                 </span>
               </div>
@@ -126,7 +126,7 @@ export default function Projects() {
                 <div><p className="text-sm font-medium">Copy Share Link</p><p className="text-[11px] text-muted-foreground">Copy to clipboard</p></div>
               </button>
               {user?.role === 'super_admin' && (
-                <button onClick={() => { if (confirm(`Delete "${ap.name}"?`)) { setShowActions(false); addToast({ type: 'success', message: `${ap.name} deleted` }); } }}
+                <button onClick={() => { if (confirm(`Delete "${ap.name}"?`)) { deleteProject(ap.id); setShowActions(false); setActionProjectId(null); addToast({ type: 'success', message: `${ap.name} deleted` }); } }}
                   className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-red-50 transition-colors text-left">
                   <Trash2 size={16} className="text-red-500" />
                   <div><p className="text-sm font-medium text-red-600">Delete Project</p><p className="text-[11px] text-muted-foreground">Permanently remove</p></div>
@@ -154,10 +154,12 @@ interface AddProjectSheetProps {
 }
 
 function AddProjectSheet({ isOpen, onClose, onSaved }: AddProjectSheetProps) {
-  const { addProject } = useDataStore();
+  const { addProject, projects } = useDataStore();
   const [projectName, setProjectName] = useState('');
   const [projectLocation, setProjectLocation] = useState('');
   const [description, setDescription] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [coverPreview, setCoverPreview] = useState<string>('');
   const [coverData, setCoverData] = useState<string>('');
@@ -196,6 +198,17 @@ function AddProjectSheet({ isOpen, onClose, onSaved }: AddProjectSheetProps) {
     if (!projectName.trim()) { addToast({ type: 'error', message: 'Project name is required' }); return; }
     if (!projectLocation.trim()) { addToast({ type: 'error', message: 'Location is required' }); return; }
 
+    // Generate a unique slug (avoid collisions with same-named projects)
+    const baseSlug = projectName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    let slug = baseSlug;
+    let n = 2;
+    while (projects.some(p => p.slug === slug)) {
+      slug = `${baseSlug}-${n++}`;
+    }
+
+    const min = minPrice ? Number(minPrice) : 0;
+    const max = maxPrice ? Number(maxPrice) : 0;
+
     addProject({
       id: `p_${Date.now()}`,
       name: projectName.trim(),
@@ -204,11 +217,11 @@ function AddProjectSheet({ isOpen, onClose, onSaved }: AddProjectSheetProps) {
       propertyType: selectedTypes.length > 0 ? selectedTypes : ['Apartment'],
       coverImage: coverData || '',
       status: 'active',
-      minPrice: 0,
-      maxPrice: 0,
+      minPrice: min,
+      maxPrice: max,
       galleryImages: coverData ? [coverData] : [''],
-      slug: projectName.trim().toLowerCase().replace(/\s+/g, '-'),
-      shareLink: `https://p1313.xyz/project/${projectName.trim().toLowerCase().replace(/\s+/g, '-')}`,
+      slug,
+      shareLink: `https://p1313.xyz/project/${slug}`,
       amenities: [],
       viewCount: 0,
       leadCount: 0,
@@ -222,6 +235,8 @@ function AddProjectSheet({ isOpen, onClose, onSaved }: AddProjectSheetProps) {
     setProjectName('');
     setProjectLocation('');
     setDescription('');
+    setMinPrice('');
+    setMaxPrice('');
     setSelectedTypes([]);
     setCoverPreview('');
     setCoverData('');
@@ -262,6 +277,30 @@ function AddProjectSheet({ isOpen, onClose, onSaved }: AddProjectSheetProps) {
             placeholder="Brief description of the project"
             className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none focus:border-p13-yellow outline-none transition-all"
           />
+        </div>
+
+        {/* Price Range */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Min Price (₹)</label>
+            <input
+              type="number"
+              value={minPrice}
+              onChange={e => setMinPrice(e.target.value)}
+              placeholder="e.g. 4500000"
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none transition-all"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Max Price (₹)</label>
+            <input
+              type="number"
+              value={maxPrice}
+              onChange={e => setMaxPrice(e.target.value)}
+              placeholder="e.g. 9500000"
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm focus:border-p13-yellow outline-none transition-all"
+            />
+          </div>
         </div>
 
         {/* Property Type */}

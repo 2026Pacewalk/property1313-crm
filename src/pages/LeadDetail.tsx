@@ -5,6 +5,7 @@ import {
   User, Calendar, Tag, IndianRupee, Flame, Sparkles, Building2, Save, Search, X, Check
 } from 'lucide-react';
 import { useDataStore } from '@/stores/dataStore';
+import { useReminderStore } from '@/stores/reminderStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useWhatsAppStore } from '@/stores/whatsappStore';
@@ -19,6 +20,7 @@ export default function LeadDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { leads, followups, visits, updateLead, addFollowup, projects } = useDataStore();
+  const { createReminder } = useReminderStore();
   const { user } = useAuthStore();
   const { addToast } = useUIStore();
   const { openPicker, isPickerOpen, getFavorites, getSuggested } = useWhatsAppStore();
@@ -105,17 +107,30 @@ export default function LeadDetail() {
 
   const handleAddFollowup = () => {
     if (!followupNote.trim() || !followupDate) { addToast({ type: 'error', message: 'Please fill all fields' }); return; }
-    // Actually save the follow-up
+    const scheduledAt = new Date(followupDate).toISOString();
+    // Save the follow-up to the lead's timeline
     addFollowup({
       id: `fu_${Date.now()}`,
       leadId: lead.id,
       leadName: lead.name,
       leadPhone: lead.phone || '',
       note: followupNote.trim(),
-      scheduledAt: new Date(followupDate).toISOString(),
+      scheduledAt,
       status: 'pending',
       assignedTo: user?.id || '',
       createdAt: new Date().toISOString(),
+    });
+    // Also create a reminder so it surfaces on the Follow-ups page / scheduler
+    createReminder({
+      leadId: lead.id,
+      userId: user?.id || 'u1',
+      assignedToUserId: user?.id || 'u1',
+      reminderType: 'follow_up',
+      title: `Follow-up: ${lead.name}`,
+      message: followupNote.trim(),
+      reminderDateTime: scheduledAt,
+      timezone: 'Asia/Kolkata',
+      repeatType: 'none',
     });
     addToast({ type: 'success', message: 'Follow-up added!' });
     setShowFollowup(false);
@@ -153,7 +168,7 @@ export default function LeadDetail() {
   return (
     <div className="pb-24">
       {/* Sticky Top Action Bar */}
-      <div className="sticky top-0 z-10 bg-p13-white/95 backdrop-blur-sm border-b border-border px-4 py-2 flex items-center gap-3">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-2 flex items-center gap-3">
         <button onClick={() => navigate('/leads')} className="text-muted-foreground"><ArrowLeft size={18} /></button>
         <span className="text-[15px] font-semibold truncate flex-1">{lead.name}</span>
         <div className="flex gap-2">
@@ -172,7 +187,7 @@ export default function LeadDetail() {
 
       <div className="page-container pt-4 space-y-4">
         {/* Lead Info Card */}
-        <div className="bg-card rounded-xl p-4 shadow-xs border border-neutral-200/50">
+        <div className="bg-card rounded-xl p-4 shadow-xs border border-border">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full flex items-center justify-center text-foreground text-base font-bold" style={{ backgroundColor: color }}>
@@ -284,7 +299,7 @@ export default function LeadDetail() {
               <div key={i} className="flex gap-3">
                 <div className="flex flex-col items-center">
                   <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                  {i < timeline.length - 1 && <div className="w-px flex-1 bg-neutral-200 min-h-[30px]" />}
+                  {i < timeline.length - 1 && <div className="w-px flex-1 bg-muted min-h-[30px]" />}
                 </div>
                 <div className="pb-4 flex-1">
                   <p className="text-[13px] font-medium">{item.title}</p>
@@ -524,11 +539,11 @@ export default function LeadDetail() {
             {/* Actions */}
             <div className="flex gap-2 pt-2">
               <button onClick={() => setShowEdit(false)}
-                className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-all">
+                className="flex-1 h-11 bg-muted text-foreground/80 rounded-lg text-sm font-medium hover:bg-muted transition-all">
                 Cancel
               </button>
               <button onClick={handleSaveLead}
-                className="flex-1 h-11 bg-card text-foreground rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2">
+                className="flex-1 h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold hover:bg-p13-yellow/90 transition-all flex items-center justify-center gap-2">
                 <Save size={14} /> Save Changes
               </button>
             </div>
@@ -563,7 +578,7 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
       {icon}
       <div>
         <p className="text-[11px] text-muted-foreground">{label}</p>
-        <p className="text-sm text-neutral-800 font-medium">{value}</p>
+        <p className="text-sm text-foreground font-medium">{value}</p>
       </div>
     </div>
 
