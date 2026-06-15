@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Bell, MapPin, Building2,
   FileText, Zap, BarChart3, Settings, LogOut,
   ChevronLeft, ChevronRight, UserCircle, MessageCircle,
-  Shield, ClipboardList, Database,
+  Shield, ClipboardList, Database, QrCode,
 } from 'lucide-react';
 import { getInitials, getAvatarColor } from '@/data/mockData';
 
@@ -20,6 +20,7 @@ const navItems: NavItem[] = [
   { path: '/projects', label: 'Projects', icon: Building2 },
   { path: '/loan-inquiry', label: 'Loan', icon: FileText },
   { path: '/whatsapp-templates', label: 'WhatsApp', icon: MessageCircle },
+  { path: '/whatsapp-connect', label: 'WhatsApp Connect', icon: QrCode },
   { path: '/automation', label: 'Automation', icon: Zap },
   { path: '/reports', label: 'Reports', icon: BarChart3 },
   { path: '/profile', label: 'Profile', icon: UserCircle },

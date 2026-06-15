@@ -422,7 +422,7 @@ export default function Notifications() {
                           {n.actions.map((a, ai) => (
                             <button
                               key={ai}
-                              onClick={(e) => { e.stopPropagation(); addToast({ type: 'info', message: `${a.label} clicked` }); }}
+                              onClick={(e) => { e.stopPropagation(); handleNotificationClick(n); }}
                               className="text-[11px] text-blue-600 font-medium hover:underline"
                             >
                               {a.label}

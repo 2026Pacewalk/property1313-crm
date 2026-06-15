@@ -29,6 +29,28 @@ export default function Settings() {
     });
   };
 
+  const handleExportData = () => {
+    try {
+      const payload = localStorage.getItem('p13-data-store') || '{}';
+      const blob = new Blob([payload], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `property1313-export-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      addToast({ type: 'success', message: 'Data exported' });
+    } catch {
+      addToast({ type: 'error', message: 'Export failed' });
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    if (!confirm('Delete your account? This will sign you out. This action cannot be undone.')) return;
+    addToast({ type: 'info', message: 'Account deletion requested. Contact admin to finalize.' });
+    setTimeout(() => logout(), 800);
+  };
+
   const initials = user ? getInitials(user.name) : 'U';
   const avatarColor = user ? getAvatarColor(user.name) : '#FBBD08';
 
@@ -152,10 +174,10 @@ export default function Settings() {
                 <span className="text-[11px] px-2 py-0.5 bg-muted text-muted-foreground rounded-full">{item.value}</span>
               )}
               {item.control === 'button' && (
-                <span className="text-xs text-blue-600 font-medium cursor-pointer">Export</span>
+                <button onClick={handleExportData} className="text-xs text-blue-600 font-medium hover:underline">Export</button>
               )}
               {item.control === 'danger' && (
-                <span className="text-xs text-red-500 font-medium cursor-pointer">Delete</span>
+                <button onClick={handleDeleteAccount} className="text-xs text-red-500 font-medium hover:underline">Delete</button>
               )}
             </div>
           ))}

@@ -1,12 +1,23 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import { MessageCircle, Bell, AlertTriangle, MapPin, Flame, Clock, UserPlus, RefreshCw, Zap } from 'lucide-react';
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
 import { cn } from '@/lib/utils';
 
+const MODE_LABELS: Record<string, string> = { manual: 'Manual', semi: 'Semi Automatic', full: 'Full Auto' };
+const MODE_DESC: Record<string, string> = {
+  manual: 'You trigger every action yourself.',
+  semi: 'Rules are suggested; you approve before they run.',
+  full: 'Enabled rules run automatically when triggered.',
+};
+
 export default function Automation() {
   const { automationRules, toggleAutomationRule } = useDataStore();
   const { addToast } = useUIStore();
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<'manual' | 'semi' | 'full'>('semi');
 
   const iconMap: Record<string, React.ElementType> = {
     MessageCircle, Bell, AlertTriangle, MapPin, Flame, Clock, UserPlus, RefreshCw, Zap,
@@ -17,15 +28,17 @@ export default function Automation() {
       <h1 className="text-h1-mobile md:text-h1-desktop font-semibold mb-4">Automation Center</h1>
 
       {/* Mode Selector */}
-      <div className="flex bg-muted rounded-lg p-0.5 mb-5">
-        {(['manual', 'semi', 'full'] as const).map(mode => (
-          <button key={mode} className={`flex-1 py-2.5 px-3 rounded-md text-xs font-semibold capitalize transition-all ${
-            mode === 'semi' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground/80'
-          }`}>
-            {mode === 'semi' ? 'Semi Automatic' : `${mode.charAt(0).toUpperCase() + mode.slice(1)}`}
+      <div className="flex bg-muted rounded-lg p-0.5 mb-2">
+        {(['manual', 'semi', 'full'] as const).map(m => (
+          <button key={m} onClick={() => { setMode(m); addToast({ type: 'success', message: `Automation mode: ${MODE_LABELS[m]}` }); }}
+            className={`flex-1 py-2.5 px-3 rounded-md text-xs font-semibold capitalize transition-all ${
+              mode === m ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground/80'
+            }`}>
+            {MODE_LABELS[m]}
           </button>
         ))}
       </div>
+      <p className="text-[11px] text-muted-foreground mb-5">{MODE_DESC[mode]}</p>
 
       {/* Rules Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -63,7 +76,7 @@ export default function Automation() {
                   {rule.lastRunAt ? `Last run: ${new Date(rule.lastRunAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Never run'}
                   {'  '} Runs: {rule.runCount}
                 </span>
-                <span className="text-[11px] text-p13-yellow font-medium cursor-pointer">Configure</span>
+                <button onClick={() => navigate('/whatsapp-templates')} className="text-[11px] text-p13-yellow font-medium hover:underline">Configure</button>
               </div>
             </motion.div>
           );

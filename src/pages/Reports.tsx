@@ -13,6 +13,21 @@ export default function Reports() {
   const conversionRate = totalLeads > 0 ? ((convertedLeads / totalLeads) * 100).toFixed(1) : '0';
   const activeFollowups = leads.filter(l => l.status === 'warm' || l.status === 'hot').length;
 
+  const handleExport = () => {
+    const rows = [
+      ['Name', 'Phone', 'Status', 'Source', 'Lead Score', 'Created'],
+      ...leads.map((l) => [l.name, l.phone, l.status, l.source, l.leadScore, new Date(l.createdAt).toLocaleDateString()]),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `property1313-leads-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const kpis = [
     { label: 'Total Leads', value: totalLeads.toLocaleString(), icon: Users, color: 'bg-p13-yellow/15 text-p13-yellow', trend: '' },
     { label: 'Converted', value: String(convertedLeads), icon: CheckCircle, color: 'bg-green-100 text-green-500', trend: '' },
@@ -24,7 +39,7 @@ export default function Reports() {
     <div className="page-container pt-4 pb-6">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-h1-mobile md:text-h1-desktop font-semibold">Reports & Analytics</h1>
-        <button className="flex items-center gap-1.5 px-3 py-2 bg-card border border-border rounded-lg text-xs font-medium hover:bg-muted/50">
+        <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-2 bg-card border border-border rounded-lg text-xs font-medium hover:bg-muted/50">
           <Download size={14} /> Export
         </button>
       </div>

@@ -40,6 +40,7 @@ export default function Projects() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((project) => (
           <div key={project.id}
+            onClick={() => navigate(`/project/${project.slug}`)}
             className="bg-card rounded-xl shadow-xs border border-border overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group">
             {/* Media */}
             <div className="relative h-44 md:h-52 overflow-hidden">
@@ -51,7 +52,7 @@ export default function Projects() {
                 </span>
               </div>
               <div className="absolute top-3 right-3 flex gap-1.5">
-                <button onClick={() => { navigator.clipboard.writeText(project.shareLink); addToast({ type: 'success', message: 'Link copied!' }); }}
+                <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(project.shareLink); addToast({ type: 'success', message: 'Link copied!' }); }}
                   className="w-8 h-8 bg-black/40 backdrop-blur rounded-full flex items-center justify-center text-foreground hover:bg-black/60">
                   <Share2 size={14} />
                 </button>
@@ -80,7 +81,7 @@ export default function Projects() {
                   <span className="text-[11px] text-muted-foreground flex items-center gap-1"><Users size={12} />{project.leadCount} Leads</span>
                   <span className="text-[11px] text-muted-foreground flex items-center gap-1"><Eye size={12} />{project.viewCount >= 1000 ? `${(project.viewCount / 1000).toFixed(1)}k` : project.viewCount} views</span>
                 </div>
-                <button onClick={() => navigate(`/project/${project.slug}`)}
+                <button onClick={(e) => { e.stopPropagation(); navigate(`/project/${project.slug}`); }}
                   className="text-xs text-blue-600 font-medium flex items-center gap-1 hover:underline">
                   Public Page <ExternalLink size={10} />
                 </button>

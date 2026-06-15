@@ -8,6 +8,7 @@ import {
   KeyRound, Fingerprint, Save
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { useRBACStore } from '@/stores/rbacStore';
 import { useUIStore } from '@/stores/uiStore';
 import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps } from '@/lib/phone-validation';
 import {
@@ -21,8 +22,9 @@ type ProfileTab = 'overview' | 'security' | 'login_activity' | 'notifications';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user, logout, updateUser } = useAuthStore();
+  const { user, logout, updateUser, impersonateUser } = useAuthStore();
   const { addToast } = useUIStore();
+  const { disableUser, enableUser, deleteUser, startImpersonation, setPassword: rbacSetPassword } = useRBACStore();
 
   // Direct role check instead of broken usePermission import
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin' || false;
@@ -95,7 +97,8 @@ export default function Profile() {
 
   const handleAdminSetPassword = () => {
     if (adminNewPass.length < 8) { addToast({ type: 'error', message: 'Password must be at least 8 characters' }); return; }
-    addToast({ type: 'success', message: `Password ${forceChange ? 'set with force change' : 'reset'} for user` });
+    if (selectedStaffId) rbacSetPassword(selectedStaffId, adminNewPass, forceChange, user?.id || 'system');
+    addToast({ type: 'success', message: `Password ${forceChange ? 'set with force change' : 'updated'} for user` });
     setShowSetPassword(false); setAdminNewPass(''); setForceChange(false);
   };
 
@@ -735,17 +738,17 @@ export default function Profile() {
                 <Lock size={16} className="text-blue-500" />
                 <div><p className="text-sm font-medium">Reset Password</p><p className="text-[11px] text-muted-foreground">Send password reset link</p></div>
               </button>
-              <button onClick={() => { addToast({ type: 'info', message: `Logged in as ${staff.name}` }); setShowAdminActions(false); }}
+              <button onClick={() => { startImpersonation(staff.id, user?.id || 'system'); impersonateUser(staff); addToast({ type: 'success', message: `Now viewing as ${staff.name}` }); setShowAdminActions(false); setTimeout(() => navigate('/dashboard'), 200); }}
                 className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left">
                 <User size={16} className="text-purple-500" />
                 <div><p className="text-sm font-medium">Login as User</p><p className="text-[11px] text-muted-foreground">Impersonate this account</p></div>
               </button>
-              <button onClick={() => { addToast({ type: 'success', message: `${staff.isActive ? 'Disabled' : 'Enabled'} ${staff.name}` }); setShowAdminActions(false); }}
+              <button onClick={() => { if (staff.isActive) disableUser(staff.id, user?.id || 'system'); else enableUser(staff.id, user?.id || 'system'); addToast({ type: 'success', message: `${staff.isActive ? 'Disabled' : 'Enabled'} ${staff.name}` }); setShowAdminActions(false); }}
                 className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left">
                 <Shield size={16} className={staff.isActive ? 'text-red-500' : 'text-green-500'} />
                 <div><p className="text-sm font-medium">{staff.isActive ? 'Disable Account' : 'Enable Account'}</p><p className="text-[11px] text-muted-foreground">{staff.isActive ? 'Temporarily disable' : 'Reactivate account'}</p></div>
               </button>
-              <button onClick={() => { if (confirm(`Delete ${staff.name}?`)) { addToast({ type: 'success', message: 'User deleted' }); setShowAdminActions(false); } }}
+              <button onClick={() => { if (confirm(`Delete ${staff.name}?`)) { deleteUser(staff.id, user?.id || 'system'); addToast({ type: 'success', message: 'User deleted' }); setShowAdminActions(false); } }}
                 className="flex items-center gap-3 w-full px-3 py-3 rounded-lg hover:bg-red-50 transition-colors text-left">
                 <Trash2Custom />
                 <div><p className="text-sm font-medium text-red-600">Delete Account</p><p className="text-[11px] text-muted-foreground">Permanently remove user</p></div>

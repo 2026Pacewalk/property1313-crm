@@ -3,16 +3,67 @@ import { useState } from 'react';
 import { MapPin, Calendar, Phone, Clock, List, CalendarDays } from 'lucide-react';
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useAuthStore } from '@/stores/authStore';
 import { getAvatarColor, getInitials } from '@/data/mockData';
+import { normalizeMobile } from '@/lib/phone-validation';
 import BottomSheet from '@/components/shared/BottomSheet';
 import type { Visit } from '@/types';
 
 export default function Visits() {
-  const { visits } = useDataStore();
+  const { visits, leads, projects, addVisit, updateVisit } = useDataStore();
   const { addToast } = useUIStore();
+  const { user } = useAuthStore();
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [showSchedule, setShowSchedule] = useState(false);
   const [activeStatus, setActiveStatus] = useState<string>('all');
+
+  // Schedule-visit form state
+  const [fLeadId, setFLeadId] = useState('');
+  const [fProject, setFProject] = useState('');
+  const [fDate, setFDate] = useState('');
+  const [fTime, setFTime] = useState('10:00');
+  const [fDuration, setFDuration] = useState('1 hour');
+  const [fType, setFType] = useState<'first_visit' | 'revisit'>('first_visit');
+  const [fNotes, setFNotes] = useState('');
+
+  const resetForm = () => {
+    setFLeadId(''); setFProject(''); setFDate(''); setFTime('10:00');
+    setFDuration('1 hour'); setFType('first_visit'); setFNotes('');
+  };
+
+  const handleSchedule = () => {
+    const lead = leads.find(l => l.id === fLeadId);
+    if (!lead) { addToast({ type: 'error', message: 'Please select a lead' }); return; }
+    if (!fDate) { addToast({ type: 'error', message: 'Please select a date' }); return; }
+    addVisit({
+      id: `v_${Date.now()}`,
+      leadId: lead.id,
+      leadName: lead.name,
+      leadPhone: lead.phone || '',
+      projectName: fProject || lead.projectInterest || '',
+      visitDate: fDate,
+      visitTime: fTime,
+      duration: fDuration,
+      visitType: fType,
+      status: 'scheduled',
+      assignedTo: user?.id || '',
+      notes: fNotes.trim(),
+      createdAt: new Date().toISOString(),
+    } as Visit);
+    addToast({ type: 'success', message: 'Visit scheduled!' });
+    resetForm();
+    setShowSchedule(false);
+  };
+
+  const handleStartVisit = (v: Visit) => {
+    updateVisit(v.id, { status: 'in_progress' });
+    addToast({ type: 'success', message: `Visit started for ${v.leadName}` });
+  };
+
+  const handleCallLead = (v: Visit) => {
+    if (v.leadPhone) window.location.href = `tel:+91${normalizeMobile(v.leadPhone)}`;
+    else addToast({ type: 'error', message: 'No phone number available' });
+  };
 
   const filtered = activeStatus === 'all' ? visits : visits.filter(v => v.status === activeStatus);
   const today = new Date().toISOString().split('T')[0];
@@ -109,8 +160,8 @@ export default function Visits() {
                       <p className="text-xs text-muted-foreground">{v.projectName}</p>
                     </div>
                     <div className="flex gap-2 mt-3">
-                      {v.status === 'scheduled' && <button className="flex-1 h-8 bg-p13-yellow text-p13-black rounded-lg text-xs font-semibold">Start Visit</button>}
-                      <button className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center"><Phone size={12} className="text-green-500" /></button>
+                      {v.status === 'scheduled' && <button onClick={() => handleStartVisit(v)} className="flex-1 h-8 bg-p13-yellow text-p13-black rounded-lg text-xs font-semibold hover:bg-p13-yellow/90">Start Visit</button>}
+                      <button onClick={() => handleCallLead(v)} className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center hover:bg-green-100"><Phone size={12} className="text-green-500" /></button>
                     </div>
                   </div>
                 ))}
@@ -155,24 +206,54 @@ export default function Visits() {
         )}
       </div>
 
-      <BottomSheet isOpen={showSchedule} onClose={() => setShowSchedule(false)} title="Schedule Visit">
+      <BottomSheet isOpen={showSchedule} onClose={() => setShowSchedule(false)} title="Schedule Visit" maxHeight="90vh">
         <div className="space-y-4 py-2">
-          {['Lead', 'Project/Property', 'Date', 'Time', 'Duration', 'Visit Type', 'Notes'].map(label => (
-            <div key={label}>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">{label}</label>
-              {label === 'Notes' ? (
-                <textarea rows={3} placeholder={`Enter ${label.toLowerCase()}...`} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
-              ) : label === 'Date' ? (
-                <input type="date" className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm" />
-              ) : label === 'Time' ? (
-                <input type="time" className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm" />
-              ) : (
-                <input placeholder={`Enter ${label.toLowerCase()}...`} className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm" />
-              )}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Lead *</label>
+            <select value={fLeadId} onChange={e => setFLeadId(e.target.value)}
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow">
+              <option value="">Select lead...</option>
+              {leads.map(l => <option key={l.id} value={l.id}>{l.name} — {l.phone}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Project / Property</label>
+            <select value={fProject} onChange={e => setFProject(e.target.value)}
+              className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow">
+              <option value="">Select project...</option>
+              {projects.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Date *</label>
+              <input type="date" value={fDate} onChange={e => setFDate(e.target.value)} className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
             </div>
-          ))}
-          <button onClick={() => { addToast({ type: 'success', message: 'Visit scheduled!' }); setShowSchedule(false); }}
-            className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold">Schedule Visit</button>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Time</label>
+              <input type="time" value={fTime} onChange={e => setFTime(e.target.value)} className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Duration</label>
+              <select value={fDuration} onChange={e => setFDuration(e.target.value)} className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow">
+                <option>30 mins</option><option>1 hour</option><option>1.5 hours</option><option>2 hours</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Visit Type</label>
+              <select value={fType} onChange={e => setFType(e.target.value as 'first_visit' | 'revisit')} className="w-full h-11 px-3 rounded-lg border border-border bg-card text-sm outline-none focus:border-p13-yellow">
+                <option value="first_visit">First Visit</option><option value="revisit">Revisit</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Notes</label>
+            <textarea rows={3} value={fNotes} onChange={e => setFNotes(e.target.value)} placeholder="Enter notes..." className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none outline-none focus:border-p13-yellow" />
+          </div>
+          <button onClick={handleSchedule}
+            className="w-full h-11 bg-p13-yellow text-p13-black rounded-lg text-sm font-semibold hover:bg-p13-yellow/90">Schedule Visit</button>
         </div>
       </BottomSheet>
     </div>

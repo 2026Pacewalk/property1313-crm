@@ -9,7 +9,8 @@ import {
 import { useDataStore } from '@/stores/dataStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useMasterStore } from '@/stores/masterStore';
-import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps, mobileInputClasses } from '@/lib/phone-validation';
+import { useWhatsAppConnectionStore } from '@/stores/whatsappConnectionStore';
+import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps, mobileInputClasses, normalizeMobile } from '@/lib/phone-validation';
 import { getInitials, getAvatarColor, users as allUsers } from '@/data/mockData';
 import StatusBadge from '@/components/shared/StatusBadge';
 import BottomSheet from '@/components/shared/BottomSheet';
@@ -325,9 +326,8 @@ export default function Leads() {
       <FloatingActionButton
         actions={[
           { id: 'add-lead', label: 'Add Lead', icon: <User size={16} />, onClick: () => setShowAddLead(true), color: '#FBBD08' },
-          { id: 'add-followup', label: 'Add Follow-up', icon: <Calendar size={16} />, onClick: () => { /* Follow-up form */ }, color: '#3B82F6' },
-          { id: 'schedule-visit', label: 'Schedule Visit', icon: <MapPin size={16} />, onClick: () => { /* Visit form */ }, color: '#22C55E' },
-          { id: 'quick-assign', label: 'Quick Assign', icon: <Users size={16} />, onClick: () => { /* Assign flow */ }, color: '#8B5CF6' },
+          { id: 'add-followup', label: 'Add Follow-up', icon: <Calendar size={16} />, onClick: () => navigate('/follow-ups'), color: '#3B82F6' },
+          { id: 'schedule-visit', label: 'Schedule Visit', icon: <MapPin size={16} />, onClick: () => navigate('/visits'), color: '#22C55E' },
         ]}
       />
     </div>
@@ -341,6 +341,7 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
   const { addLead } = useDataStore();
   const { addToast } = useUIStore();
   const masterStore = useMasterStore();
+  const { autoIntro, renderIntro } = useWhatsAppConnectionStore();
 
   // Get master values for dropdowns
   const cityOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_city' && v.isActive).map(v => v.name);
@@ -474,6 +475,14 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
       lastActivityAt: now,
     });
     addToast({ type: 'success', message: `Lead "${fullName}" created successfully` });
+
+    // Auto-share the company introduction on WhatsApp (opens pre-filled, ready to send)
+    if (autoIntro) {
+      const num = mobileResult.normalized.replace(/\D/g, '');
+      const text = encodeURIComponent(renderIntro(fullName.trim()));
+      window.open(`https://wa.me/91${num}?text=${text}`, '_blank');
+    }
+
     onClose();
   };
 
@@ -672,6 +681,11 @@ function LeadListCard({ lead, onClick }: { lead: Lead; index: number; onClick: (
 
 function LeadGridCard({ lead, onClick }: { lead: Lead; index: number; onClick: () => void }) {
   const color = getAvatarColor(lead.name);
+  const navigate = useNavigate();
+  const phone = normalizeMobile(lead.phone || '');
+  const callLead = (e: React.MouseEvent) => { e.stopPropagation(); if (phone) window.location.href = `tel:+91${phone}`; };
+  const whatsappLead = (e: React.MouseEvent) => { e.stopPropagation(); if (phone) window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hi ${lead.name}, `)}`, '_blank'); };
+  const followLead = (e: React.MouseEvent) => { e.stopPropagation(); navigate(`/leads/${lead.id}`); };
   return (
     <div
       onClick={onClick} className="bg-card rounded-xl p-4 shadow-xs border border-border/50 cursor-pointer hover:shadow-md transition-all active:scale-[0.98]"
@@ -692,9 +706,9 @@ function LeadGridCard({ lead, onClick }: { lead: Lead; index: number; onClick: (
       <p className="text-xs text-muted-foreground text-center">{lead.phone}</p>
       {lead.targetCity && <p className="text-[11px] text-muted-foreground text-center mt-1 truncate">{lead.targetCity}</p>}
       <div className="flex justify-center gap-3 mt-3">
-        <button className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center"><Phone size={12} className="text-green-500" /></button>
-        <button className="w-8 h-8 rounded-full bg-p13-yellow/10 flex items-center justify-center"><MessageCircle size={12} className="text-green-600" /></button>
-        <button className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center"><Bell size={12} className="text-blue-500" /></button>
+        <button onClick={callLead} title="Call" className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center hover:bg-green-100"><Phone size={12} className="text-green-500" /></button>
+        <button onClick={whatsappLead} title="WhatsApp" className="w-8 h-8 rounded-full bg-p13-yellow/10 flex items-center justify-center hover:bg-p13-yellow/20"><MessageCircle size={12} className="text-green-600" /></button>
+        <button onClick={followLead} title="Follow-up" className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100"><Bell size={12} className="text-blue-500" /></button>
       </div>
     </div>
   );

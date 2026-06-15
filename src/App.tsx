@@ -10,11 +10,13 @@ import Visits from './pages/Visits';
 import Followups from './pages/Followups';
 import LoanInquiry from './pages/LoanInquiry';
 import WhatsAppTemplates from './pages/WhatsAppTemplates';
+import WhatsAppConnect from './pages/WhatsAppConnect';
 import Automation from './pages/Automation';
 import Reports from './pages/Reports';
 import SettingsPage from './pages/Settings';
 import NotificationsPage from './pages/Notifications';
 import PublicProject from './pages/PublicProject';
+import PublicListings from './pages/PublicListings';
 import AdminUsers from './pages/AdminUsers';
 import AuditLogs from './pages/AuditLogs';
 import EditProject from './pages/EditProject';
@@ -32,6 +34,8 @@ export default function App() {
     <>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/listings" element={<PublicListings />} />
+        <Route path="/explore" element={<PublicListings />} />
         <Route path="/project/:slug" element={<PublicProject />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
@@ -44,6 +48,7 @@ export default function App() {
           <Route path="/follow-ups" element={<Followups />} />
           <Route path="/loan-inquiry" element={<LoanInquiry />} />
           <Route path="/whatsapp-templates" element={<WhatsAppTemplates />} />
+          <Route path="/whatsapp-connect" element={<WhatsAppConnect />} />
           <Route path="/automation" element={<RouteGuard allowedRoles={MANAGER_ROLES}><Automation /></RouteGuard>} />
           <Route path="/reports" element={<RouteGuard allowedRoles={MANAGER_ROLES}><Reports /></RouteGuard>} />
           <Route path="/settings" element={<SettingsPage />} />

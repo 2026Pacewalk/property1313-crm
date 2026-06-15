@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CheckCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +12,8 @@ interface MessagePreviewProps {
 }
 
 export default function MessagePreview({ message, mediaType, mediaUrl, status = 'sent', className, compact }: MessagePreviewProps) {
-  const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  // Stable per-mount timestamp (avoids the time jumping on every re-render)
+  const [time] = useState(() => new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
 
   return (
     <div className={cn('flex justify-start', className)}>

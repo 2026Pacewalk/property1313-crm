@@ -38,6 +38,7 @@ export default function MasterDatabase() {
   const [selectedTypeId, setSelectedTypeId] = useState<string>('mt_lead_status');
   const [search, setSearch] = useState('');
   const [filterModule, setFilterModule] = useState<string>('all');
+  const [fieldModule, setFieldModule] = useState<string>('add_lead');
   const [showInactive, setShowInactive] = useState(false);
 
   // Edit/Add state
@@ -402,8 +403,9 @@ export default function MasterDatabase() {
                 <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1">
                   {['add_lead', 'add_project', 'schedule_visit', 'add_followup', 'loan_inquiry', 'add_user'].map(mod => (
                     <button key={mod}
-                      onClick={() => { /* re-render with module */ }}
-                      className="px-3 py-1.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground hover:bg-muted transition-all whitespace-nowrap">
+                      onClick={() => setFieldModule(mod)}
+                      className={cn('px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap',
+                        fieldModule === mod ? 'bg-p13-yellow text-p13-black' : 'bg-muted text-muted-foreground hover:text-foreground')}>
                       {mod.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                     </button>
                   ))}
@@ -416,7 +418,7 @@ export default function MasterDatabase() {
                     <span className="text-center">Visible</span>
                     <span className="text-center">Editable</span>
                   </div>
-                  {fieldSettings.slice(0, 15).map(fs => (
+                  {fieldSettings.filter(fs => fs.moduleName === fieldModule).map(fs => (
                     <div key={fs.id} className="grid grid-cols-[1fr_80px_80px_80px] gap-2 px-4 py-2 border-b border-border/50 items-center">
                       <div>
                         <p className="text-sm font-medium">{fs.fieldLabel}</p>

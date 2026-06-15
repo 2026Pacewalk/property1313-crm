@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router';
-import { Home, Users, Bell, MapPin, Building2, MoreHorizontal, LogOut, Settings, User, Shield, BarChart3, MessageCircle, FileText, Zap } from 'lucide-react';
+import { Home, Users, Bell, MapPin, Building2, MoreHorizontal, LogOut, Settings, User, Shield, BarChart3, MessageCircle, FileText, Zap, QrCode } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
 
@@ -84,6 +84,11 @@ export default function BottomTabBar() {
               className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
               <MessageCircle size={16} className="text-green-500" />
               <span className="text-sm font-medium dark:text-foreground">WhatsApp Templates</span>
+            </button>
+            <button onClick={() => { navigate('/whatsapp-connect'); setShowMore(false); }}
+              className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">
+              <QrCode size={16} className="text-green-500" />
+              <span className="text-sm font-medium dark:text-foreground">WhatsApp Connect</span>
             </button>
             <button onClick={() => { navigate('/loan-inquiry'); setShowMore(false); }}
               className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 dark:hover:bg-white/5 transition-colors text-left border-t border-border/50 dark:border-slate-700">

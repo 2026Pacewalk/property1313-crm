@@ -39,6 +39,7 @@ interface DataState {
   addFollowup: (followup: FollowUp) => Promise<void>;
   updateFollowup: (id: string, data: Partial<FollowUp>) => void;
   addVisit: (visit: Visit) => Promise<void>;
+  updateVisit: (id: string, data: Partial<Visit>) => void;
   addProject: (project: Project) => Promise<void>;
   updateProject: (id: string, data: Partial<Project>) => Promise<void>;
   deleteProject: (id: string) => void;
@@ -162,6 +163,9 @@ export const useDataStore = create<DataState>()(
           set((s) => ({ visits: [visit, ...s.visits] }));
         }
       },
+
+      updateVisit: (id, data) =>
+        set((s) => ({ visits: s.visits.map((v) => v.id === id ? { ...v, ...data } : v) })),
 
       // Project CRUD
       addProject: async (project) => {
