@@ -347,7 +347,6 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
   // Get master values for dropdowns
   const cityOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_city' && v.isActive).map(v => v.name);
   const lookingForOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_looking_for' && v.isActive).map(v => v.name);
-  const typeDetailsOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_property_sub_category' && v.isActive).map(v => v.name);
   const inquirySourceOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_lead_source' && v.isActive).map(v => v.name);
 
   // Live users from the RBAC store (reflects deletes/disables), filtered by role for assignments
@@ -385,6 +384,12 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
   const [leadScore, setLeadScore] = useState<'hot' | 'warm' | 'cold'>('warm');
   const [initialRemark, setInitialRemark] = useState('');
 
+  // Type Details cascades from the selected Looking For (sub-categories whose parent matches it)
+  const selectedLookingForVal = masterStore.masterValues.find(v => v.masterTypeId === 'mt_looking_for' && v.name === lookingFor);
+  const typeDetailsOptions = masterStore.masterValues
+    .filter(v => v.masterTypeId === 'mt_property_sub_category' && v.isActive && (!selectedLookingForVal || v.parentId === selectedLookingForVal.id))
+    .map(v => v.name);
+
   // Handle add new master value
   const handleAddNewCity = (val: string) => {
     masterStore.addValue('mt_city', val, { color: '#3B82F6' });
@@ -397,7 +402,9 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
     addToast({ type: 'success', message: `Added "${val}" to looking for` });
   };
   const handleAddNewTypeDetail = (val: string) => {
-    masterStore.addValue('mt_property_sub_category', val, { color: '#8B5CF6' });
+    // Link the new sub-category to the currently selected Looking For so it maps correctly
+    const parent = masterStore.masterValues.find(v => v.masterTypeId === 'mt_looking_for' && v.name === lookingFor);
+    masterStore.addValue('mt_property_sub_category', val, { color: '#8B5CF6', parentId: parent?.id });
     setTypeDetails(val);
     addToast({ type: 'success', message: `Added "${val}" to property types` });
   };
@@ -546,7 +553,7 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
         </div>
         <div>
           <Label required>Looking For</Label>
-          <ComboboxInput value={lookingFor} onChange={setLookingFor} options={lookingForOptions} placeholder="Select option..." allowAddNew onAddNew={handleAddNewLookingFor} />
+          <ComboboxInput value={lookingFor} onChange={(v) => { setLookingFor(v); setTypeDetails(''); }} options={lookingForOptions} placeholder="Select option..." allowAddNew onAddNew={handleAddNewLookingFor} />
         </div>
         <div>
           <Label>Type Details</Label>
