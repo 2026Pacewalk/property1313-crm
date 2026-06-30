@@ -11,7 +11,8 @@ import { useUIStore } from '@/stores/uiStore';
 import { useMasterStore } from '@/stores/masterStore';
 import { useWhatsAppConnectionStore } from '@/stores/whatsappConnectionStore';
 import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps, mobileInputClasses, normalizeMobile } from '@/lib/phone-validation';
-import { getInitials, getAvatarColor, users as allUsers } from '@/data/mockData';
+import { getInitials, getAvatarColor } from '@/data/mockData';
+import { useRBACStore } from '@/stores/rbacStore';
 import StatusBadge from '@/components/shared/StatusBadge';
 import BottomSheet from '@/components/shared/BottomSheet';
 import FloatingActionButton from '@/components/shared/FloatingActionButton';
@@ -349,8 +350,9 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
   const typeDetailsOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_property_sub_category' && v.isActive).map(v => v.name);
   const inquirySourceOptions = masterStore.masterValues.filter(v => v.masterTypeId === 'mt_lead_source' && v.isActive).map(v => v.name);
 
-  // Real users filtered by role for assignments
-  const activeUsers = allUsers.filter(u => u.isActive);
+  // Live users from the RBAC store (reflects deletes/disables), filtered by role for assignments
+  const rbacUsers = useRBACStore(s => s.users);
+  const activeUsers = rbacUsers.filter(u => u.isActive && u.accountStatus !== 'disabled' && u.accountStatus !== 'archived');
   const telecallerOptions = activeUsers.filter(u => u.role === 'telecaller').map(u => u.name);
   const salesOptions = activeUsers.filter(u => u.role === 'sales_person').map(u => u.name);
   const managerOptions = activeUsers.filter(u => u.role === 'manager' || u.role === 'admin' || u.role === 'super_admin').map(u => u.name);

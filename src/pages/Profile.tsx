@@ -14,7 +14,7 @@ import { useReminderStore } from '@/stores/reminderStore';
 import { useUIStore } from '@/stores/uiStore';
 import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps } from '@/lib/phone-validation';
 import {
-  getInitials, getAvatarColor, users as allUsers,
+  getInitials, getAvatarColor,
   userSessions, notificationPrefs, auditLogs, loginActivity
 } from '@/data/mockData';
 import BottomSheet from '@/components/shared/BottomSheet';
@@ -26,7 +26,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const { user, logout, updateUser, impersonateUser } = useAuthStore();
   const { addToast } = useUIStore();
-  const { disableUser, enableUser, deleteUser, startImpersonation, setPassword: rbacSetPassword } = useRBACStore();
+  const { users: allUsers, disableUser, enableUser, deleteUser, startImpersonation, setPassword: rbacSetPassword } = useRBACStore();
 
   // Direct role check instead of broken usePermission import
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin' || false;
