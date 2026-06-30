@@ -239,7 +239,6 @@ function notifTypeToDb(type: string): string {
   if (/automation/.test(type)) return 'automation';
   return 'system';
 }
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function notifToDb(n: any) {
   return {
     user_id: n.userId || null,
@@ -249,8 +248,7 @@ function notifToDb(n: any) {
     read: !!n.read,
     deleted: !!n.deleted,
     action_url: n.actionUrl ?? null,
-    // related_entity_id is a UUID column — only send it when entityId is actually a UUID
-    related_entity_id: typeof n.entityId === 'string' && UUID_RE.test(n.entityId) ? n.entityId : null,
+    related_entity_id: n.entityId ?? null,
     related_entity_type: n.entityType ?? null,
   };
 }
