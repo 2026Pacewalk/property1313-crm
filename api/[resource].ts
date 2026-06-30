@@ -16,8 +16,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const table = resolveTable(Array.isArray(req.query.resource) ? req.query.resource[0] : req.query.resource);
   if (!table) return res.status(404).json({ error: 'Unknown resource' });
 
-  const sql = db();
   try {
+    const sql = await db();
     if (req.method === 'GET') {
       const { rows } = await sql.query(`SELECT * FROM ${table} ORDER BY created_at DESC NULLS LAST`);
       return res.status(200).json(rows);

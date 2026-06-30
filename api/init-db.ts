@@ -87,8 +87,8 @@ const STATEMENTS: string[] = [
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   if (!hasDb()) return res.status(503).json({ error: 'Database not configured. Add a Postgres store in Vercel → Storage.' });
-  const sql = db();
   try {
+    const sql = await db();
     for (const stmt of STATEMENTS) {
       await sql.query(stmt);
     }

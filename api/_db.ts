@@ -1,15 +1,20 @@
-import { createPool, type VercelPool } from '@vercel/postgres';
+// Lazy DB accessor — @vercel/postgres is imported dynamically so any load error
+// surfaces inside the route handler's try/catch (as JSON) instead of crashing cold start.
 
-// Vercel Postgres injects POSTGRES_URL; the Neon marketplace integration uses DATABASE_URL.
 const connectionString =
   process.env.POSTGRES_URL ||
   process.env.DATABASE_URL ||
   process.env.POSTGRES_PRISMA_URL ||
+  process.env.POSTGRES_URL_NON_POOLING ||
   '';
 
-let pool: VercelPool | null = null;
-export function db(): VercelPool {
-  if (!pool) pool = createPool({ connectionString });
+let pool: any = null;
+
+export async function db(): Promise<any> {
+  if (!pool) {
+    const { createPool } = await import('@vercel/postgres');
+    pool = createPool({ connectionString });
+  }
   return pool;
 }
 
@@ -24,7 +29,7 @@ export const TABLES = new Set([
 // Valid SQL identifier (column name) — blocks injection via object keys
 export const COL_RE = /^[a-z_][a-z0-9_]*$/;
 
-export function resolveTable(resource: string): string | null {
+export function resolveTable(resource: string | undefined): string | null {
   const table = String(resource || '').replace(/-/g, '_');
   return TABLES.has(table) ? table : null;
 }
