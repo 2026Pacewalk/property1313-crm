@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useRBACStore } from '@/stores/rbacStore';
+import { useDataStore } from '@/stores/dataStore';
+import { useReminderStore } from '@/stores/reminderStore';
 import { useUIStore } from '@/stores/uiStore';
 import { validateMobile, handleMobileInputChange, handleMobileInputBlur, mobileInputProps } from '@/lib/phone-validation';
 import {
@@ -28,6 +30,14 @@ export default function Profile() {
 
   // Direct role check instead of broken usePermission import
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin' || false;
+
+  // Real quick-stats: admins see totals; everyone else sees records assigned to them
+  const { leads, visits } = useDataStore();
+  const { reminders } = useReminderStore();
+  const ownsLead = (l: typeof leads[number]) => [l.assignedTo, l.assignTelecaller, l.assignSalesExpert, l.assignManager].includes(user?.id);
+  const myLeadsCount = isAdmin ? leads.length : leads.filter(ownsLead).length;
+  const myVisitsCount = isAdmin ? visits.length : visits.filter(v => v.assignedTo === user?.id).length;
+  const myFollowupsCount = isAdmin ? reminders.length : reminders.filter(r => r.assignedToUserId === user?.id).length;
 
   const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
 
@@ -179,20 +189,20 @@ export default function Profile() {
 
         {/* Quick Stats Row */}
         <div className="flex gap-4 mt-4 pt-4 border-t border-border">
-          <div className="text-center flex-1">
-            <p className="text-lg font-bold text-foreground">12</p>
+          <button onClick={() => navigate('/leads')} className="text-center flex-1 hover:bg-muted/50 rounded-lg py-1 transition-colors">
+            <p className="text-lg font-bold text-foreground">{myLeadsCount}</p>
             <p className="text-[10px] text-muted-foreground">Leads</p>
-          </div>
+          </button>
           <div className="w-px bg-border" />
-          <div className="text-center flex-1">
-            <p className="text-lg font-bold text-foreground">8</p>
+          <button onClick={() => navigate('/follow-ups')} className="text-center flex-1 hover:bg-muted/50 rounded-lg py-1 transition-colors">
+            <p className="text-lg font-bold text-foreground">{myFollowupsCount}</p>
             <p className="text-[10px] text-muted-foreground">Follow-ups</p>
-          </div>
+          </button>
           <div className="w-px bg-border" />
-          <div className="text-center flex-1">
-            <p className="text-lg font-bold text-foreground">5</p>
+          <button onClick={() => navigate('/visits')} className="text-center flex-1 hover:bg-muted/50 rounded-lg py-1 transition-colors">
+            <p className="text-lg font-bold text-foreground">{myVisitsCount}</p>
             <p className="text-[10px] text-muted-foreground">Visits</p>
-          </div>
+          </button>
         </div>
       </div>
 
