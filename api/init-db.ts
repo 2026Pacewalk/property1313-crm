@@ -91,10 +91,17 @@ const STATEMENTS: string[] = [
     created_at TIMESTAMPTZ DEFAULT NOW(), updated_at TIMESTAMPTZ DEFAULT NOW())`,
 ];
 
-export default async function handler(_req: any, res: any) {
+const RESET_TABLES = ['notifications', 'audit_logs', 'loan_inquiries', 'visits', 'followups', 'master_values', 'projects', 'leads', 'users'];
+
+export default async function handler(req: any, res: any) {
   if (!hasDb()) return res.status(503).json({ error: 'Database not configured. Add a Postgres store in Vercel -> Storage.' });
   try {
     const sql = db();
+    // /api/init-db?reset=1 rebuilds the tables with the correct TEXT-id schema
+    // (needed when older UUID-id tables already exist). Drops existing rows.
+    if (req?.query?.reset === '1') {
+      for (const t of RESET_TABLES) await sql.query(`DROP TABLE IF EXISTS ${t} CASCADE`);
+    }
     for (const stmt of STATEMENTS) await sql.query(stmt);
     const { rows } = await sql.query(
       `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name`
