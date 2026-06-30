@@ -375,8 +375,9 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
   const [inquirySource, setInquirySource] = useState('');
   const [assignTelecaller, setAssignTelecaller] = useState('');
   const [assignSalesExpert, setAssignSalesExpert] = useState('');
-  const [assignManager, setAssignManager] = useState('');
-  const [projectTeamMembers, setProjectTeamMembers] = useState<string[]>([]);
+  // Default assignments (only if those users still exist/active)
+  const [assignManager, setAssignManager] = useState(() => managerOptions.find(n => n === 'Adamya Khosla') || '');
+  const [projectTeamMembers, setProjectTeamMembers] = useState<string[]>(() => teamOptions.includes('Suhail Pratap Malik') ? ['Suhail Pratap Malik'] : []);
 
   // First Step
   const [nextCallDate, setNextCallDate] = useState(new Date().toISOString().split('T')[0]);
