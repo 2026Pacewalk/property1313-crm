@@ -93,14 +93,18 @@ export const useDataStore = create<DataState>()(
             fetchLoanInquiries(),
             fetchNotifications(),
           ]);
+          // IMPORTANT: only replace a collection when Supabase actually returns rows.
+          // Otherwise an empty/failed fetch would wipe locally-saved (localStorage) data
+          // created while Supabase writes were unavailable.
+          const notifications = (notifData as Notification[]).length > 0 ? (notifData as Notification[]) : get().notifications;
           set({
-            leads: leadsData as Lead[],
+            leads: (leadsData as Lead[]).length > 0 ? (leadsData as Lead[]) : get().leads,
             projects: projectsData.length > 0 ? (projectsData as Project[]) : get().projects,
-            followups: followupsData as FollowUp[],
-            visits: visitsData as Visit[],
-            loanInquiries: loanData as LoanInquiry[],
-            notifications: notifData as Notification[],
-            unreadCount: (notifData as Notification[]).filter((n: Notification) => !n.read && !n.deleted).length,
+            followups: (followupsData as FollowUp[]).length > 0 ? (followupsData as FollowUp[]) : get().followups,
+            visits: (visitsData as Visit[]).length > 0 ? (visitsData as Visit[]) : get().visits,
+            loanInquiries: (loanData as LoanInquiry[]).length > 0 ? (loanData as LoanInquiry[]) : get().loanInquiries,
+            notifications,
+            unreadCount: notifications.filter((n: Notification) => !n.read && !n.deleted).length,
           });
         } catch (e) {
           console.error('[dataStore] syncFromSupabase failed:', e);
