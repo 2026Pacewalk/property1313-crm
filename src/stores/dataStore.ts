@@ -14,7 +14,7 @@ import {
   fetchVisits, createVisit,
   fetchLoanInquiries, createLoanInquiry,
   fetchNotifications, createNotification, markNotificationReadDb,
-} from '@/lib/supabase-api';
+} from '@/lib/api';
 
 interface DataState {
   leads: Lead[];
@@ -53,7 +53,7 @@ interface DataState {
   getUnreadCount: () => number;
   toggleAutomationRule: (id: string) => void;
   runAutomationForTrigger: (trigger: string, context?: { leadName?: string; leadId?: string }) => void;
-  syncFromSupabase: () => Promise<void>;
+  syncFromCloud: () => Promise<void>;
 }
 
 // Static mock data (not persisted)
@@ -81,8 +81,8 @@ export const useDataStore = create<DataState>()(
       unreadCount: 0,
       isLoading: false,
 
-      // Sync data from Supabase on load
-      syncFromSupabase: async () => {
+      // Sync data from cloud on load
+      syncFromCloud: async () => {
         set({ isLoading: true });
         try {
           const [leadsData, projectsData, followupsData, visitsData, loanData, notifData] = await Promise.all([
@@ -93,7 +93,7 @@ export const useDataStore = create<DataState>()(
             fetchLoanInquiries(),
             fetchNotifications(),
           ]);
-          // IMPORTANT: only replace a collection when Supabase actually returns rows.
+          // IMPORTANT: only replace a collection when the cloud actually returns rows.
           // Otherwise an empty/failed fetch would wipe locally-saved (localStorage) data
           // created while Supabase writes were unavailable.
           const notifications = (notifData as Notification[]).length > 0 ? (notifData as Notification[]) : get().notifications;
@@ -107,7 +107,7 @@ export const useDataStore = create<DataState>()(
             unreadCount: notifications.filter((n: Notification) => !n.read && !n.deleted).length,
           });
         } catch (e) {
-          console.error('[dataStore] syncFromSupabase failed:', e);
+          console.error('[dataStore] syncFromCloud failed:', e);
         } finally {
           // Always clear the loading flag so the UI can't hang on a failed/partial sync
           set({ isLoading: false });
@@ -116,14 +116,14 @@ export const useDataStore = create<DataState>()(
 
       // Lead CRUD with Supabase
       addLead: async (lead) => {
-        console.log('[addLead] Saving lead to Supabase:', lead.name);
+        console.log('[addLead] Saving lead to cloud:', lead.name);
         const saved = await createLead(lead as any);
         const finalLead = (saved as Lead) || lead;
         if (saved) {
-          console.log('[addLead] Saved to Supabase successfully:', saved.id);
+          console.log('[addLead] Saved to cloud successfully:', saved.id);
           set((s) => ({ leads: [saved as Lead, ...s.leads] }));
         } else {
-          console.warn('[addLead] Supabase save failed, using localStorage fallback');
+          console.warn('[addLead] Cloud save failed, using localStorage fallback');
           set((s) => ({ leads: [lead, ...s.leads] }));
         }
         // Fire automation rules listening for new leads

@@ -5,7 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import { useAuthStore } from './stores/authStore'
 import { useThemeStore } from './stores/themeStore'
-import { testSupabaseConnection } from './lib/supabase-api'
+import { testApiConnection } from './lib/api'
 
 // Set theme class on <html> BEFORE React renders to prevent flash
 const stored = localStorage.getItem('p13-theme')
@@ -17,17 +17,14 @@ function AppWithInit() {
   useEffect(() => {
     useAuthStore.getState().checkStoredSession()
     useThemeStore.getState().init()
-    // Test Supabase connection
-    testSupabaseConnection().then((result) => {
-      if (result.ok) {
-        console.log('[Supabase] Connected successfully')
-      } else {
-        console.error('[Supabase] Connection failed:', result.error)
-      }
+    // Test API/database connection
+    testApiConnection().then((result) => {
+      if (result.ok) console.log('[API] Connected successfully')
+      else console.warn('[API] Not reachable (using local fallback):', result.error)
     })
-    // Sync data from Supabase on app load
+    // Sync data from cloud on app load
     import('./stores/dataStore').then(({ useDataStore }) => {
-      useDataStore.getState().syncFromSupabase()
+      useDataStore.getState().syncFromCloud()
     })
   }, [])
   return <App />

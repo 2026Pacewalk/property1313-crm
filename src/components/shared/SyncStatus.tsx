@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Cloud, CloudOff, RefreshCw } from 'lucide-react';
-import { isSupabaseReady } from '@/lib/supabase';
+import { isApiOnline } from '@/lib/api';
 import { useDataStore } from '@/stores/dataStore';
 
 export function SyncStatus() {
-  const [isOnline, setIsOnline] = useState(isSupabaseReady());
+  const [isOnline, setIsOnline] = useState(isApiOnline());
   const [isSyncing, setIsSyncing] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const isLoading = useDataStore((s) => s.isLoading);
 
   useEffect(() => {
-    const check = () => setIsOnline(isSupabaseReady());
+    const check = () => setIsOnline(isApiOnline());
     check();
     const interval = setInterval(check, 30000);
     return () => clearInterval(interval);
@@ -20,7 +20,7 @@ export function SyncStatus() {
     if (!isOnline || isSyncing) return;
     setIsSyncing(true);
     try {
-      await useDataStore.getState().syncFromSupabase();
+      await useDataStore.getState().syncFromCloud();
     } finally {
       setTimeout(() => setIsSyncing(false), 500);
     }
@@ -60,8 +60,8 @@ export function SyncStatus() {
           </p>
           <p className="text-gray-500 dark:text-gray-400">
             {isOnline
-              ? 'Data syncs automatically to Supabase cloud database. Your data is backed up and accessible from any device.'
-              : 'Data is stored in browser localStorage only. To enable cloud sync, add your Supabase API key in Vercel environment variables.'}
+              ? 'Data syncs to your Vercel Postgres cloud database, backed up and accessible from any device.'
+              : 'You appear offline — changes are kept in this browser and will sync when back online.'}
           </p>
           {isOnline && (
             <button
