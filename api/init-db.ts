@@ -1,5 +1,11 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, hasDb } from './_db';
+import { createPool } from '@vercel/postgres';
+
+const connectionString =
+  process.env.POSTGRES_URL || process.env.DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL_NON_POOLING || '';
+let pool: any = null;
+const db = () => (pool ||= createPool({ connectionString }));
+const hasDb = () => !!connectionString;
 
 /**
  * One-time (idempotent) database setup. Visit /api/init-db once after the
@@ -8,7 +14,7 @@ import { db, hasDb } from './_db';
 const STATEMENTS: string[] = [
   `CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY DEFAULT (gen_random_uuid())::text,
-    name TEXT NOT NULL, email TEXT, phone TEXT, alternate_mobile TEXT,
+    name TEXT, email TEXT, phone TEXT, alternate_mobile TEXT,
     role TEXT DEFAULT 'sales_person', avatar TEXT, is_active BOOLEAN DEFAULT true,
     account_status TEXT DEFAULT 'active', last_login_at TIMESTAMPTZ,
     display_name TEXT, timezone TEXT DEFAULT 'Asia/Kolkata',
@@ -19,7 +25,7 @@ const STATEMENTS: string[] = [
 
   `CREATE TABLE IF NOT EXISTS leads (
     id TEXT PRIMARY KEY DEFAULT (gen_random_uuid())::text,
-    name TEXT NOT NULL, phone TEXT, alternate_mobile TEXT, email TEXT,
+    name TEXT, phone TEXT, alternate_mobile TEXT, email TEXT,
     status TEXT DEFAULT 'new', source TEXT DEFAULT 'Website', inquiry_source TEXT,
     project_interest TEXT, target_city TEXT, looking_for TEXT, type_details TEXT,
     preferred_location TEXT, intended_purpose TEXT, customer_budget TEXT, budget NUMERIC,
@@ -31,7 +37,7 @@ const STATEMENTS: string[] = [
 
   `CREATE TABLE IF NOT EXISTS projects (
     id TEXT PRIMARY KEY DEFAULT (gen_random_uuid())::text,
-    name TEXT NOT NULL, description TEXT, location TEXT, property_type TEXT[],
+    name TEXT, description TEXT, location TEXT, property_type TEXT[],
     min_price NUMERIC DEFAULT 0, max_price NUMERIC DEFAULT 0, status TEXT DEFAULT 'active',
     cover_image TEXT, gallery_images TEXT[], total_units INTEGER, possession TEXT,
     rera_id TEXT, land_area TEXT, floors TEXT, amenities TEXT[],
@@ -85,13 +91,11 @@ const STATEMENTS: string[] = [
     created_at TIMESTAMPTZ DEFAULT NOW(), updated_at TIMESTAMPTZ DEFAULT NOW())`,
 ];
 
-export default async function handler(_req: VercelRequest, res: VercelResponse) {
-  if (!hasDb()) return res.status(503).json({ error: 'Database not configured. Add a Postgres store in Vercel → Storage.' });
+export default async function handler(_req: any, res: any) {
+  if (!hasDb()) return res.status(503).json({ error: 'Database not configured. Add a Postgres store in Vercel -> Storage.' });
   try {
-    const sql = await db();
-    for (const stmt of STATEMENTS) {
-      await sql.query(stmt);
-    }
+    const sql = db();
+    for (const stmt of STATEMENTS) await sql.query(stmt);
     const { rows } = await sql.query(
       `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name`
     );

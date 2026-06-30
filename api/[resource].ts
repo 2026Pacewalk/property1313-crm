@@ -1,5 +1,18 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, hasDb, resolveTable, COL_RE } from './_db';
+import { createPool } from '@vercel/postgres';
+
+// Vercel Postgres injects POSTGRES_URL; the Neon marketplace integration uses DATABASE_URL.
+const connectionString =
+  process.env.POSTGRES_URL || process.env.DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL_NON_POOLING || '';
+let pool: any = null;
+const db = () => (pool ||= createPool({ connectionString }));
+const hasDb = () => !!connectionString;
+
+const TABLES = new Set([
+  'leads', 'projects', 'followups', 'visits', 'loan_inquiries',
+  'notifications', 'users', 'audit_logs', 'master_values',
+]);
+const COL_RE = /^[a-z_][a-z0-9_]*$/;
 
 /**
  * Generic CRUD for the CRM tables.
@@ -7,17 +20,17 @@ import { db, hasDb, resolveTable, COL_RE } from './_db';
  *   POST   /api/leads            -> insert (body = snake_case column map)
  *   PATCH  /api/leads?id=l123    -> update by id
  *   DELETE /api/leads?id=l123    -> delete by id
- * Table names are whitelisted; column names are regex-validated; values are
- * always parameterised — so user input can't be used for SQL injection.
+ * Tables are whitelisted, column names regex-validated, values parameterised.
  */
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: any, res: any) {
   if (!hasDb()) return res.status(503).json({ error: 'Database not configured' });
 
-  const table = resolveTable(Array.isArray(req.query.resource) ? req.query.resource[0] : req.query.resource);
-  if (!table) return res.status(404).json({ error: 'Unknown resource' });
+  const resource = Array.isArray(req.query.resource) ? req.query.resource[0] : req.query.resource;
+  const table = String(resource || '').replace(/-/g, '_');
+  if (!TABLES.has(table)) return res.status(404).json({ error: 'Unknown resource' });
 
   try {
-    const sql = await db();
+    const sql = db();
     if (req.method === 'GET') {
       const { rows } = await sql.query(`SELECT * FROM ${table} ORDER BY created_at DESC NULLS LAST`);
       return res.status(200).json(rows);
@@ -60,9 +73,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-// Arrays/objects -> JSON-compatible values node-postgres can bind (TEXT[] handled natively for string[])
 function normalize(v: any) {
-  if (Array.isArray(v)) return v; // text[] / arrays bind directly
-  if (v && typeof v === 'object') return JSON.stringify(v); // JSONB columns
+  if (Array.isArray(v)) return v;
+  if (v && typeof v === 'object') return JSON.stringify(v);
   return v;
 }
