@@ -73,8 +73,11 @@ function ComboboxInput({ value, onChange, options, placeholder, allowAddNew, onA
   allowAddNew?: boolean; onAddNew?: (val: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const filtered = options.filter(o => o.toLowerCase().includes(value.toLowerCase()));
-  const isNew = value.trim() && !options.some(o => o.toLowerCase() === value.toLowerCase());
+  const isExact = options.some(o => o.toLowerCase() === value.toLowerCase());
+  // Show ALL options when nothing is typed OR the value is a committed selection,
+  // so a chosen value can still be changed. Only narrow while actively typing a partial.
+  const filtered = (!value.trim() || isExact) ? options : options.filter(o => o.toLowerCase().includes(value.toLowerCase()));
+  const isNew = value.trim() && !isExact;
 
   return (
     <div className="relative">
@@ -384,10 +387,13 @@ function AddLeadForm({ onClose }: { onClose: () => void }) {
   const [leadScore, setLeadScore] = useState<'hot' | 'warm' | 'cold'>('warm');
   const [initialRemark, setInitialRemark] = useState('');
 
-  // Type Details cascades from the selected Looking For (sub-categories whose parent matches it)
+  // Type Details cascades from the selected Looking For. Sub-categories WITH a parent
+  // only show under their parent; ones WITHOUT a parent (e.g. added via Master Database)
+  // always show, so user-added values like "5BHK" aren't hidden.
   const selectedLookingForVal = masterStore.masterValues.find(v => v.masterTypeId === 'mt_looking_for' && v.name === lookingFor);
   const typeDetailsOptions = masterStore.masterValues
-    .filter(v => v.masterTypeId === 'mt_property_sub_category' && v.isActive && (!selectedLookingForVal || v.parentId === selectedLookingForVal.id))
+    .filter(v => v.masterTypeId === 'mt_property_sub_category' && v.isActive
+      && (!selectedLookingForVal || !v.parentId || v.parentId === selectedLookingForVal.id))
     .map(v => v.name);
 
   // Handle add new master value
